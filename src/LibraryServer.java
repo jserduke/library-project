@@ -1,5 +1,6 @@
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
 
 public class LibraryServer {
 	public static void main(String[] args) {
@@ -52,24 +53,30 @@ public class LibraryServer {
 						// JUST KEEPING LOGIC RIGHT HERE TEMPORARILY FOR TESTING PURPOSES
 						System.out.println(messageFromClient);
 						// System.out.println("Is logged in? " + isLoggedIn);
+						ArrayList<String> info = new ArrayList<String>();
 						if (!isLoggedIn) {
 							// System.out.println("In");
 							if (messageFromClient.getAction() == Action.LOGIN) {
 								isLoggedIn = true;
-								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.LOGIN, Status.SUCCESS, "Jason");
+								info.add("Jason");
+								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.LOGIN, Status.SUCCESS, info);
 							} else {
-								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.LOGIN, Status.FAILURE, "Not logged in yet");
+								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.LOGIN, Status.FAILURE, info);
 							}
 							writerToClient.writeObject(messageToClient);
 						} else {
 							if (messageFromClient.getAction() == Action.GET_CHECKOUTS) {
-								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.GET_CHECKOUTS, Status.SUCCESS, "ABC");
+								info.add("Harry Potter");
+								info.add("Mouse Paint");
+								info.add("If You Give a Mouse a Cookie");
+								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.GET_CHECKOUTS, Status.SUCCESS, info);
 								writerToClient.writeObject(messageToClient);
 							} else if (messageFromClient.getAction() == Action.CHECKOUT) {
-								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.CHECKOUT, Status.SUCCESS, "Networking 101 successfully checked out!");
+								info.add("Networking 101 successfully checked out!");
+								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.CHECKOUT, Status.SUCCESS, info);
 								writerToClient.writeObject(messageToClient);
 							} else if (messageFromClient.getAction() == Action.LOGOUT) {
-								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.LOGOUT, Status.SUCCESS, "Goodbye");
+								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.LOGOUT, Status.SUCCESS, info);
 								writerToClient.writeObject(messageToClient);
 								
 								writerToClient.close();

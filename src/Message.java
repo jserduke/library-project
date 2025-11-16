@@ -1,4 +1,5 @@
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class Message implements Serializable {
@@ -10,9 +11,9 @@ public class Message implements Serializable {
 	private int requestId;
 	private Action action;
 	private Status status;
-	private String info;
+	private ArrayList<String> info;
 	
-	public Message(int libraryId, Type type, int requestId, Action action, Status status, String info) {
+	public Message(int libraryId, Type type, int requestId, Action action, Status status, ArrayList<String> info) {
 		id = count++;
 		datetime = new Date();
 		this.libraryId = libraryId;
@@ -48,7 +49,7 @@ public class Message implements Serializable {
 	public Action getAction() {
 		return action;
 	}
-	public String getInfo() {
+	public ArrayList<String> getInfo() {
 		return info;
 	}
 	

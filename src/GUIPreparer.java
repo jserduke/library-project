@@ -1,4 +1,5 @@
 import java.io.*;
+import java.util.ArrayList;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
@@ -28,7 +29,7 @@ public class GUIPreparer {
 		// SEND LOGIN REQUEST WHEN BUTTON IS CLICKED
 		loginButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
-				Message request = new Message(0, Type.REQUEST, -1, Action.LOGIN, Status.PENDING, "Please let me in");
+				Message request = new Message(0, Type.REQUEST, -1, Action.LOGIN, Status.PENDING, null);
 				// FRAME (WINDOW) TO BE EDITED WHEN RESPONSE FROM SERVER IS RECEIVED
 				responseHandler.setFrame(frame);
 				// ID CORRESPONDING TO LOGIN REQUEST THAT RESPONSE SHOULD BE LOOKING FOR
@@ -57,7 +58,7 @@ public class GUIPreparer {
 		// System.out.println("# of components: " + panel.getComponents().length);
 		JTextField titleField = (JTextField) panel.getComponents()[0];
 		// UPDATE HOME PAGE TEXT AFTER SUCCESSFUL LOGIN
-		titleField.setText("Home Page for " + response.getInfo());
+		titleField.setText("Home Page for " + response.getInfo().getFirst());
 		// REMOVE LOGIN AND REGISTRATION BUTTONS
 		panel.remove(1);
 		panel.remove(1);
@@ -65,7 +66,7 @@ public class GUIPreparer {
 		JButton getCheckoutsButton = new JButton("Get checkouts");
 		getCheckoutsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
-				Message request = new Message(0, Type.REQUEST, -1, Action.GET_CHECKOUTS, Status.PENDING, "Give me records");
+				Message request = new Message(0, Type.REQUEST, -1, Action.GET_CHECKOUTS, Status.PENDING, null);
 				// NEW WINDOW WILL BE CREATED
 				responseHandler.setFrame(null);
 				// INFORM ResponseHandler OF WHICH CORRESPONDING RESPONSE THEY SHOULD BE EXPECTING NEXT
@@ -81,7 +82,7 @@ public class GUIPreparer {
 		JButton checkoutButton = new JButton("Checkout the book");
 		checkoutButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
-				Message request = new Message(0, Type.REQUEST, -1, Action.CHECKOUT, Status.PENDING, "Checkout please!");
+				Message request = new Message(0, Type.REQUEST, -1, Action.CHECKOUT, Status.PENDING, null);
 				// JOptionPane WILL BE ATTACHED TO HOME PAGE WINDOW
 				responseHandler.setFrame(frame);
 				// INFORM ResponseHandler OF WHICH CORRESPONDING RESPONSE THEY SHOULD BE EXPECTING NEXT
@@ -107,9 +108,8 @@ public class GUIPreparer {
 		panel.setLayout(layout);
 		// DISPLAY GRID OF CHECKOUT HISTORY
 		System.out.println(response.getInfo());
-		for (int i = 0; i < response.getInfo().length(); i += 1) {
-			String recordText = Character.toString(response.getInfo().charAt(i));
-			JTextField checkoutRecord = new JTextField(recordText);
+		for (int i = 0; i < response.getInfo().size(); i += 1) {
+			JTextField checkoutRecord = new JTextField(response.getInfo().get(i));
 			checkoutRecord.setEditable(false);
 			panel.add(checkoutRecord);
 		}
