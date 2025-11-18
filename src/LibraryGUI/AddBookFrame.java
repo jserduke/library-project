@@ -37,14 +37,17 @@ public class AddBookFrame extends JDialog {
  		gbc.anchor = GridBagConstraints.LINE_END;
 
  		int row = 0;
- 		gbc.gridx = 0; gbc.gridy = row; form.add(new JLabel("ISBN:"), gbc);
+ 		gbc.gridx = 0; 
+ 		gbc.gridy = row; 
+ 		form.add(new JLabel("ISBN:"), gbc);
  		gbc.gridy++; form.add(new JLabel("Name:"), gbc);
  		gbc.gridy++; form.add(new JLabel("Author:"), gbc);
  		gbc.gridy++; form.add(new JLabel("Genre:"), gbc);
  		gbc.gridy++; form.add(new JLabel("Quantity:"), gbc);
 
  		gbc.anchor = GridBagConstraints.LINE_START;
- 		gbc.gridx = 1; gbc.gridy = 0;
+ 		gbc.gridx = 1; 
+ 		gbc.gridy = 0;
      	form.add(txtIsbn, gbc);
      	gbc.gridy++; form.add(txtTitle, gbc);
      	gbc.gridy++; form.add(txtAuthor, gbc);
@@ -59,7 +62,9 @@ public class AddBookFrame extends JDialog {
      	btnPanel.add(btnAdd);
      	btnPanel.add(btnCancel);
 
-     	gbc.gridx = 0; gbc.gridy++; gbc.gridwidth = 2;
+     	gbc.gridx = 0; 
+     	gbc.gridy++;
+     	gbc.gridwidth = 2;
      	gbc.anchor = GridBagConstraints.CENTER;
      	form.add(btnPanel, gbc);
 

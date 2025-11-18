@@ -75,7 +75,8 @@ public class ManageMembersFrame extends JDialog {
 		}
 		int confirm = JOptionPane.showConfirmDialog(this, "Delete this member?", "Confirm",
 				JOptionPane.YES_NO_OPTION);
-		if (confirm != JOptionPane.YES_OPTION) return;
+		if (confirm != JOptionPane.YES_OPTION) 
+			return;
 
 		int id = (int) model.getValueAt(row, 0);
 		LibraryData.MEMBERS.removeIf(m -> m.getId() == id);

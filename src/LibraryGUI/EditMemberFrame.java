@@ -36,7 +36,9 @@ public class EditMemberFrame extends JDialog {
 		gbc.anchor = GridBagConstraints.LINE_END;
 
 		int row = 0;
-		gbc.gridx = 0; gbc.gridy = row; form.add(new JLabel("Enter Member ID:"), gbc);
+		gbc.gridx = 0; 
+		gbc.gridy = row; 
+		form.add(new JLabel("Enter Member ID:"), gbc);
 		gbc.gridy++; form.add(new JLabel("First Name:"), gbc);
 		gbc.gridy++; form.add(new JLabel("Last Name:"), gbc);
 		gbc.gridy++; form.add(new JLabel("Phone:"), gbc);
@@ -44,7 +46,8 @@ public class EditMemberFrame extends JDialog {
 		gbc.gridy++; form.add(new JLabel("Gender:"), gbc);
 
 		gbc.anchor = GridBagConstraints.LINE_START;
-		gbc.gridx = 1; gbc.gridy = 0;
+		gbc.gridx = 1;
+		gbc.gridy = 0;
 		JPanel idPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
     	txtId.setColumns(6);
     	JButton btnSearch = new JButton("search");
@@ -52,14 +55,22 @@ public class EditMemberFrame extends JDialog {
     	idPanel.add(btnSearch);
     	form.add(idPanel, gbc);
 
-    	gbc.gridy++; form.add(txtFirst, gbc);
-    	gbc.gridy++; form.add(txtLast, gbc);
-    	gbc.gridy++; form.add(txtPhone, gbc);
-    	gbc.gridy++; form.add(txtEmail, gbc);
-    	gbc.gridy++; form.add(cbGender, gbc);
+    	gbc.gridy++; 
+    	form.add(txtFirst, gbc);
+    	gbc.gridy++; 
+    	form.add(txtLast, gbc);
+    	gbc.gridy++; 
+    	form.add(txtPhone, gbc);
+    	gbc.gridy++; 
+    	form.add(txtEmail, gbc);
+    	gbc.gridy++; 
+    	form.add(cbGender, gbc);
 
     	JButton btnSave = new JButton("Edit Member Info");
-    	gbc.gridx = 0; gbc.gridy++; gbc.gridwidth = 2; gbc.anchor = GridBagConstraints.CENTER;
+    	gbc.gridx = 0; 
+    	gbc.gridy++; 
+    	gbc.gridwidth = 2; 
+    	gbc.anchor = GridBagConstraints.CENTER;
     	form.add(btnSave, gbc);
 
     	add(form, BorderLayout.CENTER);
@@ -70,6 +81,7 @@ public class EditMemberFrame extends JDialog {
 
 	private void searchMember() {
 		int id;
+		
 		try {
 			id = Integer.parseInt(txtId.getText().trim());
 		} catch (NumberFormatException ex) {

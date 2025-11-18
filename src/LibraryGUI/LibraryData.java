@@ -40,13 +40,15 @@ public class LibraryData {
 
 	public static int nextMemberId() {
 		int max = 0;
-		for (Member m : MEMBERS) if (m.getId() > max) max = m.getId();
+		for (Member m : MEMBERS) 
+			if (m.getId() > max) max = m.getId();
 		return max + 1;
 	}
 
 	public static int nextBookId() {
 		int max = 0;
-		for (Book b : BOOKS) if (b.getId() > max) max = b.getId();
+		for (Book b : BOOKS) 
+			if (b.getId() > max) max = b.getId();
 		return max + 1;
 	}
 }

@@ -30,12 +30,16 @@ public class LoginFrame extends JFrame {
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.insets = new Insets(5, 5, 5, 5);
 
-		gbc.gridx = 0; gbc.gridy = 0; gbc.anchor = GridBagConstraints.LINE_END;
+		gbc.gridx = 0; 
+		gbc.gridy = 0; 
+		gbc.anchor = GridBagConstraints.LINE_END;
 		center.add(new JLabel("Username:"), gbc);
 		gbc.gridy++;
 		center.add(new JLabel("Password:"), gbc);
 
-		gbc.gridx = 1; gbc.gridy = 0; gbc.anchor = GridBagConstraints.LINE_START;
+		gbc.gridx = 1; 
+		gbc.gridy = 0; 
+		gbc.anchor = GridBagConstraints.LINE_START;
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		center.add(txtUser, gbc);
 		gbc.gridy++;
