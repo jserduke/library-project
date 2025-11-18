@@ -1,6 +1,9 @@
 import java.io.*;
 import java.util.Date;
 import java.util.ArrayList;
+import java.io.File;
+import java.io.FileWriter;
+import java.util.Scanner;
 
 public class HoldsRepository {
 	private ArrayList<Hold> holds;
@@ -29,5 +32,33 @@ public class HoldsRepository {
 		
 		
 		return removedCount;
+	}
+	
+	public void saveHoldToFile(String filename) {
+		File file = new File(filename);
+		
+		try {
+			if (file.createNewFile()) {
+				System.out.println(filename + " created!");
+			}
+			
+			else {
+				System.out.println(filename + " already exists. Overwriting...");
+			}
+			
+			FileWriter writer = new FileWriter(file);
+			
+			for (Hold h : holds) {
+//				writer.write(h.getMediaId() + ", " +
+//							 h.getMemberId() + ", " +
+//							 h.getDatePlaced().getTime() + ", " + 
+//							 h.getUntil().getTime() + "\n");
+			}
+			
+			writer.close();
+			System.out.println("Holds have to " + filename);
+		} catch (IOException e) {
+			System.out.println("Error writing to " + filename + ": " + e.getMessage());
+		}
 	}
 }
