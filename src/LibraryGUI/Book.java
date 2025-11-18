@@ -1,5 +1,7 @@
 package LibraryGUI;
 
+import java.time.LocalDate;
+
 public class Book {
 	private int id;
 	private String isbn;
@@ -8,6 +10,8 @@ public class Book {
 	private String genre;
 	private int quantity;
 	private boolean available;
+	private Integer issuedToMemberId;
+	private LocalDate dueDate;
 
 	public Book(int id, String isbn, String title,
              	String author, String genre, int quantity, boolean available) {
@@ -41,7 +45,12 @@ public class Book {
 	public boolean isAvailable() { 
 		return available; 
 	}
-
+	public Integer getIssuedToMemberId() {
+		return issuedToMemberId;
+	}
+	public LocalDate getDueDate() {
+		return dueDate;
+	}
 	public void setTitle(String title) {
 		this.title = title; 
 	}
@@ -56,6 +65,12 @@ public class Book {
 	}
 	public void setAvailable(boolean available) { 
 		this.available = available; 
+	}
+	public void setIssuedToMemberId(Integer issuedToMemberId) {
+		this.issuedToMemberId = issuedToMemberId;
+	}
+	public void setDueDate(LocalDate dueDate) {
+		this.dueDate = dueDate;
 	}
 
 }

@@ -23,14 +23,26 @@ public class LibrarySystemDashboard extends JFrame {
 		// TOP
 		JPanel top = new JPanel(new BorderLayout());
 		top.setBackground(new Color(38, 70, 120));
+
 		JLabel lblTitle = new JLabel("  Library System Dashboard");
 		lblTitle.setForeground(Color.WHITE);
 		lblTitle.setFont(lblTitle.getFont().deriveFont(Font.BOLD, 20f));
-		JLabel lblWelcome = new JLabel("Welcome Back! [ " + currentUser.getUsername() + " ]  ");
+
+		// Show different text depending on whether someone is logged in
+		String welcomeText;
+		if (currentUser != null) {
+			welcomeText = "Welcome Back! [ " + currentUser.getUsername() + " ]  ";
+		} else {
+			welcomeText = "Welcome to the Library System!";
+		}
+
+		JLabel lblWelcome = new JLabel(welcomeText);
 		lblWelcome.setForeground(Color.WHITE);
+
 		top.add(lblTitle, BorderLayout.WEST);
 		top.add(lblWelcome, BorderLayout.EAST);
 		add(top, BorderLayout.NORTH);
+
 
 		// LEFT MENU
 		JPanel left = new JPanel();
@@ -53,12 +65,13 @@ public class LibrarySystemDashboard extends JFrame {
 		left.add(menuButton("Manage Authors", () ->
 				new ManageAuthorsFrame(this).setVisible(true)));
 
-		left.add(menuSectionTitle("Members"));
-		left.add(menuButton("Add Member", () -> new AddMemberFrame(this).setVisible(true)));
-		left.add(menuButton("Edit Member", () -> new EditMemberFrame(this).setVisible(true)));
-		left.add(menuButton("Delete Member", () -> new ManageMembersFrame(this).setVisible(true)));
-		left.add(menuButton("Members List", () -> new MembersListFrame(this).setVisible(true)));
-		left.add(menuButton("Manage Members", () -> new ManageMembersFrame(this).setVisible(true)));
+		if (currentUser != null && currentUser.getRole() == User.Role.ADMIN) {
+		    left.add(menuSectionTitle("Members"));
+		    left.add(menuButton("Members List", () -> new MembersListFrame(this).setVisible(true)));
+		    left.add(menuButton("Add Member", () -> new AddMemberFrame(this).setVisible(true)));
+		    left.add(menuButton("Edit Member", () -> new EditMemberFrame(this).setVisible(true)));
+		    left.add(menuButton("Manage Members", () -> new ManageMembersFrame(this).setVisible(true)));
+		}
 
 		left.add(menuSectionTitle("Books"));
 		left.add(menuButton("Add Book", () -> new AddBookFrame(this).setVisible(true)));
@@ -71,17 +84,20 @@ public class LibrarySystemDashboard extends JFrame {
 		left.add(menuButton("Issue Book", () -> new IssueBookFrame(this).setVisible(true)));
 		left.add(menuButton("Return Book", () -> new ReturnBookFrame(this).setVisible(true)));
 
-		if (currentUser.getRole() == User.Role.ADMIN) {
+		if (currentUser != null && currentUser.getRole() == User.Role.ADMIN) {
 			left.add(menuSectionTitle("Manage Users"));
 			left.add(menuButton("Manage Users", () -> new ManageUsersFrame(this).setVisible(true)));
 		}
 
-		JButton btnLogout = menuButton("Logout", () -> {
+
+		String authButtonText = (currentUser == null) ? "Login" : "Logout";
+		JButton btnAuth = menuButton(authButtonText, () -> {
 			new LoginFrame().setVisible(true);
 			dispose();
 		});
 		left.add(Box.createVerticalStrut(10));
-		left.add(btnLogout);
+		left.add(btnAuth);
+
 
 		add(left, BorderLayout.WEST);
 
@@ -132,10 +148,19 @@ public class LibrarySystemDashboard extends JFrame {
 		// STATUS
 		JPanel status = new JPanel(new BorderLayout());
 		status.setBackground(new Color(90, 90, 90));
-		JLabel lblUser = new JLabel("  Logged in as: " + currentUser.getUsername());
+
+		String userLabelText;
+		if (currentUser != null) {
+			userLabelText = "  Logged in as: " + currentUser.getUsername();
+		} else {
+			userLabelText = "  Not logged in";
+		}
+
+		JLabel lblUser = new JLabel(userLabelText);
 		lblUser.setForeground(Color.WHITE);
 		status.add(lblUser, BorderLayout.WEST);
 		add(status, BorderLayout.SOUTH);
+
 
 		updateCounts();
 	}

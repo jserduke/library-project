@@ -21,7 +21,7 @@ public class LoginFrame extends JFrame {
 		header.setPreferredSize(new Dimension(400, 90));
 		JLabel title = new JLabel("Library Management System");
 		title.setForeground(Color.WHITE);
-		title.setFont(title.getFont().deriveFont(Font.BOLD, 18f));
+		title.setFont(new Font("SansSerif", Font.BOLD, 18));
 		header.add(title);
 		add(header, BorderLayout.NORTH);
 

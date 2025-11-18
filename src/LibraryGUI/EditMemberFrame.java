@@ -3,6 +3,7 @@ package LibraryGUI;
 import javax.swing.*;
 import java.awt.*;
 
+
 public class EditMemberFrame extends JDialog {
 
 	private static final long serialVersionUID = 1L;
@@ -26,7 +27,7 @@ public class EditMemberFrame extends JDialog {
 		header.setBackground(new Color(0, 153, 102));
 		JLabel lbl = new JLabel("  Edit Member");
 		lbl.setForeground(Color.WHITE);
-		lbl.setFont(lbl.getFont().deriveFont(Font.BOLD, 18f));
+		lbl.setFont(new Font("SansSerif", Font.BOLD, 18));
 		header.add(lbl, BorderLayout.WEST);
 		add(header, BorderLayout.NORTH);
 

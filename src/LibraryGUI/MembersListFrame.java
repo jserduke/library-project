@@ -23,7 +23,7 @@ public class MembersListFrame extends JDialog {
 		header.setBackground(new Color(0, 153, 102));
 		JLabel lbl = new JLabel("  Members List");
 		lbl.setForeground(Color.WHITE);
-		lbl.setFont(lbl.getFont().deriveFont(Font.BOLD, 18f));
+		lbl.setFont(new Font("SansSerif", Font.BOLD, 18));
 		header.add(lbl, BorderLayout.WEST);
 		add(header, BorderLayout.NORTH);
 

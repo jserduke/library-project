@@ -9,7 +9,9 @@ public class ManageMembersFrame extends JDialog {
 	private static final long serialVersionUID = 1L;
 	private DefaultTableModel model = new DefaultTableModel(
 			new Object[]{"ID","F-Name","L-Name","Phone","Email","Gender"}, 0) {
-		@Override public boolean isCellEditable(int r, int c) { return false; }
+		@Override public boolean isCellEditable(int r, int c) { 
+			return false; 
+		}
 	};
 	private JTable table = new JTable(model);
 
@@ -23,7 +25,7 @@ public class ManageMembersFrame extends JDialog {
 		header.setBackground(new Color(0, 153, 102));
 		JLabel lbl = new JLabel("  Manage Members");
 		lbl.setForeground(Color.WHITE);
-		lbl.setFont(lbl.getFont().deriveFont(Font.BOLD, 18f));
+		lbl.setFont(new Font("SansSerif", Font.BOLD, 18));
 		header.add(lbl, BorderLayout.WEST);
 		add(header, BorderLayout.NORTH);
 

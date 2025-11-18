@@ -8,6 +8,7 @@ public class Member {
 	private String phone;
 	private String email;
 	private String gender;
+	private double balance;
 
 	public Member(int id, String firstName, String lastName,
                String phone, String email, String gender) {
@@ -17,6 +18,7 @@ public class Member {
 		this.phone = phone;
 		this.email = email;
 		this.gender = gender;
+		this.balance = 0.0;
 	}
 
 	public int getId() { 
@@ -37,6 +39,9 @@ public class Member {
 	public String getGender() { 
 		return gender; 
 	}
+	public double getBalance() {
+		return balance;
+	}
 	public void setFirstName(String firstName) { 
 		this.firstName = firstName; 
 	}
@@ -51,6 +56,12 @@ public class Member {
 	}
 	public void setGender(String gender) { 
 		this.gender = gender; 
+	}
+	public void setBalance(double balance) {
+		this.balance = balance;
+	}
+	public void addToBalance(double amount) {
+		this.balance += amount;
 	}
 }
 

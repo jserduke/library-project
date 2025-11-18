@@ -27,7 +27,7 @@ public class AddBookFrame extends JDialog {
  		header.setBackground(new Color(204, 102, 0));
  		JLabel lbl = new JLabel("  Add a New Book");
  		lbl.setForeground(Color.WHITE);
- 		lbl.setFont(lbl.getFont().deriveFont(Font.BOLD, 18f));
+ 		lbl.setFont(new Font("SansSerif", Font.BOLD, 18));
  		header.add(lbl, BorderLayout.WEST);
  		add(header, BorderLayout.NORTH);
 

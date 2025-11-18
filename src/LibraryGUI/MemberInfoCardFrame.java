@@ -2,13 +2,14 @@ package LibraryGUI;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.Window;
 
 public class MemberInfoCardFrame extends JDialog {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public MemberInfoCardFrame(JFrame parent, Member member) {
-		super(parent, "Member Info Card", true);
+	public MemberInfoCardFrame(Window parent, Member member) {
+        super(parent, "Member Info Card", ModalityType.APPLICATION_MODAL);
 
 		setSize(320, 260);
 		setLocationRelativeTo(parent);
@@ -18,7 +19,7 @@ public class MemberInfoCardFrame extends JDialog {
 		header.setBackground(new Color(0, 153, 102));
 		JLabel lbl = new JLabel("  Member Info Card");
 		lbl.setForeground(Color.WHITE);
-		lbl.setFont(lbl.getFont().deriveFont(Font.BOLD, 18f));
+		lbl.setFont(new Font("SansSerif", Font.BOLD, 18));
 		header.add(lbl, BorderLayout.WEST);
 		add(header, BorderLayout.NORTH);
 
@@ -38,6 +39,8 @@ public class MemberInfoCardFrame extends JDialog {
 		info.add(new JLabel(member.getPhone()));
 		info.add(new JLabel(member.getEmail()));
 		info.add(new JLabel(member.getGender()));
+        info.add(new JLabel(String.format("Balance: $%.2f", member.getBalance())));
+
 		center.add(Box.createHorizontalStrut(10));
 		center.add(info);
 
