@@ -4,7 +4,8 @@ public enum Rating {
 	PG,
 	PG_13,
 	NC_17,
-	R;
+	R,
+	Unrated;
 	
 	@Override
 	public String toString() {
