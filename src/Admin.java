@@ -14,13 +14,22 @@ public class Admin extends Account{
 	
 	public ArrayList<Loan> viewHistory(int memberId, LoanRepository loanRep) {
 		ArrayList<Loan> history = new ArrayList<>();
-		//more code here
+		
+		for (Loan loan : loanRep.getHistory()) {
+			if (loan.getMemberId() == memberId) {
+				history.add(loan);
+			}
+		}
 		return history;
 	}
 	
 	public ArrayList<Loan> viewLoans(int memberId, LoanRepository loanRep) {
 		ArrayList<Loan> loans = new ArrayList<>();
-		//more code here
+		for (Loan loan : loanRep.getHistory()) {
+			if (loan.getMemberId() == memberId && loan.getReturnedDate() == null) {
+				loans.add(loan);
+			}
+		}
 		return loans;
 	}
 	

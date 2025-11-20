@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.util.Scanner;
 
+
 public class LoanRepository {
 	private int numLoans;
 	private int loanLimit;
@@ -39,5 +40,45 @@ public class LoanRepository {
 		return loan;
 	}
 	
-	//Still working on this class
+	public boolean returnMedia(int mediaId, int memberId) {
+		for (Loan loan : history) {
+			if (loan.getMediaId() == mediaId && 
+				loan.getMemberId() == memberId && 
+				loan.getReturnedDate() == null) {
+				
+				loan.setReturnDate(new Date());
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public double calculateFees(int mediaId, int memberId) {
+		return 0.0;
+	}
+	
+	public void saveLoansToFile(String filename) {
+		File file = new File(filename);
+		
+		try {
+			FileWriter writer = new FileWriter(file);
+			for (Loan loan : history) {
+				writer.write(loan.getMediaId() + ", " +
+							 loan.getMemberId() + ", " + 
+							 loan.getCheckoutDate() + ", " +
+							 loan.getDueDate() + ", " +
+							 (loan.getReturnedDate() == null ? -1 : loan.getReturnedDate() + "\n"));
+			}
+			writer.close();
+			System.out.println("Saved loan history.");
+			
+		} catch (IOException e) {
+			System.out.println("Error saving loan: " + e.getMessage());
+		}
+	}
+	
+	public void loadLoansFromFile(String filename) {
+		
+	}
+	
 }

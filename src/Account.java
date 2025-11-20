@@ -60,9 +60,9 @@ public class Account {
 	
 	public void setBirthday(int Month, int Day, int Year) {
 		Calendar cal = Calendar.getInstance();
+		cal.set(Calendar.YEAR, Year);
 		cal.set(Calendar.MONTH, Month - 1);
 		cal.set(Calendar.DAY_OF_MONTH, Day);
-		cal.set(Calendar.YEAR, Year);
 		this.birthday = cal.getTime();
 	}
 	

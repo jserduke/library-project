@@ -23,17 +23,33 @@ public class Loan {
     public int getMemberId() {
         return memberId;
     }
+    
+    public Date getCheckoutDate() {
+        return dateCheckedOut;
+    }
 
     public void setCheckoutDate(Date checkoutDate) {
         this.dateCheckedOut = checkoutDate;
+    }
+    
+    public Date getReturnedDate() {
+        return dateReturned;
     }
 
     public void setReturnDate(Date returnDate) {
         this.dateReturned = returnDate;
     }
 
+    public Date getDueDate() {
+        return dateDue;
+    }
+    
     public void setDateDue(Date dueDate) {
         this.dateDue = dueDate;
+    }
+    
+    public Date getGracePeriod() {
+        return gracePeriod;
     }
 
     public void setGracePeriod(Date gracePeriod) {
