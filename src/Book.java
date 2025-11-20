@@ -43,11 +43,12 @@ public class Book extends Media{
 	}
 	
 	public String toString() {
-		return getTitle() + "," + 
-		getAuthor() + "," +
-		getDdCallNumber() + "," +
-		getIsbn() + "," +
-		getPublisher();
+		return "Book {" + 
+		"Title:" + getTitle() + 
+		", Author:" + getAuthor() + 
+		", DD Number:" + getDdCallNumber() + 
+		", ISBN:" + getIsbn() + 
+		", Publisher:" + getPublisher() + "}\n";
 	}
 	
 	private void setTitle(String newTitle) {

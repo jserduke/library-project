@@ -42,11 +42,12 @@ public class BoardGame extends Media{
 	}
 	
 	public String toString() {
-		return getTitle() + "," +
-		getRating() + "," +
-		getPlayerCountMin() + "," +
-		getPlayerCountMax() + "," +
-		getGameLength();
+		return "Board Game {" +
+	"Title:" + getTitle() + 
+	", Rating:" + getRating() + 
+	", Min Players:" + getPlayerCountMin() + 
+	", Max Players:" + getPlayerCountMax() + 
+	", Game Length:" + getGameLength() + "}\n";
 	}
 	
 	private void setTitle(String newTitle) {
