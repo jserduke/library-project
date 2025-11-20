@@ -2,14 +2,14 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class Account {
-	private Integer id;
+	private int id;
 	private String email;
 	private String password;
 	private String fullName;
 	private Date birthday;
 	private Permission permission;
 	
-	public Account(Integer id, String email, String password, String fullName, Date birthday, Permission permission) {
+	public Account(int id, String email, String password, String fullName, Date birthday, Permission permission) {
 		this.id = id;
 		this.email = email;
 		this.password = password;
@@ -18,7 +18,7 @@ public class Account {
 		this.permission = permission;
 	}
 	
-	public Account (Integer id, String email, String password, String fullName, Date birthday) {
+	public Account (int id, String email, String password, String fullName, Date birthday) {
 		this.id = id;
 		this.email = email;
 		this.password = password;
@@ -58,7 +58,7 @@ public class Account {
 		return birthday;
 	}
 	
-	public void setBirthday(Integer Month, Integer Day, Integer Year) {
+	public void setBirthday(int Month, int Day, int Year) {
 		Calendar cal = Calendar.getInstance();
 		cal.set(Calendar.MONTH, Month - 1);
 		cal.set(Calendar.DAY_OF_MONTH, Day);
@@ -74,7 +74,7 @@ public class Account {
 		this.permission = permission;
 	}
 	
-	public void makePayment(Double amount, Integer ccNumber, String expDate, Integer csv) {
+	public void makePayment(Double amount, int ccNumber, String expDate, int csv) {
 		System.out.print("[Payment made: $" + amount +
 						 " using CC: " + ccNumber +
 						 " Exp: " + expDate +

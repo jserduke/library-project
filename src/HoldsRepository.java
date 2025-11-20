@@ -49,10 +49,9 @@ public class HoldsRepository {
 			FileWriter writer = new FileWriter(file);
 			
 			for (Hold h : holds) {
-//				writer.write(h.getMediaId() + ", " +
-//							 h.getMemberId() + ", " +
-//							 h.getDatePlaced().getTime() + ", " + 
-//							 h.getUntil().getTime() + "\n");
+				writer.write(h.getMediaId() + ", " +
+							 h.getMemberId() + ", " +
+							 h.getHoldUntilDate().getTime() + "\n");
 			}
 			
 			writer.close();
@@ -61,4 +60,30 @@ public class HoldsRepository {
 			System.out.println("Error writing to " + filename + ": " + e.getMessage());
 		}
 	}
+	
+	public void loanHoldsFromFile(String filename) {
+		File file = new File(filename);
+		
+		if (!file.exists()) {
+			System.out.println(filename + " not found. No holds loaded.");
+			return;
+		}
+		
+		System.out.println("Loading holds from " + filename + "...");
+		
+		holds.clear();
+		numHolds = 0;
+		
+		try {
+			Scanner scanner = new Scanner(file);
+			
+			while (scanner.hasNextLine()) {
+				String line = scanner.nextLine();
+				
+			}
+		} catch (Exception e) {
+			System.out.println("Error reading " + filename + ": " + e.getMessage());
+		}
+	}
+	
 }
