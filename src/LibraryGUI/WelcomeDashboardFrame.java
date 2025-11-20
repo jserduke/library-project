@@ -6,14 +6,7 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.util.List;
 
-/**
- * Welcome / Home with top nav, media cards, and catalog.
- * - Nav bar moved to TOP (under header)
- * - Media cards appear ABOVE the table
- * - Columns now have real names (dynamic per selected type)
- * - Admin tools entry present (routes to login/AdminPortal)
- * Pure Swing; no session object used.
- */
+
 public class WelcomeDashboardFrame extends JFrame {
     private static final long serialVersionUID = 1L;
 
@@ -140,7 +133,6 @@ public class WelcomeDashboardFrame extends JFrame {
     // --- Helpers -------------------------------------------------------------
 
     private void setCatalogColumnsForType(String typeLabel) {
-        // Real names for the mixed columns when "All" is selected
         String c3 = "Author / Rating / Players";
         String c4 = "ISBN / Runtime";
         String c5 = "Publisher / Studio / Length";
@@ -166,59 +158,100 @@ public class WelcomeDashboardFrame extends JFrame {
         if ("Books".equals(type)) {
             List<Book> list = q.isEmpty() ? LibraryData.BOOKS : LibraryData.searchBooks(q);
             for (int i=0;i<list.size();i++) {
+            	
                 Book b = list.get(i);
-                if (i<3) cardsGrid.add(buildCard(b));
+                if (i<3) 
+                	cardsGrid.add(buildCard(b));
                 model.addRow(new Object[]{
-                    b.getId(), b.getTitle(), b.getAuthor(), b.getIsbn(), b.getPublisher(),
-                    b.getTotalQuantity(), LibraryData.availableCountForBook(b.getId())
+                    b.getId(), 
+                    b.getTitle(), 
+                    b.getAuthor(), 
+                    b.getIsbn(), 
+                    b.getPublisher(),
+                    b.getTotalQuantity(), 
+                    LibraryData.availableCountForBook(b.getId())
                 });
             }
         } else if ("DVDs".equals(type)) {
             List<Dvd> list = q.isEmpty() ? LibraryData.DVDS : LibraryData.searchDvds(q);
             for (int i=0;i<list.size();i++) {
+            	
                 Dvd d = list.get(i);
-                if (i<3) cardsGrid.add(buildCard(d));
+                if (i<3) 
+                	cardsGrid.add(buildCard(d));
                 model.addRow(new Object[]{
-                    d.getId(), d.getTitle(), d.getRating(), d.getRuntimeMinutes()+" min", d.getStudio()==null? "" : d.getStudio(),
-                    d.getTotalQuantity(), LibraryData.availableCountForDvd(d.getId())
+                    d.getId(), 
+                    d.getTitle(), 
+                    d.getRating(), 
+                    d.getRuntimeMinutes()+" min",
+                    d.getStudio()==null? "" : d.getStudio(),
+                    d.getTotalQuantity(), 
+                    LibraryData.availableCountForDvd(d.getId())
                 });
             }
         } else if ("Board Games".equals(type)) {
             List<BoardGame> list = q.isEmpty() ? LibraryData.BOARD_GAMES : LibraryData.searchBoardGames(q);
             for (int i=0;i<list.size();i++) {
+            	
                 BoardGame g = list.get(i);
-                if (i<3) cardsGrid.add(buildCard(g));
+                if (i<3) 
+                	cardsGrid.add(buildCard(g));
                 model.addRow(new Object[]{
-                    g.getId(), g.getTitle(), g.getRating(), g.getPlayerCount(), g.getGameLengthMinutes()+" min",
-                    g.getTotalQuantity(), LibraryData.availableCountForBoardGame(g.getId())
+                    g.getId(), 
+                    g.getTitle(),
+                    g.getRating(),
+                    g.getPlayerCount(), 
+                    g.getGameLengthMinutes()+" min",
+                    g.getTotalQuantity(), 
+                    LibraryData.availableCountForBoardGame(g.getId())
                 });
             }
         } else { // All
             for (int i=0;i<LibraryData.BOOKS.size();i++) {
                 Book b = LibraryData.BOOKS.get(i);
                 if (q.isEmpty() || b.getTitle().toLowerCase().contains(q) || b.getAuthor().toLowerCase().contains(q) || b.getIsbn().toLowerCase().contains(q)) {
-                    if (cardsGrid.getComponentCount()<3) cardsGrid.add(buildCard(b));
+                    if (cardsGrid.getComponentCount()<3) 
+                    	cardsGrid.add(buildCard(b));
                     model.addRow(new Object[]{
-                        "Book", b.getId(), b.getTitle(), b.getAuthor(), b.getIsbn(), b.getPublisher(),
-                        b.getTotalQuantity(), LibraryData.availableCountForBook(b.getId())
+                        "Book", b.getId(), 
+                        b.getTitle(), 
+                        b.getAuthor(), 
+                        b.getIsbn(), 
+                        b.getPublisher(),
+                        b.getTotalQuantity(), 
+                        LibraryData.availableCountForBook(b.getId())
                     });
                 }
             }
             for (Dvd d : LibraryData.DVDS) {
                 if (q.isEmpty() || d.getTitle().toLowerCase().contains(q) || d.getRating().toLowerCase().contains(q)) {
-                    if (cardsGrid.getComponentCount()<3) cardsGrid.add(buildCard(d));
+                    if (cardsGrid.getComponentCount()<3) 
+                    	cardsGrid.add(buildCard(d));
                     model.addRow(new Object[]{
-                        "DVD", d.getId(), d.getTitle(), d.getRating(), d.getRuntimeMinutes()+" min", d.getStudio()==null? "" : d.getStudio(),
-                        d.getTotalQuantity(), LibraryData.availableCountForDvd(d.getId())
+                        "DVD", d.getId(), 
+                        d.getTitle(), 
+                        d.getRating(),
+                        d.getRuntimeMinutes()+" min", 
+                        d.getStudio()==null? "" : 
+                        	d.getStudio(),
+                        d.getTotalQuantity(), 
+                        LibraryData.availableCountForDvd(d.getId())
                     });
                 }
             }
             for (BoardGame g : LibraryData.BOARD_GAMES) {
                 if (q.isEmpty() || g.getTitle().toLowerCase().contains(q) || g.getRating().toLowerCase().contains(q)) {
-                    if (cardsGrid.getComponentCount()<3) cardsGrid.add(buildCard(g));
+                    if (cardsGrid.getComponentCount()<3) 
+                    	cardsGrid.add(buildCard(g));
                     model.addRow(new Object[]{
-                        "Board Game", g.getId(), g.getTitle(), g.getRating(), g.getPlayerCount(), g.getGameLengthMinutes()+" min",
-                        g.getTotalQuantity(), LibraryData.availableCountForBoardGame(g.getId())
+                        "Board Game", 
+                        g.getId(), 
+                        g.getTitle(), 
+                        g.getRating(), 
+                        g.getPlayerCount(),
+                        g.getGameLengthMinutes()+" min",
+                        g.getTotalQuantity(), 
+                        LibraryData.availableCountForBoardGame(g.getId())
                     });
                 }
             }
@@ -237,7 +270,11 @@ public class WelcomeDashboardFrame extends JFrame {
         JButton details = Theme.darkButton("View");
         details.addActionListener(e -> JOptionPane.showMessageDialog(this,
             "Book: " + b.getTitle() + "\nAuthor: " + b.getAuthor() + "\nISBN: " + b.getIsbn() + "\nPublisher: " + b.getPublisher()));
-        card.add(title); card.add(d1); card.add(d2); card.add(d3); card.add(details);
+        card.add(title); 
+        card.add(d1); 
+        card.add(d2); 
+        card.add(d3);
+        card.add(details);
         return card;
     }
     private JPanel buildCard(Dvd d) {
@@ -249,7 +286,11 @@ public class WelcomeDashboardFrame extends JFrame {
         JButton details = Theme.darkButton("View");
         details.addActionListener(e -> JOptionPane.showMessageDialog(this,
             "DVD: " + d.getTitle() + "\nRating: " + d.getRating() + "\nRuntime: " + d.getRuntimeMinutes() + " min"));
-        card.add(title); card.add(d1); card.add(d2); card.add(d3); card.add(details);
+        card.add(title); 
+        card.add(d1); 
+        card.add(d2); 
+        card.add(d3); 
+        card.add(details);
         return card;
     }
     private JPanel buildCard(BoardGame g) {
@@ -261,7 +302,11 @@ public class WelcomeDashboardFrame extends JFrame {
         JButton details = Theme.darkButton("View");
         details.addActionListener(e -> JOptionPane.showMessageDialog(this,
             "Board Game: " + g.getTitle() + "\nPlayers: " + g.getPlayerCount() + "\nLength: " + g.getGameLengthMinutes() + " min"));
-        card.add(title); card.add(d1); card.add(d2); card.add(d3); card.add(details);
+        card.add(title); 
+        card.add(d1); 
+        card.add(d2); 
+        card.add(d3);
+        card.add(details);
         return card;
     }
 

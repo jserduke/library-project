@@ -16,7 +16,8 @@ public class LibraryData {
     // --------- Auth / lookups ------------------------------------------------
     // Find a user by username + password (case-insensitive username)
     public static User findUser(String username, String password) {
-        if (username == null || password == null) return null;
+        if (username == null || password == null) 
+        	return null;
         for (User u : USERS) {
             if (u.getUsername().equalsIgnoreCase(username) && u.getPassword().equals(password)) {
                 return u;
@@ -61,12 +62,7 @@ public class LibraryData {
     		max = Math.max(max, l.getId()); 
     	return max + 1; 
     }
-    public static int nextHoldId() { 
-    	int max = 0; 
-    	for (Hold h : HOLDS) 
-    		max = Math.max(max, h.getId()); 
-    	return max + 1; 
-    }
+
 
     // --------- Member activity ----------------------------------------------
     // All loans for a member
@@ -139,7 +135,7 @@ public class LibraryData {
             BOOKS.add(new Book(7,"9780596007126","Head First Design Patterns","Eric Freeman","O'Reilly","Programming",3));
             BOOKS.add(new Book(8,"9780262033848","Introduction to Algorithms","Cormen et al.","MIT Press","Algorithms",4));
         }
-        // DVDs (more!)
+        // DVDs
         if (DVDS.isEmpty()) {
             DVDS.add(new Dvd(1,"The Matrix","R",136,5).studio("Warner Bros"));
             DVDS.add(new Dvd(2,"Interstellar","PG-13",169,2).studio("Paramount"));
@@ -148,7 +144,7 @@ public class LibraryData {
             DVDS.add(new Dvd(5,"Wall-E","G",98,3).studio("Pixar"));
             DVDS.add(new Dvd(6,"The Lord of the Rings: The Fellowship of the Ring","PG-13",178,3).studio("New Line"));
         }
-        // Board games (more!)
+        // Board games
         if (BOARD_GAMES.isEmpty()) {
             BOARD_GAMES.add(new BoardGame(1,"Catan","7.2","3-4",90,3));
             BOARD_GAMES.add(new BoardGame(2,"Ticket to Ride","7.4","2-5",60,4));
@@ -226,4 +222,119 @@ public class LibraryData {
     public static boolean removeBoardGameById(int id) {
     	return BOARD_GAMES.removeIf(g -> g.getId()==id); 
     }
+
+
+// ======== Late fee store & policy ========
+public static final List<LateFee> LATE_FEES = new ArrayList<>();
+public static int LATE_FEE_PER_DAY_CENTS = 100;    // $1/day
+public static int LATE_FEE_MAX_CENTS = 2000;       // $20 cap
+public static int ACCOUNT_FREEZE_THRESHOLD_CENTS = 5000; // optional block
+
+public static int nextLateFeeId() {
+    int max = 0;
+    for (LateFee f : LATE_FEES) max = Math.max(max, f.getId());
+    return max + 1;
+}
+public static LateFee findLateFeeById(int id) {
+    for (LateFee f : LATE_FEES) 
+    	if (f.getId()==id) 
+    		return f;
+    return null;
+}
+public static int memberBalanceCents(int memberId) {
+    int sum = 0;
+    for (LateFee f : LATE_FEES) {
+        if (f.getMemberId()==memberId && f.getStatus()==LateFee.Status.PENDING) sum += f.getAmountCents();
+    }
+    return sum;
+}
+public static void markFeePaid(int feeId, LocalDate when) {
+    LateFee fee = findLateFeeById(feeId);
+    if (fee != null) 
+    	fee.markPaid(when);
+}
+public static void waiveFee(int feeId, String reason) {
+    LateFee fee = findLateFeeById(feeId);
+    if (fee != null) 
+    	fee.waive(reason);
+}
+
+// Assess a late fee for a loan on check-in, if any is owed, and return the LateFee object (or null).
+
+public static LateFee assessLateFeeForLoan(Loan loan, LocalDate now) {
+    int days = loan.computeDaysLate(now);
+    if (days <= 0) 
+    	return null;
+    int amount = loan.computeLateFeeCents(LATE_FEE_PER_DAY_CENTS, LATE_FEE_MAX_CENTS, now);
+    LateFee fee = new LateFee(nextLateFeeId(), loan.getId(), loan.getMemberId(), days, amount, now);
+    LATE_FEES.add(fee);
+    return fee;
+}
+
+// ======== Hold helpers (queuing, activation, expiration) ========
+public static int nextHoldId() {
+    int max = 0;
+    for (Hold h : HOLDS) max = Math.max(max, h.getId());
+    return max + 1;
+}
+
+
+// Place a hold in REQUESTED status (queued).
+// Returns the new Hold object.
+public static Hold placeHold(int memberId, MediaType type, int mediaId) {
+    int position = (int) HOLDS.stream()
+            .filter(h -> h.getMediaType()==type && h.getMediaId()==mediaId && h.getStatus()==Hold.HoldStatus.REQUESTED)
+            .count() + 1;
+    Hold h = new Hold(nextHoldId(), 
+    		memberId, 
+    		type, 
+    		mediaId, 
+    		Hold.HoldStatus.REQUESTED,
+            LocalDate.now(), 
+            null, 
+            null, 
+            position, 
+            null);
+    HOLDS.add(h);
+    return h;
+}
+
+
+// Activate the next REQUESTED hold (used when an item is returned to shelf).
+
+public static Hold activateNextHoldFor(MediaType type, int mediaId, int holdWindowHours) {
+    Hold next = HOLDS.stream()
+            .filter(h -> h.getMediaType()==type && h.getMediaId()==mediaId && h.getStatus()==Hold.HoldStatus.REQUESTED)
+            .sorted(Comparator.comparing(Hold::getQueuePosition, Comparator.nullsLast(Comparator.naturalOrder()))
+                    .thenComparing(Hold::getPlacedAt))
+            .findFirst().orElse(null);
+    
+    if (next == null) 
+    	return null;
+    LocalDate today = LocalDate.now();
+    LocalDate deadline = today.plusDays(Math.max(1, holdWindowHours/24));
+    next.setStatus(Hold.HoldStatus.ACTIVE);
+    next.setActivatedAt(today);
+    next.setPickupDeadline(deadline);
+    return next;
+}
+
+
+// Mark ACTIVE holds as EXPIRED if past pickupDeadline.
+
+public static void expireOverdueHolds(LocalDate today) {
+    for (Hold h : HOLDS) {
+        if (h.isExpired(today)) {
+            h.setStatus(Hold.HoldStatus.EXPIRED);
+        }
+    }
+}
+
+
+// Utility to get active holds.
+
+public static List<Hold> activeHolds() {
+    return HOLDS.stream().filter(Hold::isActive).collect(Collectors.toList());
+}
+
 }

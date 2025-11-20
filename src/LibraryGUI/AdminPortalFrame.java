@@ -21,18 +21,26 @@ public class AdminPortalFrame extends JFrame {
         Theme.styleHeaderBar(top, title);
         top.add(title, BorderLayout.WEST);
 
+        JButton btnHoldsFees = new JButton("Holds & Fees");
         JButton btnLogout = new JButton("Logout");
+
+        Theme.styleButton(btnHoldsFees, Theme.ACCENT_PURPLE);
         Theme.styleButton(btnLogout, Theme.ACCENT_ORANGE);
+
         JPanel right = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 8));
         right.setBackground(Theme.PRIMARY);
+        right.add(btnHoldsFees);
         right.add(btnLogout);
+
         top.add(right, BorderLayout.EAST);
         add(top, BorderLayout.NORTH);
 
-        btnLogout.addActionListener(e -> {
-            new WelcomeDashboardFrame().setVisible(true);
-            dispose();
+
+        btnHoldsFees.addActionListener(e -> {
+            AdminHoldsAndFeesDialog dialog = new AdminHoldsAndFeesDialog(this);
+            dialog.setVisible(true);
         });
+
 
         add(new ManageInventoryPanel(), BorderLayout.CENTER);
     }
@@ -158,22 +166,36 @@ public class AdminPortalFrame extends JFrame {
             booksModel.setRowCount(0);
             for (Book b : LibraryData.BOOKS) {
                 booksModel.addRow(new Object[]{
-                    b.getId(), b.getIsbn(), b.getTitle(), b.getAuthor(), b.getPublisher(), b.getGenre(),
-                    b.getTotalQuantity(), LibraryData.availableCountForBook(b.getId())
+                    b.getId(), 
+                    b.getIsbn(), 
+                    b.getTitle(), 
+                    b.getAuthor(), 
+                    b.getPublisher(), 
+                    b.getGenre(),
+                    b.getTotalQuantity(), 
+                    LibraryData.availableCountForBook(b.getId())
                 });
             }
             dvdsModel.setRowCount(0);
             for (Dvd d : LibraryData.DVDS) {
                 dvdsModel.addRow(new Object[]{
-                    d.getId(), d.getTitle(), d.getRating(), d.getRuntimeMinutes(),
-                    d.getTotalQuantity(), LibraryData.availableCountForDvd(d.getId())
+                    d.getId(), 
+                    d.getTitle(),
+                    d.getRating(), 
+                    d.getRuntimeMinutes(),
+                    d.getTotalQuantity(), 
+                    LibraryData.availableCountForDvd(d.getId())
                 });
             }
             gamesModel.setRowCount(0);
             for (BoardGame g : LibraryData.BOARD_GAMES) {
                 gamesModel.addRow(new Object[]{
-                    g.getId(), g.getTitle(), g.getRating(), g.getPlayerCount(),
-                    g.getGameLengthMinutes(), g.getTotalQuantity(),
+                    g.getId(),
+                    g.getTitle(),
+                    g.getRating(),
+                    g.getPlayerCount(),
+                    g.getGameLengthMinutes(),
+                    g.getTotalQuantity(),
                     LibraryData.availableCountForBoardGame(g.getId())
                 });
             }
@@ -192,8 +214,13 @@ public class AdminPortalFrame extends JFrame {
             }, "Add Book", JOptionPane.OK_CANCEL_OPTION);
             
             if (res == JOptionPane.OK_OPTION) {
-                LibraryData.BOOKS.add(new Book(LibraryData.nextBookId(), isbn.getText().trim(), title.getText().trim(),
-                    author.getText().trim(), publisher.getText().trim(), genre.getText().trim(), (Integer)qty.getValue()));
+                LibraryData.BOOKS.add(new Book(LibraryData.nextBookId(), 
+                		isbn.getText().trim(), 
+                		title.getText().trim(),
+                    author.getText().trim(), 
+                    publisher.getText().trim(), 
+                    genre.getText().trim(), 
+                    (Integer)qty.getValue()));
                 reloadAll();
             }
         }
@@ -201,7 +228,9 @@ public class AdminPortalFrame extends JFrame {
             int row = booksTable.getSelectedRow(); 
             if (row<0) 
             	return;
+            
             int id = (Integer) booksModel.getValueAt(row, 0);
+            
             Book found = null; 
             for (Book b : LibraryData.BOOKS) 
             	if (b.getId()==id){
@@ -248,8 +277,11 @@ public class AdminPortalFrame extends JFrame {
                 "Title:", title, "Rating:", rating, "Runtime (min):", runtime, "Total Qty:", qty
             }, "Add DVD", JOptionPane.OK_CANCEL_OPTION);
             if (res == JOptionPane.OK_OPTION) {
-                LibraryData.DVDS.add(new Dvd(LibraryData.nextDvdId(), title.getText().trim(), rating.getText().trim(),
-                    (Integer)runtime.getValue(), (Integer)qty.getValue()));
+                LibraryData.DVDS.add(new Dvd(LibraryData.nextDvdId(), 
+                		title.getText().trim(), 
+                		rating.getText().trim(),
+                    (Integer)runtime.getValue(), 
+                    (Integer)qty.getValue()));
                 reloadAll();
             }
         }
@@ -257,7 +289,9 @@ public class AdminPortalFrame extends JFrame {
             int row = dvdsTable.getSelectedRow(); 
             if (row<0) 
             	return;
+            
             int id = (Integer) dvdsModel.getValueAt(row, 0);
+            
             Dvd found = null; 
             for (Dvd d : LibraryData.DVDS) 
             	if (d.getId()==id){
@@ -303,14 +337,22 @@ public class AdminPortalFrame extends JFrame {
             }, "Add Board Game", JOptionPane.OK_CANCEL_OPTION);
             
             if (res == JOptionPane.OK_OPTION) {
-                LibraryData.BOARD_GAMES.add(new BoardGame(LibraryData.nextBoardGameId(), title.getText().trim(),
-                    rating.getText().trim(), players.getText().trim(), (Integer)length.getValue(), (Integer)qty.getValue()));
+                LibraryData.BOARD_GAMES.add(new BoardGame(LibraryData.nextBoardGameId(), 
+                		title.getText().trim(),
+                    rating.getText().trim(),
+                    players.getText().trim(), 
+                    (Integer)length.getValue(),
+                    (Integer)qty.getValue()));
                 reloadAll();
             }
         }
         private void editGame() {
-            int row = gamesTable.getSelectedRow(); if (row<0) return;
+            int row = gamesTable.getSelectedRow(); 
+            if (row<0) 
+            	return;
+            
             int id = (Integer) gamesModel.getValueAt(row, 0);
+            
             BoardGame found = null; 
             for (BoardGame g : LibraryData.BOARD_GAMES) 
             	if (g.getId()==id){

@@ -32,26 +32,48 @@ public class Loan {
     public MediaType getMediaType() { 
     	return mediaType; 
     }
-    public int getMediaId() { 
+    public int getMediaId() {
     	return mediaId; 
     }
-    public LocalDate getCheckoutDate() { 
+    public LocalDate getCheckoutDate() {
     	return checkoutDate; 
     }
-    public LocalDate getDueDate() { 
-    	return dueDate;
+    public LocalDate getDueDate() {
+    	return dueDate; 
     }
-    public LocalDate getReturnDate() { 
+    public LocalDate getReturnDate() {
     	return returnDate; 
     }
-    public int getGracePeriodDays() { 
-    	return gracePeriodDays;
+    public int getGracePeriodDays() {
+    	return gracePeriodDays; 
+    }
+    public void setReturnDate(LocalDate returnDate) {
+        this.returnDate = returnDate;
     }
 
-    public void setReturnDate(LocalDate returnDate) { 
-    	this.returnDate = returnDate; 
-    }
     public boolean isReturned() {
-    	return returnDate != null; 
+        return returnDate != null;
+    }
+
+    // Late fee helpers 
+
+    public int computeDaysLate(LocalDate now) {
+        LocalDate end = (getReturnDate() != null) ? getReturnDate() : now;
+        LocalDate lateStart = getDueDate().plusDays(getGracePeriodDays());
+        
+        if (!end.isAfter(lateStart)) 
+        	return 0;
+        long days = java.time.temporal.ChronoUnit.DAYS.between(lateStart, end);
+        return (int) Math.max(1, days);
+    }
+
+
+    public int computeLateFeeCents(int perDayCents, int capCents, LocalDate now) {
+        int daysLate = computeDaysLate(now);
+        
+        if (daysLate <= 0) 
+        	return 0;
+        long raw = (long) daysLate * (long) perDayCents;
+        return (int) Math.min((long) capCents, raw);
     }
 }

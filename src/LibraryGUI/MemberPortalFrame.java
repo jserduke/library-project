@@ -85,28 +85,38 @@ public class MemberPortalFrame extends JFrame {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(Theme.SURFACE);
         JPanel search = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 10));
+        
         Theme.styleControlStrip(search);
+        
         search.add(new JLabel("Search:"));
         search.add(txtSearch);
         search.add(new JLabel("Type:"));
         search.add(cbType);
+        
         JButton btnSearch = new JButton("Search");
         JButton btnCheckout = new JButton("Checkout Selected");
         JButton btnHold = new JButton("Place Hold");
         JButton btnEdit = new JButton("Edit Account");
+        JButton btnHoldsFees = new JButton("My Holds & Fees");
+
         Theme.styleButton(btnSearch, Theme.DARK_BUTTON);
         Theme.styleButton(btnCheckout, Theme.ACCENT_BLUE);
         Theme.styleButton(btnHold, Theme.ACCENT_PURPLE);
         Theme.styleButton(btnEdit, Theme.ACCENT_GREEN);
+        Theme.styleButton(btnHoldsFees, Theme.ACCENT_ORANGE);
+
         search.add(btnSearch);
         search.add(btnCheckout);
         search.add(btnHold);
         search.add(btnEdit);
+        search.add(btnHoldsFees);
+
         panel.add(search, BorderLayout.NORTH);
 
         JScrollPane sc = new JScrollPane(catalogTable);
         sc.getViewport().setBackground(Theme.SURFACE);
         panel.add(sc, BorderLayout.CENTER);
+        
         Theme.styleTable(catalogTable);
 
         btnSearch.addActionListener(e -> reloadCatalog());
@@ -115,10 +125,13 @@ public class MemberPortalFrame extends JFrame {
         btnCheckout.addActionListener(e -> checkoutSelected());
         btnHold.addActionListener(e -> holdSelected());
         btnEdit.addActionListener(e -> editAccount());
+        btnHoldsFees.addActionListener(e -> openHoldsAndFees());
         return panel;
+
     }
 
-    private JPanel buildLoansPanel() {
+
+	private JPanel buildLoansPanel() {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(Theme.SURFACE);
         JLabel lbl = new JLabel("  My Loans");
@@ -137,7 +150,12 @@ public class MemberPortalFrame extends JFrame {
         btnReturn.addActionListener(e -> returnSelectedLoan());
         return panel;
     }
+	
+    private void openHoldsAndFees() {
+    	MemberAccountDialog dialog = new MemberAccountDialog(this, member);
+    	dialog.setVisible(true);
 
+	}
     private void reloadCatalog() {
         String q = txtSearch.getText().trim();
         String type = cbType.getSelectedItem().toString();

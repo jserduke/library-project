@@ -4,7 +4,7 @@ public class BoardGame {
     private int id;
     private String title;
     private String rating;
-    private String playerCount; // e.g., "2-4"
+    private String playerCount; 
     private int gameLengthMinutes;
     private int totalQuantity;
 

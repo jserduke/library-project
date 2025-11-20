@@ -23,25 +23,40 @@ public class RegisterFrame extends JDialog {
         gbc.insets = new Insets(5,5,5,5);
         gbc.anchor = GridBagConstraints.LINE_END;
 
-        gbc.gridx=0; gbc.gridy=0; form.add(new JLabel("First name:"), gbc);
-        gbc.gridy++; form.add(new JLabel("Last name:"), gbc);
-        gbc.gridy++; form.add(new JLabel("Birthday (YYYY-MM-DD):"), gbc);
-        gbc.gridy++; form.add(new JLabel("Phone:"), gbc);
-        gbc.gridy++; form.add(new JLabel("Email (username):"), gbc);
-        gbc.gridy++; form.add(new JLabel("Password:"), gbc);
+        gbc.gridx=0; 
+        gbc.gridy=0; 
+        form.add(new JLabel("First name:"), gbc);
+        gbc.gridy++; 
+        form.add(new JLabel("Last name:"), gbc);
+        gbc.gridy++; 
+        form.add(new JLabel("Birthday (YYYY-MM-DD):"), gbc);
+        gbc.gridy++;
+        form.add(new JLabel("Phone:"), gbc);
+        gbc.gridy++; 
+        form.add(new JLabel("Email (username):"), gbc);
+        gbc.gridy++; 
+        form.add(new JLabel("Password:"), gbc);
 
         gbc.anchor = GridBagConstraints.LINE_START;
-        gbc.gridx=1; gbc.gridy=0; form.add(txtFirst, gbc);
-        gbc.gridy++; form.add(txtLast, gbc);
-        gbc.gridy++; form.add(txtBirth, gbc);
-        gbc.gridy++; form.add(txtPhone, gbc);
-        gbc.gridy++; form.add(txtEmail, gbc);
-        gbc.gridy++; form.add(txtPass, gbc);
+        gbc.gridx=1; 
+        gbc.gridy=0; 
+        form.add(txtFirst, gbc);
+        gbc.gridy++; 
+        form.add(txtLast, gbc);
+        gbc.gridy++; 
+        form.add(txtBirth, gbc);
+        gbc.gridy++; 
+        form.add(txtPhone, gbc);
+        gbc.gridy++; 
+        form.add(txtEmail, gbc);
+        gbc.gridy++;
+        form.add(txtPass, gbc);
 
         JButton btnCreate = new JButton("Create Account");
         JButton btnCancel = new JButton("Cancel");
         JPanel btns = new JPanel();
-        btns.add(btnCancel); btns.add(btnCreate);
+        btns.add(btnCancel); 
+        btns.add(btnCreate);
 
         add(form, BorderLayout.CENTER);
         add(btns, BorderLayout.SOUTH);

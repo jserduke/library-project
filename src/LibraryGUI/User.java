@@ -1,38 +1,44 @@
 package LibraryGUI;
 
+
+ // Simple user account used for authentication and to link to a Member record.
+ 
 public class User {
-	
+
     public enum Role { 
-    	USER, ADMIN 
+    	ADMIN, 
+    	USER 
     }
 
-    private final String username; 
+    private String username;
     private String password;
-    private final Role role;
-    private Integer memberId; 
+    private Role role;
+    /** Optional link to a Member.id; may be null until created. */
+    private Integer memberId;
 
     public User(String username, String password, Role role) {
         this.username = username;
         this.password = password;
-        this.role = role;
+        this.role = (role == null ? Role.USER : role);
     }
 
-    public String getUsername() { 
-    	return username; 
+    public String getUsername() {
+        return username;
     }
-    public String getPassword() { 
-    	return password; 
+
+    public String getPassword() {
+        return password;
     }
-    public Role getRole() { 
-    	return role; 
+
+    public Role getRole() {
+        return role;
     }
-    public Integer getMemberId() { 
-    	return memberId; 
+
+    public Integer getMemberId() {
+        return memberId;
     }
-    public void setMemberId(Integer memberId) { 
-    	this.memberId = memberId; 
-    }
-    public void setPassword(String password) { 
-    	this.password = password; 
+
+    public void setMemberId(Integer memberId) {
+        this.memberId = memberId;
     }
 }

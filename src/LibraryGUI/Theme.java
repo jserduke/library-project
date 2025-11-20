@@ -4,16 +4,10 @@ package LibraryGUI;
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 
-/**
- * Centralized look & feel helpers so all frames share a consistent,
- * clean style similar to the Alameda Library screenshots.
- *
- * NOTE: Pure Swing only — no external LAF, no Session usage.
- */
+
 public final class Theme {
     private Theme(){}
 
@@ -38,7 +32,6 @@ public final class Theme {
     public static final Font  ITEM_FONT     = new Font("SansSerif", Font.PLAIN, 13);
 
     // ---- Header -------------------------------------------------------------
-    /** Styles a header bar and places the title on the left, any component on the right. */
     public static void styleHeaderBar(JPanel bar, JComponent leftTitleOrLogo) {
         bar.setLayout(new BorderLayout());
         bar.setBackground(PRIMARY_DARK);
@@ -52,7 +45,6 @@ public final class Theme {
         }
     }
 
-    /** Simple status/footer bar. */
     public static JPanel statusBar(String message) {
         JPanel p = new JPanel(new BorderLayout());
         p.setBackground(STATUS);
@@ -76,7 +68,6 @@ public final class Theme {
         }
     }
 
-    /** Flat, dark action button often used for secondary controls. */
     public static JButton darkButton(String text) {
         JButton btn = new JButton(text);
         styleButton(btn, DARK_BUTTON);
@@ -114,14 +105,12 @@ public final class Theme {
     }
 
     // ---- Utility panels -----------------------------------------------------
-    /** A slim control strip (search row) just under the header. */
     public static void styleControlStrip(JComponent strip) {
         strip.setBorder(new EmptyBorder(10, 12, 10, 12));
         strip.setBackground(SURFACE);
         if (strip instanceof JComponent jc) jc.setOpaque(true);
     }
 
-    /** Apply the light content background to any container. */
     public static void applySurface(Container c) {
         c.setBackground(SURFACE);
         if (c instanceof JComponent jc) jc.setOpaque(true);
