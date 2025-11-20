@@ -4,82 +4,72 @@ import javax.swing.*;
 import java.awt.*;
 
 public class LoginFrame extends JFrame {
+    private static final long serialVersionUID = 1L;
+	private final JTextField txtUser = new JTextField(18);
+    private final JPasswordField txtPass = new JPasswordField(18);
 
-	private static final long serialVersionUID = 1L;
-	private final JTextField txtUser = new JTextField(15);
-	private final JPasswordField txtPass = new JPasswordField(15);
+    public LoginFrame() {
+        setTitle("Library Login");
+        setSize(460, 260);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setLocationRelativeTo(null);
+        setLayout(new BorderLayout());
 
-	public LoginFrame() {
-		setTitle("Library Login");
-		setSize(420, 260);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setLocationRelativeTo(null);
-		setLayout(new BorderLayout());
 
-		JPanel header = new JPanel();
-		header.setBackground(new Color(60, 130, 220));
-		header.setPreferredSize(new Dimension(400, 90));
-		JLabel title = new JLabel("Library Management System");
-		title.setForeground(Color.WHITE);
-		title.setFont(new Font("SansSerif", Font.BOLD, 18));
-		header.add(title);
-		add(header, BorderLayout.NORTH);
+        // HEADER
+        JPanel header = new JPanel(new BorderLayout());
+        JLabel title = new JLabel("  Sign in");
+        Theme.styleHeaderBar(header, title);
+        header.add(title, BorderLayout.WEST);
+        add(header, BorderLayout.NORTH);
 
-		JPanel center = new JPanel(new GridBagLayout());
-		center.setBackground(new Color(230, 240, 255));
-		GridBagConstraints gbc = new GridBagConstraints();
-		gbc.insets = new Insets(5, 5, 5, 5);
+        // FORM
+        JPanel center = new JPanel(new GridBagLayout());
+        center.setBackground(Theme.SURFACE);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(6, 8, 6, 8);
+        gbc.anchor = GridBagConstraints.LINE_END;
+        gbc.gridx=0; 
+        gbc.gridy=0; 
+        center.add(new JLabel("Email:"), gbc);
+        gbc.gridy++; 
+        center.add(new JLabel("Password:"), gbc);
 
-		gbc.gridx = 0; 
-		gbc.gridy = 0; 
-		gbc.anchor = GridBagConstraints.LINE_END;
-		center.add(new JLabel("Username:"), gbc);
-		gbc.gridy++;
-		center.add(new JLabel("Password:"), gbc);
+        gbc.anchor = GridBagConstraints.LINE_START;
+        gbc.gridx=1; 
+        gbc.gridy=0; gbc.fill=GridBagConstraints.HORIZONTAL; 
+        center.add(txtUser, gbc);
+        gbc.gridy++; 
+        center.add(txtPass, gbc);
+        add(center, BorderLayout.CENTER);
 
-		gbc.gridx = 1; 
-		gbc.gridy = 0; 
-		gbc.anchor = GridBagConstraints.LINE_START;
-		gbc.fill = GridBagConstraints.HORIZONTAL;
-		center.add(txtUser, gbc);
-		gbc.gridy++;
-		center.add(txtPass, gbc);
+        // BUTTONS
+        JButton btnLogin = new JButton("Login");
+        JButton btnRegister = new JButton("Create an Account");
+        Theme.styleButton(btnRegister, Theme.ACCENT_GREEN);
+        Theme.styleButton(btnLogin, Theme.ACCENT_BLUE);
+        JPanel btns = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        btns.setBackground(Theme.SURFACE);
+        btns.add(btnRegister); btns.add(btnLogin);
+        add(btns, BorderLayout.SOUTH);
 
-		add(center, BorderLayout.CENTER);
+        btnLogin.addActionListener(e -> doLogin());
+        btnRegister.addActionListener(e -> new RegisterFrame(this).setVisible(true));
+    }
 
-		JButton btnLogin = new JButton("Login");
-		btnLogin.setPreferredSize(new Dimension(100, 30));
-		JPanel bottom = new JPanel();
-		bottom.add(btnLogin);
-		add(bottom, BorderLayout.SOUTH);
-
-		btnLogin.addActionListener(e -> doLogin());
-	}
-
-	private void doLogin() {
-		String username = txtUser.getText().trim();
-		String password = new String(txtPass.getPassword());
-		
-		User matched = null;
-			for (User u : LibraryData.USERS) {
-				if (u.getUsername().equals(username) &&
-					u.getPassword().equals(password)) {
-					matched = u;
-					break;
-				}
-			}
-
-			if (matched == null) {
-				JOptionPane.showMessageDialog(this,
-						"Invalid username or password",
-						"Login failed",
-						JOptionPane.ERROR_MESSAGE);
-				return;
-			}
-
-			LibrarySystemDashboard dash = new LibrarySystemDashboard(matched);
-			dash.setVisible(true);
-			dispose();
-	}
+    private void doLogin() {
+        String u = txtUser.getText().trim();
+        String p = new String(txtPass.getPassword());
+        User found = LibraryData.findUser(u, p);
+        if (found == null) {
+            JOptionPane.showMessageDialog(this, "Invalid username/password", "Login failed", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if (found.getRole() == User.Role.ADMIN) {
+            new AdminPortalFrame(found).setVisible(true);
+        } else {
+            new MemberPortalFrame(found).setVisible(true);
+        }
+        dispose();
+    }
 }
-
