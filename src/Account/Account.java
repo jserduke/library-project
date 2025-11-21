@@ -1,7 +1,6 @@
 package Account;
 import java.util.Date;
 
-//change to abstract class
 public abstract class Account {
 	private int id;
 	private String email;
