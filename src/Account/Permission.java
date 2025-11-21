@@ -1,4 +1,4 @@
-package account;
+package Account;
 public enum Permission {
 	MEMBER,
 	ADMIN
