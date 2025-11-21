@@ -1,10 +1,11 @@
+package Account;
 import java.util.Date;
 import java.util.ArrayList;
 
 public class Admin extends Account{
-	public Admin(Integer id, String newEmail, String newPassword,
+	public Admin(String newEmail, String newPassword,
 				  String newFullName, Date newBirthday) {
-		super(id, newEmail, newPassword, newFullName, newBirthday);
+		super(newEmail, newPassword, newFullName, newBirthday);
 		setPermission(Permission.ADMIN);
 	}
 	

@@ -1,3 +1,4 @@
+package Account;
 import java.util.Date;
 
 public class Loan {
@@ -6,14 +7,13 @@ public class Loan {
     private Date dateCheckedOut;
     private Date dateDue;
     private Date dateReturned;
-    private Date gracePeriod;
 
     public Loan(int mediaId, int memberId, Date checkoutDate, Date dueDate) {
         this.mediaId = mediaId;
         this.memberId = memberId;
         this.dateCheckedOut = checkoutDate;
         this.dateDue = dueDate;
-        this.gracePeriod = null;
+        this.dateReturned = null;
     }
 
     public int getMediaId() {
@@ -48,21 +48,12 @@ public class Loan {
         this.dateDue = dueDate;
     }
     
-    public Date getGracePeriod() {
-        return gracePeriod;
-    }
-
-    public void setGracePeriod(Date gracePeriod) {
-        this.gracePeriod = gracePeriod;
-    }
-
-    
     public String toString() {
-        return "Loan\n" +
+        return "Loan:\n" +
                 "Media Id: " + mediaId +
+                "\nMember Id: " + memberId +
                 "\nDate Checkedout: " + dateCheckedOut +
                 "\n Date due: " + dateDue +
-                "\n Return date: " + dateReturned +
-                "\n Grace period: " + gracePeriod ;
+                "\n Return date: " + dateReturned;
     }
 }
