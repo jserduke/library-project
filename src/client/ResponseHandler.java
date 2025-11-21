@@ -2,9 +2,9 @@ package client;
 import java.io.*;
 import javax.swing.*;
 
-import gui.WelcomeDashboardFrame;
+import gui.*;
 import message.Action;
-import message.Message;
+import message.*;
 
 public class ResponseHandler implements Runnable {
 		private final ObjectInputStream responseReader;
@@ -54,10 +54,27 @@ public class ResponseHandler implements Runnable {
 								SwingUtilities.invokeLater(() -> new WelcomeDashboardFrame(requestWriter, this, response.getInfo()).setVisible(true));
 								break;
 							case Action.GET_SEARCH:
-								((WelcomeDashboardFrame) oldFrame).reloadResults(response.getInfo());
+								((WelcomeDashboardFrame) oldFrame).reloadResults(response.getInfo(), 0);
 								break;
 							case Action.LOGIN:
-								// guiPreparer.updateHomePageToLoggedIn(frame, response);
+								if (response.getStatus() == Status.SUCCESS) {
+									if (response.getInfo().getFirst().equals("ADMIN")) {
+										response.getInfo().removeFirst();
+										JOptionPane.showMessageDialog(null, "Admin Login Successful! Welcome, " + response.getInfo().getFirst());
+										// GO TO ADMIN PORTAL
+										// (null /*new AdminPortalFrame(response.getInfo())*/).setVisible(true);
+										oldFrame.dispose();
+									} else if (response.getInfo().getFirst().equals("MEMBER")) {
+										response.getInfo().removeFirst();
+										JOptionPane.showMessageDialog(null, "Member Login Successful! Welcome, " + response.getInfo().getFirst());
+										// GO TO MEMBER PORTAL
+										oldFrame.dispose();
+									}
+								} else if (response.getStatus() == Status.FAILURE) {
+									JOptionPane.showMessageDialog(null, "Login Failed :(");
+								} else {
+									JOptionPane.showMessageDialog(null, "Huh?");
+								}
 								break;
 							case Action.CHECKOUT:
 								// WHEN RESPONSE RECEIVED, JUST LET USER KNOW THAT CHECKOUT WAS SUCCESSFUL

@@ -31,7 +31,7 @@ public class WelcomeDashboardFrame extends JFrame {
     private final JPanel center = new JPanel(centerCards);
 
     public WelcomeDashboardFrame(ObjectOutputStream requestWriter, ResponseHandler responseHandler, ArrayList<String> info) {
-        super(info.getFirst() + " — Welcome"); // TODO: name from server
+        super(info.getFirst() + " — Welcome");
         setSize(1100, 720);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -39,7 +39,7 @@ public class WelcomeDashboardFrame extends JFrame {
 
         // --- HEADER ----------------------------------------------------------
         JPanel header = new JPanel();
-        Theme.styleHeaderBar(header, new JLabel("  " + info.getFirst())); // TODO: name from server
+        Theme.styleHeaderBar(header, new JLabel("  " + info.getFirst()));
         JPanel right = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
         JButton btnLogin = new JButton("Login");
         JButton btnRegister = new JButton("Register");
@@ -65,7 +65,7 @@ public class WelcomeDashboardFrame extends JFrame {
                 case "Books & More" -> b.addActionListener(e -> {
                     centerCards.show(center, "CATALOG"); txtSearch.requestFocusInWindow();
                 });
-                case "My Account" -> b.addActionListener(e -> new LoginFrame().setVisible(true));
+                case "My Account" -> b.addActionListener(e -> new LoginFrame(requestWriter, responseHandler, info.getFirst()).setVisible(true));
                 case "Services" -> b.addActionListener(e -> JOptionPane.showMessageDialog(this, "Services panel coming soon."));
                 case "Calendar" -> b.addActionListener(e -> centerCards.show(center, "EVENTS"));
                 case "How Do I?" -> b.addActionListener(e -> JOptionPane.showMessageDialog(this, "Use Register to create an account.\nLogin to place holds and manage loans."));
@@ -77,7 +77,7 @@ public class WelcomeDashboardFrame extends JFrame {
         top.add(nav);
         add(top, BorderLayout.NORTH);
 
-        btnLogin.addActionListener(e -> new LoginFrame().setVisible(true));
+        btnLogin.addActionListener(e -> new LoginFrame(requestWriter, responseHandler, info.getFirst()).setVisible(true));
         btnRegister.addActionListener(e -> new RegisterFrame(this).setVisible(true));
 
         // --- CATALOG view ----------------------------------------------------
@@ -141,13 +141,13 @@ public class WelcomeDashboardFrame extends JFrame {
 				e1.printStackTrace();
 			}
         });
-        cbType.addActionListener(e -> reloadResults(info));
-        btnAdmin.addActionListener(e -> new LoginFrame().setVisible(true));
+        // TODO: should be the same as btnSearch, I think
+        cbType.addActionListener(e -> reloadResults(info, 0));
+        btnAdmin.addActionListener(e -> new LoginFrame(requestWriter, responseHandler, info.getFirst()).setVisible(true));
 
         // Initial data
         setCatalogColumnsForType("All");
-        info.removeFirst();
-        reloadResults(info);
+        reloadResults(info, 1);
     }
 
     // --- Helpers -------------------------------------------------------------
@@ -168,7 +168,7 @@ public class WelcomeDashboardFrame extends JFrame {
         }
     }
 
-    public void reloadResults(ArrayList<String> info) {
+    public void reloadResults(ArrayList<String> info, int invStart) {
         String type = (String) cbType.getSelectedItem();
         String q = txtSearch.getText().trim().toLowerCase();
         setCatalogColumnsForType(type);
@@ -227,16 +227,16 @@ public class WelcomeDashboardFrame extends JFrame {
                 });
             }
         } else { // All
-        	for (int i = 0; i < info.size() / 8; i += 1) {
+        	for (int i = 0; i < (info.size() - invStart) / 8; i += 1) {
         		model.addRow(new Object[] {
-        				info.get(i * 8 + 0),
-        				info.get(i * 8 + 1),
-        				info.get(i * 8 + 2),
-        				info.get(i * 8 + 3),
-        				info.get(i * 8 + 4),
-        				info.get(i * 8 + 5),
-        				info.get(i * 8 + 6),
-        				info.get(i * 8 + 7),
+        				info.get(invStart + i * 8 + 0),
+        				info.get(invStart + i * 8 + 1),
+        				info.get(invStart + i * 8 + 2),
+        				info.get(invStart + i * 8 + 3),
+        				info.get(invStart + i * 8 + 4),
+        				info.get(invStart + i * 8 + 5),
+        				info.get(invStart + i * 8 + 6),
+        				info.get(invStart + i * 8 + 7),
         		});
         	}
         	/*

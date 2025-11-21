@@ -2,11 +2,10 @@ package server;
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
+import java.util.Date;
 
-import message.Action;
-import message.Message;
-import message.Status;
-import message.Type;
+import account.*;
+import message.*;
 
 public class LibraryServer {
 	public static void main(String[] args) {
@@ -51,7 +50,9 @@ public class LibraryServer {
 				writerToClient = new ObjectOutputStream(clientSocket.getOutputStream());
 				readerFromClient = new ObjectInputStream(clientSocket.getInputStream());
 				Message messageFromClient = null, messageToClient = null;
-				boolean isLoggedIn = false;
+				AccountsDirectory accountsDirectory = new AccountsDirectory();
+				accountsDirectory.registerNewAccount(Permission.MEMBER, "test@test.test", "test123", "Tester Testington", new Date(2024 - 1900, 0, 1));
+				Account account = null;
 				try {
 					while (true) {
 						messageFromClient = (Message) readerFromClient.readObject();
@@ -102,13 +103,19 @@ public class LibraryServer {
 							info.add("0");
 							
 							writerToClient.writeObject(messageToClient);
-						} else if (!isLoggedIn) {
+						} else if (account == null) {
 							// System.out.println("In");
 							if (messageFromClient.getAction() == Action.LOGIN) {
-								isLoggedIn = true;
-								info.add("Jason");
-								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.LOGIN, Status.SUCCESS, info);
+								account = accountsDirectory.login(messageFromClient.getInfo().getFirst(), messageFromClient.getInfo().getLast());
+								if (account == null) {
+									messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.LOGIN, Status.FAILURE, null);
+								} else {
+									info.add(account instanceof Admin ? "ADMIN" : "MEMBER");
+									info.add(account.getFullName());
+									messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.LOGIN, Status.SUCCESS, info);
+								}
 							} else {
+								info.add("This action is not valid until login!");
 								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.LOGIN, Status.FAILURE, info);
 							}
 							writerToClient.writeObject(messageToClient);

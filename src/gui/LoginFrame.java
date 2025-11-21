@@ -2,14 +2,20 @@ package gui;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+
+import client.ResponseHandler;
+import message.*;
 
 public class LoginFrame extends JFrame {
     private static final long serialVersionUID = 1L;
 	private final JTextField txtUser = new JTextField(18);
     private final JPasswordField txtPass = new JPasswordField(18);
 
-    public LoginFrame() {
-        setTitle("Library Login");
+    public LoginFrame(ObjectOutputStream requestWriter, ResponseHandler responseHandler, String name) {
+        setTitle(name + " Login");
         setSize(460, 260);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -53,13 +59,27 @@ public class LoginFrame extends JFrame {
         btns.add(btnRegister); btns.add(btnLogin);
         add(btns, BorderLayout.SOUTH);
 
-        btnLogin.addActionListener(e -> doLogin());
+        btnLogin.addActionListener(e -> doLogin(requestWriter, responseHandler));
         btnRegister.addActionListener(e -> new RegisterFrame(this).setVisible(true));
     }
 
-    private void doLogin() {
+    private void doLogin(ObjectOutputStream requestWriter, ResponseHandler responseHandler) {
         String u = txtUser.getText().trim();
         String p = new String(txtPass.getPassword());
+        ArrayList<String> info = new ArrayList<String>();
+        Message loginMessage = new Message(0, message.Type.REQUEST, -1, message.Action.LOGIN, Status.PENDING, info);
+        info.add(u);
+        info.add(p);
+        responseHandler.setOldFrame(this);
+        responseHandler.setRequestIdExpected(loginMessage.getId());
+        try {
+			requestWriter.writeObject(loginMessage);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
+        /*
         User found = LibraryData.findUser(u, p);
         if (found == null) {
             JOptionPane.showMessageDialog(this, "Invalid username/password", "Login failed", JOptionPane.ERROR_MESSAGE);
@@ -71,5 +91,6 @@ public class LoginFrame extends JFrame {
             new MemberPortalFrame(found).setVisible(true);
         }
         dispose();
+        */
     }
 }
