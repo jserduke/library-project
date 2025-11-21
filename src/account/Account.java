@@ -1,8 +1,7 @@
 package account;
 import java.util.Date;
 
-//change to abstract class
-public class Account {
+public abstract class Account {
 	private int id;
 	private String email;
 	private String password;
@@ -34,8 +33,8 @@ public class Account {
 		this.email = email;
 	}
 	
-	public String getPassword() {
-		return password;
+	public boolean checkPassword(String inputPW) {
+		return this.password.equals(inputPW);
 	}
 	
 	public void setPassword(String pw) {
