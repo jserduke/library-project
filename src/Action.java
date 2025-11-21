@@ -1,7 +1,0 @@
-public enum Action {
-	LOGIN,
-	GET_CHECKOUTS,
-	CHECKOUT,
-	LOGOUT,
-	UNDEFINED
-}
