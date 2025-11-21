@@ -1,29 +1,25 @@
-import java.util.Calendar;
+package Account;
 import java.util.Date;
 
+//change to abstract class
 public class Account {
-	private Integer id;
+	private int id;
 	private String email;
 	private String password;
 	private String fullName;
 	private Date birthday;
 	private Permission permission;
 	
-	public Account(Integer id, String email, String password, String fullName, Date birthday, Permission permission) {
-		this.id = id;
+	
+	public Account (String email, String password, String fullName, Date birthday) {
 		this.email = email;
 		this.password = password;
 		this.fullName = fullName;
 		this.birthday = birthday;
-		this.permission = permission;
 	}
 	
-	public Account (Integer id, String email, String password, String fullName, Date birthday) {
-		this.id = id;
-		this.email = email;
-		this.password = password;
-		this.fullName = fullName;
-		this.birthday = birthday;
+	public void setId(int newId) {
+		this.id = newId;
 	}
 	
 	public int getId() {
@@ -58,12 +54,9 @@ public class Account {
 		return birthday;
 	}
 	
-	public void setBirthday(Integer Month, Integer Day, Integer Year) {
-		Calendar cal = Calendar.getInstance();
-		cal.set(Calendar.MONTH, Month - 1);
-		cal.set(Calendar.DAY_OF_MONTH, Day);
-		cal.set(Calendar.YEAR, Year);
-		this.birthday = cal.getTime();
+	@SuppressWarnings("deprecation")
+	public void setBirthday(int month, int day, int year) {
+		this.birthday = new Date(year - 1900, month - 1, day);
 	}
 	
 	public Permission getPermission() {
@@ -72,13 +65,6 @@ public class Account {
 	
 	public void setPermission(Permission permission) {
 		this.permission = permission;
-	}
-	
-	public void makePayment(Double amount, Integer ccNumber, String expDate, Integer csv) {
-		System.out.print("[Payment made: $" + amount +
-						 " using CC: " + ccNumber +
-						 " Exp: " + expDate +
-						 " CSV: " + csv + "]");
 	}
 	
 	@Override

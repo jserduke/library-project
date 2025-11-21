@@ -1,7 +1,9 @@
+package Account;
 import java.util.*;
 import java.util.ArrayList;
 
 public class AccountsDirectory {
+	private int assignId;
 	private int numAccounts;
 	private ArrayList<String> adminEmails;
 	private ArrayList<String> memberEmails;
@@ -9,6 +11,7 @@ public class AccountsDirectory {
 	
 	public AccountsDirectory() {
 		this.numAccounts = 0;
+		this.assignId = 1;
 		this.adminEmails = new ArrayList<String>();
 		this.memberEmails = new ArrayList<String>();
 		this.accounts = new ArrayList<Account>();
@@ -30,57 +33,39 @@ public class AccountsDirectory {
 		return accounts;
 	}
 	
-	public Account findAccount(Permission permissionLevel, String name, Integer id) {
-		for (Account a : accounts) {
-			if (permissionLevel != null && a.getPermission() != permissionLevel) {
-				continue;
-			}
-			
-			if (id != null) {
-				if (a.getId() == id) {
-					return a;
-				}
-				continue;
-			}
-			
-			else if (name != null && !name.isBlank()) {
-				if (a.getFullName().equalsIgnoreCase(name)) {
-					return a;
-				}
-			}
-		}
-		return null;
-	} 
-	
-	public void registerNewAccount(Permission permission,
-								   Integer id,
+	public Account registerNewAccount(Permission permission,
 								   String newEmail,
 								   String newPassword,
 								   String newFullName,
 								   Date newBirthday) {
-		if (findAccountByEmail(newEmail) != null) {
-			System.out.println("ERROR: Email already registered: " + newEmail);
-			return;
+		for (Account acct : accounts) {
+			if (acct.getEmail().equalsIgnoreCase(newEmail)) {
+				System.out.println("ERROR: Email already exists.");
+				return null;
+			}
 		}
-		
-		int newId = numAccounts + 1;
 		
 		Account newAccount;
 		
 		if (permission == Permission.ADMIN) {
-			newAccount = new Admin(newId, newEmail, newPassword,
+			newAccount = new Admin(newEmail, newPassword,
 								   newFullName, newBirthday);
 			adminEmails.add(newEmail);
 		}
 		
 		else {
-			newAccount = new Member(newId, newEmail, newPassword,
+			newAccount = new Member(newEmail, newPassword,
 								   newFullName, newBirthday);
 			memberEmails.add(newEmail);
 		}
 		
+		newAccount.setId(assignId);
+		assignId++;
+		
 		accounts.add(newAccount);
 		numAccounts++;
+		
+		return newAccount;
 	}
 	
 	public Account login(String inputEmail, String inputPassword) {
@@ -93,9 +78,17 @@ public class AccountsDirectory {
 		return null;
 	}
 	
-	private Account findAccountByEmail(String email) {
+	private Account findAccount(Permission permissionLevel, String name, Integer id) {
 		for (Account a : accounts) {
-			if (a.getEmail().equalsIgnoreCase(email)) {
+			if (a.getPermission() != permissionLevel) {
+				continue;
+			}
+			
+			if (id != null && a.getId() == id.intValue()) {
+				return a;
+			}
+			
+			if (id == null && name != null && a.getFullName().equalsIgnoreCase(name)) {
 				return a;
 			}
 		}
