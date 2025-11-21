@@ -1,4 +1,4 @@
-package Account;
+package account;
 import java.util.Date;
 
 public class Loan {

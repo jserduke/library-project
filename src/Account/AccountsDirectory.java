@@ -1,4 +1,4 @@
-package Account;
+package account;
 import java.util.*;
 import java.util.ArrayList;
 
@@ -71,7 +71,7 @@ public class AccountsDirectory {
 	public Account login(String inputEmail, String inputPassword) {
 		for (Account a : accounts) {
 			if (a.getEmail().equalsIgnoreCase(inputEmail) &&
-				a.getPassword().equals(inputPassword)) {
+				a.checkPassword(inputPassword)) {
 				return a;
 			}
 		}

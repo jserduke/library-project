@@ -1,4 +1,4 @@
-package Account;
+package account;
 
 //Created this test driver to make sure my classes were working properly
 //import java.io.File;

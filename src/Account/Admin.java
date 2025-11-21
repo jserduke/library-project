@@ -1,4 +1,4 @@
-package Account;
+package account;
 import java.util.Date;
 import java.util.ArrayList;
 
@@ -9,9 +9,9 @@ public class Admin extends Account{
 		setPermission(Permission.ADMIN);
 	}
 	
-	public void manageInventory() {
-		System.out.println("[ADMIN] " + getFullName() + " is managing inventory...");
-	}
+//	public void manageInventory() {
+//		System.out.println("[ADMIN] " + getFullName() + " is managing inventory...");
+//	}
 	
 	public ArrayList<Loan> viewHistory(int memberId, LoanRepository loanRep) {
 		ArrayList<Loan> history = new ArrayList<>();
