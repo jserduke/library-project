@@ -9,9 +9,9 @@ public class Admin extends Account{
 		setPermission(Permission.ADMIN);
 	}
 	
-	public void manageInventory() {
-		System.out.println("[ADMIN] " + getFullName() + " is managing inventory...");
-	}
+//	public void manageInventory() {
+//		System.out.println("[ADMIN] " + getFullName() + " is managing inventory...");
+//	}
 	
 	public ArrayList<Loan> viewHistory(int memberId, LoanRepository loanRep) {
 		ArrayList<Loan> history = new ArrayList<>();
