@@ -69,27 +69,27 @@ public class AccountsDirectory {
 	}
 	
 	public Account login(String inputEmail, String inputPassword) {
-		for (Account a : accounts) {
-			if (a.getEmail().equalsIgnoreCase(inputEmail) &&
-				a.checkPassword(inputPassword)) {
-				return a;
+		for (Account acct : accounts) {
+			if (acct.getEmail().equalsIgnoreCase(inputEmail) &&
+				acct.checkPassword(inputPassword)) {
+				return acct;
 			}
 		}
 		return null;
 	}
 	
 	private Account findAccount(Permission permissionLevel, String name, Integer id) {
-		for (Account a : accounts) {
-			if (a.getPermission() != permissionLevel) {
+		for (Account acct : accounts) {
+			if (acct.getPermission() != permissionLevel) {
 				continue;
 			}
 			
-			if (id != null && a.getId() == id.intValue()) {
-				return a;
+			if (id != null && acct.getId() == id.intValue()) {
+				return acct;
 			}
 			
-			if (id == null && name != null && a.getFullName().equalsIgnoreCase(name)) {
-				return a;
+			if (id == null && name != null && acct.getFullName().equalsIgnoreCase(name)) {
+				return acct;
 			}
 		}
 		return null;
