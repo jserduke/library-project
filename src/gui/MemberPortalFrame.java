@@ -4,6 +4,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
 
 public class MemberPortalFrame extends JFrame {
     private static final long serialVersionUID = 1L;
@@ -52,7 +53,9 @@ public class MemberPortalFrame extends JFrame {
         right.add(btnLogout);
         top.add(right, BorderLayout.EAST);
         add(top, BorderLayout.NORTH);
-        btnLogout.addActionListener(e -> { new WelcomeDashboardFrame().setVisible(true); 
+        ArrayList<String> info = new ArrayList<String>();
+        info.add("After Logout Library");
+        btnLogout.addActionListener(e -> { new WelcomeDashboardFrame(null, null, info).setVisible(true); 
         dispose(); });
 
         // Split

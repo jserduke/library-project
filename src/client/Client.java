@@ -1,8 +1,11 @@
 package client;
+
 import java.io.*;
 import java.net.*;
 import java.util.*;
 import javax.swing.*;
+
+import message.*;
 
 public class Client {
 	public static void main(String[] args) {
@@ -18,12 +21,15 @@ public class Client {
 			ObjectOutputStream writerToServer = new ObjectOutputStream(socket.getOutputStream());
 			ObjectInputStream readerFromServer = new ObjectInputStream(socket.getInputStream());
 			JFrame frame = new JFrame("Home Page");
-			ResponseHandler responseHandler = new ResponseHandler(readerFromServer);
-			GUIPreparer guiPreparer = new GUIPreparer(writerToServer, responseHandler);
-			responseHandler.setGuiPreparer(guiPreparer);
+			ResponseHandler responseHandler = new ResponseHandler(readerFromServer, writerToServer);
+			// GUIPreparer guiPreparer = new GUIPreparer(writerToServer, responseHandler);
+			// responseHandler.setGuiPreparer(guiPreparer);
 			Thread responseThread = new Thread(responseHandler);
 			responseThread.start();
-			guiPreparer.createHomePageNotLoggedIn(frame);
+			Message initMessage = new Message(0, Type.REQUEST, -1, message.Action.GET_DASHBOARD, Status.PENDING, null);
+			responseHandler.setRequestIdExpected(initMessage.getId());
+			writerToServer.writeObject(initMessage);
+			// guiPreparer.createHomePageNotLoggedIn(frame);
 			
 			// Without this while loop, socket seems to go out of scope and close, breaking everything else
 			// There's probably a better way to fix this but I'm just not sure of what it is

@@ -4,8 +4,13 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.List;
 
+import client.ResponseHandler;
+import message.*;
 
 public class WelcomeDashboardFrame extends JFrame {
     private static final long serialVersionUID = 1L;
@@ -25,8 +30,8 @@ public class WelcomeDashboardFrame extends JFrame {
     private final CardLayout centerCards = new CardLayout();
     private final JPanel center = new JPanel(centerCards);
 
-    public WelcomeDashboardFrame() {
-        super("Library — Welcome"); // TODO: name from server
+    public WelcomeDashboardFrame(ObjectOutputStream requestWriter, ResponseHandler responseHandler, ArrayList<String> info) {
+        super(info.getFirst() + " — Welcome"); // TODO: name from server
         setSize(1100, 720);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -34,7 +39,7 @@ public class WelcomeDashboardFrame extends JFrame {
 
         // --- HEADER ----------------------------------------------------------
         JPanel header = new JPanel();
-        Theme.styleHeaderBar(header, new JLabel("  Public Library")); // TODO: name from server
+        Theme.styleHeaderBar(header, new JLabel("  " + info.getFirst())); // TODO: name from server
         JPanel right = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
         JButton btnLogin = new JButton("Login");
         JButton btnRegister = new JButton("Register");
@@ -121,13 +126,28 @@ public class WelcomeDashboardFrame extends JFrame {
         add(center, BorderLayout.CENTER);
 
         // Listeners
-        btnSearch.addActionListener(e -> reloadResults());
-        cbType.addActionListener(e -> reloadResults());
+        // info.removeFirst();
+        btnSearch.addActionListener(e -> {
+        	ArrayList<String> queryInfo = new ArrayList<String>();
+        	queryInfo.add((String) cbType.getSelectedItem());
+        	queryInfo.add(txtSearch.getText().trim().toLowerCase());
+        	Message searchMessage = new Message(0, message.Type.REQUEST, -1, message.Action.GET_SEARCH, Status.PENDING, queryInfo);
+        	responseHandler.setRequestIdExpected(searchMessage.getId());
+        	responseHandler.setOldFrame(this);
+        	try {
+				requestWriter.writeObject(searchMessage);
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+        });
+        cbType.addActionListener(e -> reloadResults(info));
         btnAdmin.addActionListener(e -> new LoginFrame().setVisible(true));
 
         // Initial data
         setCatalogColumnsForType("All");
-        reloadResults();
+        info.removeFirst();
+        reloadResults(info);
     }
 
     // --- Helpers -------------------------------------------------------------
@@ -148,7 +168,7 @@ public class WelcomeDashboardFrame extends JFrame {
         }
     }
 
-    private void reloadResults() {
+    public void reloadResults(ArrayList<String> info) {
         String type = (String) cbType.getSelectedItem();
         String q = txtSearch.getText().trim().toLowerCase();
         setCatalogColumnsForType(type);
@@ -207,6 +227,19 @@ public class WelcomeDashboardFrame extends JFrame {
                 });
             }
         } else { // All
+        	for (int i = 0; i < info.size() / 8; i += 1) {
+        		model.addRow(new Object[] {
+        				info.get(i * 8 + 0),
+        				info.get(i * 8 + 1),
+        				info.get(i * 8 + 2),
+        				info.get(i * 8 + 3),
+        				info.get(i * 8 + 4),
+        				info.get(i * 8 + 5),
+        				info.get(i * 8 + 6),
+        				info.get(i * 8 + 7),
+        		});
+        	}
+        	/*
             for (int i=0;i<LibraryData.BOOKS.size();i++) {
                 Book b = LibraryData.BOOKS.get(i);
                 if (q.isEmpty() || b.getTitle().toLowerCase().contains(q) || b.getAuthor().toLowerCase().contains(q) || b.getIsbn().toLowerCase().contains(q)) {
@@ -255,6 +288,7 @@ public class WelcomeDashboardFrame extends JFrame {
                     });
                 }
             }
+            */
         }
 
         cardsGrid.revalidate();

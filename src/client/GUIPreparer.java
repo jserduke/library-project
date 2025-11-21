@@ -37,7 +37,7 @@ public class GUIPreparer {
 			public void actionPerformed(ActionEvent ae) {
 				Message request = new Message(0, Type.REQUEST, -1, Action.LOGIN, Status.PENDING, null);
 				// FRAME (WINDOW) TO BE EDITED WHEN RESPONSE FROM SERVER IS RECEIVED
-				responseHandler.setFrame(frame);
+				responseHandler.setOldFrame(frame);
 				// ID CORRESPONDING TO LOGIN REQUEST THAT RESPONSE SHOULD BE LOOKING FOR
 				responseHandler.setRequestIdExpected(request.getId());
 				try {
@@ -74,7 +74,7 @@ public class GUIPreparer {
 			public void actionPerformed(ActionEvent ae) {
 				Message request = new Message(0, Type.REQUEST, -1, Action.GET_CHECKOUTS, Status.PENDING, null);
 				// NEW WINDOW WILL BE CREATED
-				responseHandler.setFrame(null);
+				responseHandler.setOldFrame(null);
 				// INFORM ResponseHandler OF WHICH CORRESPONDING RESPONSE THEY SHOULD BE EXPECTING NEXT
 				responseHandler.setRequestIdExpected(request.getId());
 				try {
@@ -90,7 +90,7 @@ public class GUIPreparer {
 			public void actionPerformed(ActionEvent ae) {
 				Message request = new Message(0, Type.REQUEST, -1, Action.CHECKOUT, Status.PENDING, null);
 				// JOptionPane WILL BE ATTACHED TO HOME PAGE WINDOW
-				responseHandler.setFrame(frame);
+				responseHandler.setOldFrame(frame);
 				// INFORM ResponseHandler OF WHICH CORRESPONDING RESPONSE THEY SHOULD BE EXPECTING NEXT
 				responseHandler.setRequestIdExpected(request.getId());
 				try {

@@ -60,7 +60,49 @@ public class LibraryServer {
 						System.out.println(messageFromClient);
 						// System.out.println("Is logged in? " + isLoggedIn);
 						ArrayList<String> info = new ArrayList<String>();
-						if (!isLoggedIn) {
+						if (messageFromClient.getAction() == Action.GET_DASHBOARD) {
+							messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.GET_DASHBOARD, Status.SUCCESS, info);
+							info.add("Our Little Library");
+							// TODO:
+							// inventory = Library.getInventory();
+							// for item in inventory:
+							// add each piece of info
+							info.add("DVD");
+							info.add("1");
+							info.add("EEAAO");
+							info.add("R");
+							info.add("140 min");
+							info.add("Daniels");
+							info.add("5");
+							info.add("3");
+							
+							info.add("Book");
+							info.add("4");
+							info.add("Booksmart");
+							info.add("B. Smart");
+							info.add("1234566789");
+							info.add("Idk");
+							info.add("4");
+							info.add("0");
+							
+							writerToClient.writeObject(messageToClient);
+						} else if (messageFromClient.getAction() == Action.GET_SEARCH) {
+							messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.GET_SEARCH, Status.SUCCESS, info);
+							// TODO:
+							// library.searchByName
+							// for item in results
+							// add piece of info
+							info.add("Book");
+							info.add("4");
+							info.add("Booksmart");
+							info.add("B. Smart");
+							info.add("1234566789");
+							info.add("Idk");
+							info.add("4");
+							info.add("0");
+							
+							writerToClient.writeObject(messageToClient);
+						} else if (!isLoggedIn) {
 							// System.out.println("In");
 							if (messageFromClient.getAction() == Action.LOGIN) {
 								isLoggedIn = true;
