@@ -1,17 +1,29 @@
+package Inventory;
 
-public class DVD extends Media{
-	private String title;
+class DVD extends Media{
 	private Rating ageRating;
 	private int runTime;
 	
-	DVD (String newTitle, Rating newAgeRating, int newRunTime) {
+	DVD (String newTitle, // From base class Media
+		String newPublisher, 
+		String newGenre, 
+		int newTotalQuantity,
+		int quantityAvailable, 
+		Rating newAgeRating, // Unique to DVD subclass
+		int newRunTime)
+	{
 		this.title = newTitle;
+		this.publisher = newPublisher;
 		this.ageRating =  newAgeRating;
 		this.runTime = newRunTime;
 	}
 	
-	private DVD () {
+	DVD () {
 		this.title = null;
+		this.publisher = null;
+		this.genre = null;
+		this.totalQuantity = 0;
+		this.quantityAvailable = 0;
 		this.ageRating = Rating.Unrated;
 		this.runTime = 0;
 	}

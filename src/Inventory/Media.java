@@ -1,19 +1,18 @@
-public class Media {
-	
-	private int id;
-	private String title;
-	private String publisher;
-	private String genre;
-	private int totalQuantity;
-	private int quantityAvailable;
-	
-	public Media(int newId, 
-			String newTitle, 
-			String newPublisher, 
-			String newGenre,
-			int newTotalQuantity,
-			int newQuantityAvailable)
-	{
+package Inventory;
+abstract class Media {
+	protected int id; // all fields inherited by Book/DVD/Board Game
+	protected String title;
+	protected String publisher;
+	protected String genre;
+	protected int totalQuantity;
+	protected int quantityAvailable;
+
+protected Media(int newId, 
+	String newTitle, 
+	String newPublisher, 
+	String newGenre,
+	int newTotalQuantity,
+	int newQuantityAvailable) {
 		this.id = newId;
 		this.title = newTitle;
 		this.publisher = newPublisher;
@@ -84,13 +83,5 @@ public class Media {
 		setQuantityAvailable(newQuantityAvailable);
 	}
 	
-	public String toString() {
-		return "Media {" +
-		"ID:" + getId() + 
-		", Title:" + getTitle() + 
-		", Publisher:" + getPublisher() + 
-		", Genre:" + getGenre() +
-		", TotalQuantity:" + getTotalQuantity() +
-		", QuantityAvailable:" + getQuantityAvailable() +"}\n";
-	}
+	public abstract String toString();
 }

@@ -1,3 +1,4 @@
+package Inventory;
 
 public class BoardGame extends Media{
 	private String title;

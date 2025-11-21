@@ -1,3 +1,4 @@
+package Inventory;
 
 public enum Rating {
 	G,
