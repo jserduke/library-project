@@ -67,7 +67,7 @@ public class ResponseHandler implements Runnable {
 									} else if (response.getInfo().getFirst().equals("MEMBER")) {
 										response.getInfo().removeFirst();
 										JOptionPane.showMessageDialog(null, "Member Login Successful! Welcome, " + response.getInfo().getFirst());
-										// GO TO MEMBER PORTAL
+										(new MemberPortalFrame(requestWriter, this, response.getInfo())).setVisible(true);
 										oldFrame.dispose();
 									}
 								} else if (response.getStatus() == Status.FAILURE) {

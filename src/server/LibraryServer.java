@@ -112,6 +112,38 @@ public class LibraryServer {
 								} else {
 									info.add(account instanceof Admin ? "ADMIN" : "MEMBER");
 									info.add(account.getFullName());
+									if (info.getFirst().equals("MEMBER")) {
+										// inventory info
+										info.add("2"); // number of inventory items returned
+										
+										info.add("DVD");
+										info.add("1");
+										info.add("EEAAO");
+										info.add("R");
+										info.add("140 min");
+										info.add("Daniels");
+										info.add("5");
+										info.add("3");
+										
+										info.add("Book");
+										info.add("4");
+										info.add("Booksmart");
+										info.add("B. Smart");
+										info.add("1234566789");
+										info.add("Idk");
+										info.add("4");
+										info.add("0");
+										
+										// loan info
+										info.add("3");
+										info.add("BOOK");
+										info.add("3");
+										info.add("TITLE");
+										info.add("2025-11-15");
+										info.add("2025-12-01");
+										info.add("4");
+										info.add("");
+									}
 									messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.LOGIN, Status.SUCCESS, info);
 								}
 							} else {

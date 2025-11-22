@@ -3,13 +3,16 @@ package gui;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.io.ObjectOutputStream;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
+import client.ResponseHandler;
+
 public class MemberPortalFrame extends JFrame {
     private static final long serialVersionUID = 1L;
-	private final User user;
-    private final Member member;
+	// private final User user;
+    // private final Member member;
 
     private JTextField txtSearch = new JTextField(18);
     private JComboBox<String> cbType = new JComboBox<>(new String[]{"All", "Books", "DVDs", "Board Games"});
@@ -31,11 +34,11 @@ public class MemberPortalFrame extends JFrame {
     };
     private JTable loansTable = new JTable(loansModel);
 
-    public MemberPortalFrame(User user) {
-        this.user = user;
-        this.member = resolveMember(user);
+    public MemberPortalFrame(ObjectOutputStream requestWriter, ResponseHandler responseHandler, ArrayList<String> info) {
+        // this.user = user;
+        // this.member = resolveMember(user);
 
-        setTitle("Member Portal — " + user.getUsername());
+        setTitle("Member Portal — " + info.getFirst()); // TODO: replace with username from message
         setSize(1100, 660);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -53,22 +56,25 @@ public class MemberPortalFrame extends JFrame {
         right.add(btnLogout);
         top.add(right, BorderLayout.EAST);
         add(top, BorderLayout.NORTH);
-        ArrayList<String> info = new ArrayList<String>();
-        info.add("After Logout Library");
-        btnLogout.addActionListener(e -> { new WelcomeDashboardFrame(null, null, info).setVisible(true); 
-        dispose(); });
+        btnLogout.addActionListener(e -> {
+            ArrayList<String> logoutInfo = new ArrayList<String>();
+            info.add("After Logout Library");
+        	new WelcomeDashboardFrame(null, null, logoutInfo).setVisible(true); 
+        	dispose();
+        });
 
         // Split
         JSplitPane split = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         split.setResizeWeight(0.55);
-        split.setTopComponent(buildCatalogPanel());
+        split.setTopComponent(buildCatalogPanel(info));
         split.setBottomComponent(buildLoansPanel());
         add(split, BorderLayout.CENTER);
 
-        reloadCatalog();
-        reloadLoans();
+        reloadCatalog(info, 2);
+        reloadLoans(info, 2 + Integer.parseInt(info.get(1)) * 8);
     }
 
+    /*
     private Member resolveMember(User u) {
         if (u.getMemberId() != null) {
             for (Member m : LibraryData.MEMBERS) 
@@ -83,8 +89,9 @@ public class MemberPortalFrame extends JFrame {
         u.setMemberId(nm.getId());
         return nm;
     }
+    */
 
-    private JPanel buildCatalogPanel() {
+    private JPanel buildCatalogPanel(ArrayList<String> info) {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(Theme.SURFACE);
         JPanel search = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 10));
@@ -122,9 +129,9 @@ public class MemberPortalFrame extends JFrame {
         
         Theme.styleTable(catalogTable);
 
-        btnSearch.addActionListener(e -> reloadCatalog());
-        txtSearch.addActionListener(e -> reloadCatalog());
-        cbType.addActionListener(e -> reloadCatalog());
+        btnSearch.addActionListener(e -> reloadCatalog(info, 1));
+        txtSearch.addActionListener(e -> reloadCatalog(info, 1));
+        cbType.addActionListener(e -> reloadCatalog(info, 1));
         btnCheckout.addActionListener(e -> checkoutSelected());
         btnHold.addActionListener(e -> holdSelected());
         btnEdit.addActionListener(e -> editAccount());
@@ -155,15 +162,31 @@ public class MemberPortalFrame extends JFrame {
     }
 	
     private void openHoldsAndFees() {
+    	/*
     	MemberAccountDialog dialog = new MemberAccountDialog(this, member);
     	dialog.setVisible(true);
+    	*/
 
 	}
-    private void reloadCatalog() {
+    public void reloadCatalog(ArrayList<String> info, int invStart) {
         String q = txtSearch.getText().trim();
         String type = cbType.getSelectedItem().toString();
         catalogModel.setRowCount(0);
+        
+    	for (int i = 0; i < Integer.parseInt(info.get(1)); i += 1) {
+    		catalogModel.addRow(new Object[] {
+    				info.get(invStart + i * 8 + 0),
+    				info.get(invStart + i * 8 + 1),
+    				info.get(invStart + i * 8 + 2),
+    				info.get(invStart + i * 8 + 3),
+    				info.get(invStart + i * 8 + 4),
+    				info.get(invStart + i * 8 + 5),
+    				info.get(invStart + i * 8 + 6),
+    				info.get(invStart + i * 8 + 7),
+    		});
+    	}
 
+    	/*
         if ("All".equals(type) || "Books".equals(type)) {
             for (Book b : (q.isEmpty()? LibraryData.BOOKS : LibraryData.searchBooks(q))) {
                 catalogModel.addRow(new Object[]{
@@ -188,10 +211,24 @@ public class MemberPortalFrame extends JFrame {
                 });
             }
         }
+        */
     }
 
-    private void reloadLoans() {
+    private void reloadLoans(ArrayList<String> info, int loansStart) {
         loansModel.setRowCount(0);
+        for (int i = 0; i < (info.size() - loansStart) / 8; i += 1) {
+	        loansModel.addRow(new Object[] {
+	        	info.get(loansStart + i * 8 + 0),
+	        	info.get(loansStart + i * 8 + 1),
+	        	info.get(loansStart + i * 8 + 2),
+	        	info.get(loansStart + i * 8 + 3),
+	        	info.get(loansStart + i * 8 + 4),
+	        	info.get(loansStart + i * 8 + 5),
+	        	info.get(loansStart + i * 8 + 6),
+	        	info.get(loansStart + i * 8 + 7),
+	        });
+        }
+        /*
         for (Loan l : LibraryData.loansForMember(member.getId())) {
             String title = getTitle(l.getMediaType(), l.getMediaId());
             loansModel.addRow(new Object[]{
@@ -200,8 +237,11 @@ public class MemberPortalFrame extends JFrame {
                 (l.getReturnDate()==null? "" : l.getReturnDate().toString())
             });
         }
+        */
     }
 
+    // DON'T THINK WE NEED?
+    /*
     private String getTitle(MediaType type, int id) {
         switch (type) {
             case BOOK:
@@ -222,8 +262,11 @@ public class MemberPortalFrame extends JFrame {
         }
         return "";
     }
+    */
 
+    // WILL GET WORKING LATER
     private void checkoutSelected() {
+    	/*
         int row = catalogTable.getSelectedRow();
         if (row < 0) { 
         	JOptionPane.showMessageDialog(this, "Select a media item."); 
@@ -240,9 +283,12 @@ public class MemberPortalFrame extends JFrame {
         }
         reloadCatalog();
         reloadLoans();
+        */
     }
 
+    // WILL GET WORKING LATER
     private void holdSelected() {
+    	/*
         int row = catalogTable.getSelectedRow();
         if (row < 0) { 
         	JOptionPane.showMessageDialog(this, "Select a media item."); 
@@ -259,9 +305,12 @@ public class MemberPortalFrame extends JFrame {
             LibraryData.placeHold(member.getId(), type, id, holdUntil);
             JOptionPane.showMessageDialog(this, "Hold placed until: " + holdUntil);
         }
+        */
     }
 
+    // WILL GET WORKING LATER
     private void returnSelectedLoan() {
+    	/*
         int row = loansTable.getSelectedRow();
         if (row < 0) { 
         	JOptionPane.showMessageDialog(this, "Select a loan."); 
@@ -273,9 +322,12 @@ public class MemberPortalFrame extends JFrame {
             reloadCatalog();
             reloadLoans();
         }
+        */
     }
 
+    // WILL GET WORKING HOPEFULLY TONIGHT
     private void editAccount() {
+    	/*
         JTextField first = new JTextField(member.getFirstName());
         JTextField last = new JTextField(member.getLastName());
         JTextField dob = new JTextField(String.valueOf(member.getBirthday()));
@@ -297,9 +349,13 @@ public class MemberPortalFrame extends JFrame {
                 JOptionPane.showMessageDialog(this, "Invalid data: " + ex.getMessage());
             }
         }
+        */
     }
 
+    // DON'T THINK WE NEED
+    /*
 	public User getUser() {
 		return user;
 	}
+	*/
 }
