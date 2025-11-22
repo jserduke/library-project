@@ -60,7 +60,11 @@ public class LoginFrame extends JFrame {
         add(btns, BorderLayout.SOUTH);
 
         btnLogin.addActionListener(e -> doLogin(requestWriter, responseHandler));
-        btnRegister.addActionListener(e -> new RegisterFrame(this).setVisible(true));
+        btnRegister.addActionListener(e -> {
+        	dispose();
+        	new RegisterFrame(responseHandler.getOldFrame(), requestWriter, responseHandler).setVisible(true);
+        });
+        
     }
 
     private void doLogin(ObjectOutputStream requestWriter, ResponseHandler responseHandler) {
@@ -70,6 +74,7 @@ public class LoginFrame extends JFrame {
         Message loginMessage = new Message(0, message.Type.REQUEST, -1, message.Action.LOGIN, Status.PENDING, info);
         info.add(u);
         info.add(p);
+        responseHandler.setOldOldFrame();
         responseHandler.setOldFrame(this);
         responseHandler.setRequestIdExpected(loginMessage.getId());
         try {

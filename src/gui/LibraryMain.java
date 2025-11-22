@@ -10,7 +10,9 @@ public class LibraryMain {
     	info.add("Local Library");
         SwingUtilities.invokeLater(() -> new WelcomeDashboardFrame(null, null, info).setVisible(true));
     	*/
+    	/*
     	User found = LibraryData.findUser("member", "member123");
     	(new MemberPortalFrame(found)).setVisible(true);
+    	*/
     }
 }

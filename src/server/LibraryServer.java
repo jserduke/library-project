@@ -77,23 +77,7 @@ public class LibraryServer {
 							// inventory = Library.getInventory();
 							// for item in inventory:
 							// add each piece of info
-							info.add("DVD");
-							info.add("1");
-							info.add("EEAAO");
-							info.add("R");
-							info.add("140 min");
-							info.add("Daniels");
-							info.add("5");
-							info.add("3");
-							
-							info.add("Book");
-							info.add("4");
-							info.add("Booksmart");
-							info.add("B. Smart");
-							info.add("1234566789");
-							info.add("Idk");
-							info.add("4");
-							info.add("0");
+							addFullInventoryDummyData(info);
 							
 							writerToClient.writeObject(messageToClient);
 						} else if (messageFromClient.getAction() == Action.GET_SEARCH) {
@@ -113,32 +97,160 @@ public class LibraryServer {
 							
 							writerToClient.writeObject(messageToClient);
 						} else if (account == null) {
-							//Member login
 							if (messageFromClient.getAction() == Action.LOGIN) {
-								String email = messageFromClient.getInfo().get(0);
-								String password = messageFromClient.getInfo().get(1);
+								account = accountsDirectory.login(messageFromClient.getInfo().getFirst(), messageFromClient.getInfo().getLast());
 								
-								account = accountsDirectory.login(email, password);
+								if (account == null) {
+									messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.LOGIN, Status.FAILURE, null);
+								} else {
+									String filename = "loans_" + account.getId() + ".txt";
+									loanRepository.loadLoansFromFile(filename);
+									
+									info.add(account instanceof Admin ? "ADMIN" : "MEMBER");
+									info.add(account.getFullName());
+									info.add(account.getEmail());
+									info.add(account.getBirthday().toString());
+									info.add(String.valueOf(account.getId()));
+//									Commenting out for now in case code doesn't work or to go back to something that does work									
+//									if (info.getFirst().equals("MEMBER")) {
+//										// inventory info
+//										info.add("2"); // number of inventory items returned
+//										addFullInventoryDummyData(info);
+//										
+//										// loan info
+//										info.add("3");
+//										info.add("BOOK");
+//										info.add("3");
+//										info.add("TITLE");
+//										info.add("2025-11-15");
+//										info.add("2025-12-01");
+//										info.add("4");
+//										info.add("");
+//								}
+									messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.LOGIN, Status.SUCCESS, info);
+								}
+							} else if (messageFromClient.getAction() == Action.REGISTER) {
+								Account newAccount = accountsDirectory.registerNewAccount(Permission.MEMBER,
+										messageFromClient.getInfo().getFirst(), messageFromClient.getInfo().get(1),
+										messageFromClient.getInfo().get(2), new Date(messageFromClient.getInfo().getLast()));
+								if (newAccount != null) {
+									System.out.println(newAccount);
+									System.out.println(newAccount.getBirthday());
+									messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.REGISTER, Status.SUCCESS, info);
+								} else {
+									info.add("Account associated with this email address already exists");
+									messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.REGISTER, Status.FAILURE, info);
+								}
+								
+							} else {
+								info.add("This action is not valid until login!");
+								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.LOGIN, Status.FAILURE, info);
 							}
+							writerToClient.writeObject(messageToClient);
 						} else {
 							if (messageFromClient.getAction() == Action.GET_CHECKOUTS) {
-								info.add("Harry Potter");
-								info.add("Mouse Paint");
-								info.add("If You Give a Mouse a Cookie");
+//								Commenting out for now in case code doesn't work or to go back to something that does work
+//								info.add("Harry Potter");
+//								info.add("Mouse Paint");
+//								info.add("If You Give a Mouse a Cookie");
+//								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.GET_CHECKOUTS, Status.SUCCESS, info);
+//								writerToClient.writeObject(messageToClient);
+								
+								ArrayList<Loan> all = loanRepository.getHistory();
+								int memberId = account.getId();
+								
+								ArrayList<Loan> activeLoans = new ArrayList<>();
+								for (Loan l : all) {
+									if (l.getMemberId() == memberId && l.getReturnedDate() == null) {
+										activeLoans.add(l);
+									}
+								}
+								
+								info.add(Integer.toString(activeLoans.size()));
+								
+								for (Loan l : activeLoans) {
+									//When Inventory is integrated, necessary code goes in here
+									String title = lookupDummyTitle(l.getMediaId());
+									info.add("BOOK");
+									info.add(Integer.toString(l.getMediaId()));
+									info.add(title);
+									info.add(l.getCheckoutDate().toString());
+									info.add(l.getDueDate().toString());
+									info.add("");		//return date placeholder
+									info.add("");		//fees placeholder
+									info.add("");		//reserved placeholder
+								}
+								
 								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.GET_CHECKOUTS, Status.SUCCESS, info);
+								
 								writerToClient.writeObject(messageToClient);
+								
 							} else if (messageFromClient.getAction() == Action.CHECKOUT) {
-								info.add("Networking 101 successfully checked out!");
-								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.CHECKOUT, Status.SUCCESS, info);
+//								Commenting out for now in case code doesn't work or to go back to something that does work								
+//								info.add("Networking 101 successfully checked out!");
+//								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.CHECKOUT, Status.SUCCESS, info);
+//								writerToClient.writeObject(messageToClient);
+								
+								int mediaId = Integer.parseInt(messageFromClient.getInfo().get(0));
+								long dueMillis = Long.parseLong(messageFromClient.getInfo().get(1));
+								Date due = new Date(dueMillis);
+								
+								Loan newLoan = loanRepository.checkoutMedia(mediaId, account.getId(), due, (Member)account);
+								
+								if (newLoan == null) {
+									messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.CHECKOUT, Status.FAILURE, info);
+								} else {
+									String filename = "loans_" + account.getId() + ".txt";
+									loanRepository.loadLoansFromFile(filename);
+									
+									info.add("Checkout successful!");	
+									messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.CHECKOUT, Status.SUCCESS, info);
+								}
+								
 								writerToClient.writeObject(messageToClient);
-							} else if (messageFromClient.getAction() == Action.LOGOUT) {
+								
+							} else if(messageFromClient.getAction() == Action.RETURN) {
+								int mediaId = Integer.parseInt(messageFromClient.getInfo().get(0));
+								
+								boolean success = loanRepository.returnMedia(mediaId, account.getId());
+								if (!success) {
+									info.add("Return failed.");
+									messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.RETURN, Status.FAILURE, info);
+								} else {
+									String filename = "loans_" + account.getId() + ".txt";
+									loanRepository.loadLoansFromFile(filename);
+									
+									info.add("Return successfull!");
+									messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.RETURN, Status.SUCCESS, info);
+								}
+								
+								writerToClient.writeObject(messageToClient);
+								
+							} else if (messageFromClient.getAction() == Action.GET_PROFILE) {
+								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.GET_PROFILE, Status.SUCCESS, info);
+								info.add(account.getFullName());
+								info.add(account.getBirthday().toString());
+								info.add(account.getEmail());
+								writerToClient.writeObject(messageToClient);
+							} else if (messageFromClient.getAction() == Action.SET_PROFILE) {
+								account.setFullName(messageFromClient.getInfo().getFirst());
+								account.setBirthday(new Date(messageFromClient.getInfo().get(1)));
+								account.setEmail(messageFromClient.getInfo().get(2));
+								System.out.println(account);
+								System.out.println(account.getBirthday());
+								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.SET_PROFILE, Status.SUCCESS, null);
+								writerToClient.writeObject(messageToClient);
+							}
+							else if (messageFromClient.getAction() == Action.LOGOUT) {
+								info.add("Our Little Library");
+								addFullInventoryDummyData(info);
 								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.LOGOUT, Status.SUCCESS, info);
 								writerToClient.writeObject(messageToClient);
 								
-								writerToClient.close();
-								readerFromClient.close();
-								clientSocket.close();
-								return;
+								// writerToClient.close();
+								// readerFromClient.close();
+								// clientSocket.close();
+								// return;
 							}
 						}
 						
@@ -160,6 +272,35 @@ public class LibraryServer {
 					e.printStackTrace();
 				}
 			}
+		}
+	}
+	private static void addFullInventoryDummyData(ArrayList<String> info) {
+		info.add("DVD");
+		info.add("1");
+		info.add("EEAAO");
+		info.add("R");
+		info.add("140 min");
+		info.add("Daniels");
+		info.add("5");
+		info.add("3");
+		
+		info.add("Book");
+		info.add("4");
+		info.add("Booksmart");
+		info.add("B. Smart");
+		info.add("1234566789");
+		info.add("Idk");
+		info.add("4");
+		info.add("0");
+	}
+	
+	private static String lookupDummyTitle(int mediaId) {
+		switch(mediaId) {
+			case 1: return "EEAA0";
+			case 2: return "Booksmart";
+			case 3: return "Charlotte's Web";
+			case 4: return "The Housemain";
+			default: return "Unknown Title";
 		}
 	}
 }

@@ -3,5 +3,6 @@ package inventory;
 public enum MediaType {
 	BOOK,
 	DVD,
-	BOARD_GAME;
+	BOARD_GAME,
+	UNCATEGORIZED;
 }

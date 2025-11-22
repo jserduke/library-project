@@ -2,9 +2,13 @@ package message;
 public enum Action {
 	GET_DASHBOARD,
 	GET_SEARCH,
+	REGISTER,
 	LOGIN,
 	GET_CHECKOUTS,
 	CHECKOUT,
+	RETURN,
+	GET_PROFILE,
+	SET_PROFILE,
 	LOGOUT,
 	UNDEFINED
 }

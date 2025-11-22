@@ -65,7 +65,11 @@ public class WelcomeDashboardFrame extends JFrame {
                 case "Books & More" -> b.addActionListener(e -> {
                     centerCards.show(center, "CATALOG"); txtSearch.requestFocusInWindow();
                 });
-                case "My Account" -> b.addActionListener(e -> new LoginFrame(requestWriter, responseHandler, info.getFirst()).setVisible(true));
+                // TODO: add old frame here
+                case "My Account" -> b.addActionListener(e -> {
+                	responseHandler.setOldFrame(this);
+                	new LoginFrame(requestWriter, responseHandler, info.getFirst()).setVisible(true);
+                });
                 case "Services" -> b.addActionListener(e -> JOptionPane.showMessageDialog(this, "Services panel coming soon."));
                 case "Calendar" -> b.addActionListener(e -> centerCards.show(center, "EVENTS"));
                 case "How Do I?" -> b.addActionListener(e -> JOptionPane.showMessageDialog(this, "Use Register to create an account.\nLogin to place holds and manage loans."));
@@ -77,8 +81,14 @@ public class WelcomeDashboardFrame extends JFrame {
         top.add(nav);
         add(top, BorderLayout.NORTH);
 
-        btnLogin.addActionListener(e -> new LoginFrame(requestWriter, responseHandler, info.getFirst()).setVisible(true));
-        btnRegister.addActionListener(e -> new RegisterFrame(this).setVisible(true));
+        btnLogin.addActionListener(e -> {
+        	responseHandler.setOldFrame(this);
+        	new LoginFrame(requestWriter, responseHandler, info.getFirst()).setVisible(true);
+        });
+        btnRegister.addActionListener(e -> {
+        	responseHandler.setOldFrame(this);
+        	new RegisterFrame(this, requestWriter, responseHandler).setVisible(true);
+        });
 
         // --- CATALOG view ----------------------------------------------------
         JPanel catalog = new JPanel(new BorderLayout());
@@ -143,7 +153,10 @@ public class WelcomeDashboardFrame extends JFrame {
         });
         // TODO: should be the same as btnSearch, I think
         cbType.addActionListener(e -> reloadResults(info, 0));
-        btnAdmin.addActionListener(e -> new LoginFrame(requestWriter, responseHandler, info.getFirst()).setVisible(true));
+        btnAdmin.addActionListener(e -> {
+        	responseHandler.setOldFrame(this);
+        	(new LoginFrame(requestWriter, responseHandler, info.getFirst())).setVisible(true);
+        });
 
         // Initial data
         setCatalogColumnsForType("All");

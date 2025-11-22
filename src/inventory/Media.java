@@ -1,19 +1,22 @@
 package inventory;
-
 abstract class Media {
-	protected int id; // all fields inherited by Book/DVD/Board Game
-	protected String title;
-	protected String publisher;
-	protected String genre;
-	protected int totalQuantity;
-	protected int quantityAvailable;
+	private final MediaType mediaType;
+	private int id; // all fields inherited by Book/DVD/Board Game
+	private String title;
+	private String publisher;
+	private String genre;
+	private int totalQuantity;
+	private int quantityAvailable;
 
-protected Media(int newId, 
+	// protected constructors for subclass use to initialize variables unaccessible to subclasses
+	protected Media(MediaType newMediaType, 
+	int newId, 
 	String newTitle, 
 	String newPublisher, 
 	String newGenre,
 	int newTotalQuantity,
 	int newQuantityAvailable) {
+		this.mediaType = newMediaType;
 		this.id = newId;
 		this.title = newTitle;
 		this.publisher = newPublisher;
@@ -22,7 +25,8 @@ protected Media(int newId,
 		this.quantityAvailable = newQuantityAvailable;
 	}
 	
-	public Media() {
+	protected Media(MediaType newMediaType) { // default constructor
+		this.mediaType = newMediaType;
 		this.id = 0;
 		this.title = null;
 		this.publisher = null;
@@ -31,6 +35,11 @@ protected Media(int newId,
 		this.quantityAvailable = 0;
 	}
 	
+	// public getters for Media superclass variables
+	public String getMediaType() {
+		return this.mediaType.name();
+	}
+
 	public int getId() {
 		return this.id;
 	}
@@ -55,34 +64,43 @@ protected Media(int newId,
 		return this.quantityAvailable;
 	}
 	
-	private void setId(int newId) {
+	// toString returns all applicable Media info, subclasses have extra info
+	public String toString() {
+		return  "Media Info{ID:" + this.id + 
+		",Title:" + this.title + 
+		",Publisher:" + this.publisher + 
+		",Genre:" + this.genre + 
+		",Total Quantity:" + this.totalQuantity + 
+		",Quantity Available:" + this.quantityAvailable + "}\n";
+	}
+	
+	// Setters are protected for subclass access since variables are private
+	protected void setId(int newId) {
 		this.id = newId;
 	}
 	
-	private void setTitle(String newTitle) {
+	protected void setTitle(String newTitle) {
 		this.title = newTitle;
 	}
 	
-	private void setPublisher(String newPublisher) {
+	protected void setPublisher(String newPublisher) {
 		this.publisher = newPublisher;
 	}
 	
-	private void setGenre(String newGenre) {
+	protected void setGenre(String newGenre) {
 		this.genre = newGenre;
 	}
 	
-	private void setTotalQuantity(int newTotalQuantity) {
+	protected void setTotalQuantity(int newTotalQuantity) {
 		this.totalQuantity = newTotalQuantity;
 	}
 	
-	private void setQuantityAvailable(int newQuantityAvailable) {
+	protected void setQuantityAvailable(int newQuantityAvailable) {
 		this.quantityAvailable = newQuantityAvailable;
 	}
 	
-	private void setQuantityAll(int newTotalQuantity, int newQuantityAvailable) {
+	protected void setQuantityAll(int newTotalQuantity, int newQuantityAvailable) {
 		setTotalQuantity(newTotalQuantity);
 		setQuantityAvailable(newQuantityAvailable);
 	}
-	
-	public abstract String toString();
 }
