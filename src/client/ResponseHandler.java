@@ -36,10 +36,6 @@ public class ResponseHandler implements Runnable {
 			this.oldFrame = oldFrame;
 		}
 		
-		public JFrame getOldFrame() {
-			return oldFrame;
-		}
-		
 		public void setOldOldFrame() {
 			this.oldOldFrame = oldFrame;
 		}
@@ -95,6 +91,20 @@ public class ResponseHandler implements Runnable {
 							case Action.GET_CHECKOUTS:
 								// guiPreparer.showCheckoutHistory(new JFrame("Checkout History"), response);
 								break;
+							case Action.GET_PROFILE:
+								if (response.getStatus() == Status.SUCCESS) {
+									((MemberPortalFrame) oldFrame).editAccount(requestWriter, this, response.getInfo());
+								} else if (response.getStatus() == Status.FAILURE) {
+									JOptionPane.showMessageDialog(oldFrame, "Failed to retrieve profile information");
+								}
+								break;
+							case Action.SET_PROFILE:
+								if (response.getStatus() == Status.SUCCESS) {
+									JOptionPane.showMessageDialog(oldFrame, "Your account was successfully updated!");
+								} else if (response.getStatus() == Status.FAILURE) {
+									JOptionPane.showMessageDialog(oldFrame, "There was a problem with editing your profile.");
+								}
+								break;
 							case Action.LOGOUT:
 								if (response.getStatus() == Status.SUCCESS) {
 									(new WelcomeDashboardFrame(requestWriter, this, response.getInfo())).setVisible(true); 
@@ -102,6 +112,7 @@ public class ResponseHandler implements Runnable {
 								} else if (response.getStatus() == Status.FAILURE) {
 									JOptionPane.showMessageDialog(oldFrame, "Logout Failed?");
 								}
+								break;
 							// IF CASE HASN'T BEEN WRITTEN YET
 							default:
 								System.out.println("not ready yet");

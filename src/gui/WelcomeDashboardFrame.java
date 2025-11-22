@@ -66,7 +66,10 @@ public class WelcomeDashboardFrame extends JFrame {
                     centerCards.show(center, "CATALOG"); txtSearch.requestFocusInWindow();
                 });
                 // TODO: add old frame here
-                case "My Account" -> b.addActionListener(e -> new LoginFrame(requestWriter, responseHandler, info.getFirst()).setVisible(true));
+                case "My Account" -> b.addActionListener(e -> {
+                	responseHandler.setOldFrame(this);
+                	new LoginFrame(requestWriter, responseHandler, info.getFirst()).setVisible(true);
+                });
                 case "Services" -> b.addActionListener(e -> JOptionPane.showMessageDialog(this, "Services panel coming soon."));
                 case "Calendar" -> b.addActionListener(e -> centerCards.show(center, "EVENTS"));
                 case "How Do I?" -> b.addActionListener(e -> JOptionPane.showMessageDialog(this, "Use Register to create an account.\nLogin to place holds and manage loans."));

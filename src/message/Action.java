@@ -5,6 +5,8 @@ public enum Action {
 	LOGIN,
 	GET_CHECKOUTS,
 	CHECKOUT,
+	GET_PROFILE,
+	SET_PROFILE,
 	LOGOUT,
 	UNDEFINED
 }

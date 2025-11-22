@@ -129,7 +129,22 @@ public class LibraryServer {
 								info.add("Networking 101 successfully checked out!");
 								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.CHECKOUT, Status.SUCCESS, info);
 								writerToClient.writeObject(messageToClient);
-							} else if (messageFromClient.getAction() == Action.LOGOUT) {
+							} else if (messageFromClient.getAction() == Action.GET_PROFILE) {
+								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.GET_PROFILE, Status.SUCCESS, info);
+								info.add(account.getFullName());
+								info.add(account.getBirthday().toString());
+								info.add(account.getEmail());
+								writerToClient.writeObject(messageToClient);
+							} else if (messageFromClient.getAction() == Action.SET_PROFILE) {
+								account.setFullName(messageFromClient.getInfo().getFirst());
+								account.setBirthday(new Date(messageFromClient.getInfo().get(1)));
+								account.setEmail(messageFromClient.getInfo().get(2));
+								System.out.println(account.getBirthday());
+								System.out.println(account);
+								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.SET_PROFILE, Status.SUCCESS, null);
+								writerToClient.writeObject(messageToClient);
+							}
+							else if (messageFromClient.getAction() == Action.LOGOUT) {
 								info.add("Our Little Library");
 								addFullInventoryDummyData(info);
 								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.LOGOUT, Status.SUCCESS, info);

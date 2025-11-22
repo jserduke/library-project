@@ -59,6 +59,7 @@ public class MemberPortalFrame extends JFrame {
         top.add(right, BorderLayout.EAST);
         add(top, BorderLayout.NORTH);
         btnLogout.addActionListener(e -> {
+        	responseHandler.setOldFrame(this);
         	Message logoutMessage = new Message(0, message.Type.REQUEST, -1, message.Action.LOGOUT, Status.PENDING, null);
         	responseHandler.setRequestIdExpected(logoutMessage.getId());
         	responseHandler.setOldFrame(this);
@@ -74,7 +75,7 @@ public class MemberPortalFrame extends JFrame {
         // Split
         JSplitPane split = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         split.setResizeWeight(0.55);
-        split.setTopComponent(buildCatalogPanel(info));
+        split.setTopComponent(buildCatalogPanel(requestWriter, responseHandler, info));
         split.setBottomComponent(buildLoansPanel());
         add(split, BorderLayout.CENTER);
 
@@ -99,7 +100,7 @@ public class MemberPortalFrame extends JFrame {
     }
     */
 
-    private JPanel buildCatalogPanel(ArrayList<String> info) {
+    private JPanel buildCatalogPanel(ObjectOutputStream requestWriter, ResponseHandler responseHandler, ArrayList<String> info) {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(Theme.SURFACE);
         JPanel search = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 10));
@@ -142,7 +143,18 @@ public class MemberPortalFrame extends JFrame {
         cbType.addActionListener(e -> reloadCatalog(info, 1));
         btnCheckout.addActionListener(e -> checkoutSelected());
         btnHold.addActionListener(e -> holdSelected());
-        btnEdit.addActionListener(e -> editAccount());
+        btnEdit.addActionListener(e -> {
+            Message getProfileMessage = new Message(0, message.Type.REQUEST, -1, message.Action.GET_PROFILE, Status.PENDING, null);
+            responseHandler.setRequestIdExpected(getProfileMessage.getId());
+            responseHandler.setOldFrame(this);
+            try {
+    			requestWriter.writeObject(getProfileMessage);
+    		} catch (IOException er) {
+    			// TODO Auto-generated catch block
+    			er.printStackTrace();
+    		}
+        	// editAccount();
+        });
         btnHoldsFees.addActionListener(e -> openHoldsAndFees());
         return panel;
 
@@ -334,30 +346,44 @@ public class MemberPortalFrame extends JFrame {
     }
 
     // WILL GET WORKING HOPEFULLY TONIGHT
-    private void editAccount() {
-    	/*
-        JTextField first = new JTextField(member.getFirstName());
-        JTextField last = new JTextField(member.getLastName());
-        JTextField dob = new JTextField(String.valueOf(member.getBirthday()));
-        JTextField phone = new JTextField(member.getPhone());
-        JTextField email = new JTextField(member.getEmail());
+    public void editAccount(ObjectOutputStream requestWriter, ResponseHandler responseHandler, ArrayList<String> info) {
+    	String[] names = info.getFirst().split(" ");
+        JTextField first = new JTextField(names[0]);
+        JTextField last = new JTextField(names[1]);
+        JTextField dob = new JTextField(info.get(1));
+        // JTextField phone = new JTextField(member.getPhone());
+        JTextField email = new JTextField(info.get(2));
         int res = JOptionPane.showConfirmDialog(this, new Object[]{
             "First name:", first, "Last name:", last, "Birthday (YYYY-MM-DD):", dob,
-            "Phone:", phone, "Email:", email
+            "Email:", email
         }, "Edit Account", JOptionPane.OK_CANCEL_OPTION);
         if (res == JOptionPane.OK_OPTION) {
             try {
+            	ArrayList<String> newInfo = new ArrayList<String>();
+            	Message setProfileMessage = new Message(0, message.Type.REQUEST, -1, message.Action.SET_PROFILE, Status.PENDING, newInfo);
+            	newInfo.add(first.getText().trim() + " " + last.getText().trim());
+            	newInfo.add(dob.getText());
+            	newInfo.add(email.getText());
+                responseHandler.setRequestIdExpected(setProfileMessage.getId());
+                responseHandler.setOldFrame(this);
+                try {
+        			requestWriter.writeObject(setProfileMessage);
+        		} catch (IOException er) {
+        			// TODO Auto-generated catch block
+        			er.printStackTrace();
+        		}
+            	/*
                 member.setFirstName(first.getText().trim());
                 member.setLastName(last.getText().trim());
                 member.setBirthday(LocalDate.parse(dob.getText().trim()));
                 member.setPhone(phone.getText().trim());
                 member.setEmail(email.getText().trim());
-                JOptionPane.showMessageDialog(this, "Account updated.");
+                */
+                // JOptionPane.showMessageDialog(this, "Account updated.");
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(this, "Invalid data: " + ex.getMessage());
             }
         }
-        */
     }
 
     // DON'T THINK WE NEED
