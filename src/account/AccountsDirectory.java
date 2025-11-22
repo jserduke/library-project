@@ -88,7 +88,7 @@ public class AccountsDirectory {
 				return acct;
 			}
 			
-			if (id == null && name != null && a.getFullName().equalsIgnoreCase(name)) {
+			if (id == null && name != null && acct.getFullName().equalsIgnoreCase(name)) {
 				return acct;
 			}
 		}

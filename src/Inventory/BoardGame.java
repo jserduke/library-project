@@ -27,14 +27,14 @@ public class BoardGame extends Media{ // Variables unique to BoardGame subclass
 	
 	protected BoardGame() {
 		super(MediaType.BOARD_GAME); // calls Media superclass default constructor
-		this.ageRating = Rating.Unrated;
+		this.ageRating = Rating.UNRATED;
 		this.playerCountMin = 0;
 		this.playerCountMax = 0;
 		this.gameLength = 0;
 	}
 	
 	public MediaType getMediaType() {
-		return this.mediaType;
+		return MediaType.BOARD_GAME;
 	}
 	
 	public Rating getRating() {
