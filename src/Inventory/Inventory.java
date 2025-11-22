@@ -1,8 +1,9 @@
+package Inventory;
 import java.util.ArrayList;
 
 public class Inventory {
 	private int numMedia;
-	private ArrayList<Media> mediaItems;
+	private ArrayList<Media> mediaItems; // array of Media superclass accepts subclass objects
 	
 	
 	Inventory(int newNumMedia, ArrayList<Media> newMediaItems) {
@@ -23,5 +24,7 @@ public class Inventory {
 		return this.mediaItems;
 	}
 	
-	
+	private void addMedia(Media newMedia) {
+		
+	}
 }
