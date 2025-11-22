@@ -65,6 +65,7 @@ public class WelcomeDashboardFrame extends JFrame {
                 case "Books & More" -> b.addActionListener(e -> {
                     centerCards.show(center, "CATALOG"); txtSearch.requestFocusInWindow();
                 });
+                // TODO: add old frame here
                 case "My Account" -> b.addActionListener(e -> new LoginFrame(requestWriter, responseHandler, info.getFirst()).setVisible(true));
                 case "Services" -> b.addActionListener(e -> JOptionPane.showMessageDialog(this, "Services panel coming soon."));
                 case "Calendar" -> b.addActionListener(e -> centerCards.show(center, "EVENTS"));
@@ -77,7 +78,10 @@ public class WelcomeDashboardFrame extends JFrame {
         top.add(nav);
         add(top, BorderLayout.NORTH);
 
-        btnLogin.addActionListener(e -> new LoginFrame(requestWriter, responseHandler, info.getFirst()).setVisible(true));
+        btnLogin.addActionListener(e -> {
+        	responseHandler.setOldFrame(this);
+        	new LoginFrame(requestWriter, responseHandler, info.getFirst()).setVisible(true);
+        });
         btnRegister.addActionListener(e -> new RegisterFrame(this).setVisible(true));
 
         // --- CATALOG view ----------------------------------------------------
@@ -143,7 +147,10 @@ public class WelcomeDashboardFrame extends JFrame {
         });
         // TODO: should be the same as btnSearch, I think
         cbType.addActionListener(e -> reloadResults(info, 0));
-        btnAdmin.addActionListener(e -> new LoginFrame(requestWriter, responseHandler, info.getFirst()).setVisible(true));
+        btnAdmin.addActionListener(e -> {
+        	responseHandler.setOldFrame(this);
+        	(new LoginFrame(requestWriter, responseHandler, info.getFirst())).setVisible(true);
+        });
 
         // Initial data
         setCatalogColumnsForType("All");

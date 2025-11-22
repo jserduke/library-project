@@ -68,23 +68,7 @@ public class LibraryServer {
 							// inventory = Library.getInventory();
 							// for item in inventory:
 							// add each piece of info
-							info.add("DVD");
-							info.add("1");
-							info.add("EEAAO");
-							info.add("R");
-							info.add("140 min");
-							info.add("Daniels");
-							info.add("5");
-							info.add("3");
-							
-							info.add("Book");
-							info.add("4");
-							info.add("Booksmart");
-							info.add("B. Smart");
-							info.add("1234566789");
-							info.add("Idk");
-							info.add("4");
-							info.add("0");
+							addFullInventoryDummyData(info);
 							
 							writerToClient.writeObject(messageToClient);
 						} else if (messageFromClient.getAction() == Action.GET_SEARCH) {
@@ -115,24 +99,7 @@ public class LibraryServer {
 									if (info.getFirst().equals("MEMBER")) {
 										// inventory info
 										info.add("2"); // number of inventory items returned
-										
-										info.add("DVD");
-										info.add("1");
-										info.add("EEAAO");
-										info.add("R");
-										info.add("140 min");
-										info.add("Daniels");
-										info.add("5");
-										info.add("3");
-										
-										info.add("Book");
-										info.add("4");
-										info.add("Booksmart");
-										info.add("B. Smart");
-										info.add("1234566789");
-										info.add("Idk");
-										info.add("4");
-										info.add("0");
+										addFullInventoryDummyData(info);
 										
 										// loan info
 										info.add("3");
@@ -163,13 +130,15 @@ public class LibraryServer {
 								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.CHECKOUT, Status.SUCCESS, info);
 								writerToClient.writeObject(messageToClient);
 							} else if (messageFromClient.getAction() == Action.LOGOUT) {
+								info.add("Our Little Library");
+								addFullInventoryDummyData(info);
 								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.LOGOUT, Status.SUCCESS, info);
 								writerToClient.writeObject(messageToClient);
 								
-								writerToClient.close();
-								readerFromClient.close();
-								clientSocket.close();
-								return;
+								// writerToClient.close();
+								// readerFromClient.close();
+								// clientSocket.close();
+								// return;
 							}
 						}
 						
@@ -192,5 +161,24 @@ public class LibraryServer {
 				}
 			}
 		}
+	}
+	private static void addFullInventoryDummyData(ArrayList<String> info) {
+		info.add("DVD");
+		info.add("1");
+		info.add("EEAAO");
+		info.add("R");
+		info.add("140 min");
+		info.add("Daniels");
+		info.add("5");
+		info.add("3");
+		
+		info.add("Book");
+		info.add("4");
+		info.add("Booksmart");
+		info.add("B. Smart");
+		info.add("1234566789");
+		info.add("Idk");
+		info.add("4");
+		info.add("0");
 	}
 }

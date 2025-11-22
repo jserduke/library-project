@@ -3,11 +3,13 @@ package gui;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
 import client.ResponseHandler;
+import message.*;
 
 public class MemberPortalFrame extends JFrame {
     private static final long serialVersionUID = 1L;
@@ -57,10 +59,16 @@ public class MemberPortalFrame extends JFrame {
         top.add(right, BorderLayout.EAST);
         add(top, BorderLayout.NORTH);
         btnLogout.addActionListener(e -> {
-            ArrayList<String> logoutInfo = new ArrayList<String>();
-            info.add("After Logout Library");
-        	new WelcomeDashboardFrame(null, null, logoutInfo).setVisible(true); 
-        	dispose();
+        	Message logoutMessage = new Message(0, message.Type.REQUEST, -1, message.Action.LOGOUT, Status.PENDING, null);
+        	responseHandler.setRequestIdExpected(logoutMessage.getId());
+        	responseHandler.setOldFrame(this);
+        	try {
+				requestWriter.writeObject(logoutMessage);
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+        	
         });
 
         // Split

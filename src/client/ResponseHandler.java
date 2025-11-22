@@ -11,6 +11,7 @@ public class ResponseHandler implements Runnable {
 		private final ObjectOutputStream requestWriter;
 		// private GUIPreparer guiPreparer;
 		private JFrame oldFrame;
+		private JFrame oldOldFrame;
 		private int requestIdExpected;
 		
 		public ResponseHandler(ObjectInputStream responseReader, ObjectOutputStream requestWriter) {
@@ -18,6 +19,7 @@ public class ResponseHandler implements Runnable {
 			this.requestWriter = requestWriter;
 			// this.guiPreparer = null;
 			this.oldFrame = null;
+			this.oldOldFrame = null;
 			this.requestIdExpected = -1;
 		}
 		
@@ -32,6 +34,14 @@ public class ResponseHandler implements Runnable {
 		// SET WINDOW TO BE EDITED, NULL IF NEW WINDOW WILL BE CREATED
 		public void setOldFrame(JFrame oldFrame) {
 			this.oldFrame = oldFrame;
+		}
+		
+		public JFrame getOldFrame() {
+			return oldFrame;
+		}
+		
+		public void setOldOldFrame() {
+			this.oldOldFrame = oldFrame;
 		}
 		
 		// LATEST REQUEST THAT RESPONSE SHOULD BE IN SERVICE OF FULFILLING
@@ -63,11 +73,13 @@ public class ResponseHandler implements Runnable {
 										JOptionPane.showMessageDialog(null, "Admin Login Successful! Welcome, " + response.getInfo().getFirst());
 										// GO TO ADMIN PORTAL
 										// (null /*new AdminPortalFrame(response.getInfo())*/).setVisible(true);
+										oldOldFrame.dispose();
 										oldFrame.dispose();
 									} else if (response.getInfo().getFirst().equals("MEMBER")) {
 										response.getInfo().removeFirst();
 										JOptionPane.showMessageDialog(null, "Member Login Successful! Welcome, " + response.getInfo().getFirst());
 										(new MemberPortalFrame(requestWriter, this, response.getInfo())).setVisible(true);
+										oldOldFrame.dispose();
 										oldFrame.dispose();
 									}
 								} else if (response.getStatus() == Status.FAILURE) {
@@ -83,10 +95,16 @@ public class ResponseHandler implements Runnable {
 							case Action.GET_CHECKOUTS:
 								// guiPreparer.showCheckoutHistory(new JFrame("Checkout History"), response);
 								break;
+							case Action.LOGOUT:
+								if (response.getStatus() == Status.SUCCESS) {
+									(new WelcomeDashboardFrame(requestWriter, this, response.getInfo())).setVisible(true); 
+						        	oldFrame.dispose();
+								} else if (response.getStatus() == Status.FAILURE) {
+									JOptionPane.showMessageDialog(oldFrame, "Logout Failed?");
+								}
 							// IF CASE HASN'T BEEN WRITTEN YET
 							default:
 								System.out.println("not ready yet");
-								
 						}
 					}
 				}
