@@ -8,7 +8,7 @@ public class AdminPortalFrame extends JFrame {
     private static final long serialVersionUID = 1L;
 	private final User currentUser;
 
-    public AdminPortalFrame(User user) {
+    public AdminPortalFrame(User user) { // ArrayList<String> info here
         this.currentUser = user;
         setTitle("Admin Portal — Manage Inventory");
         setSize(1000, 620);
