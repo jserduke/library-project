@@ -4,53 +4,45 @@ class DVD extends Media{
 	private Rating ageRating;
 	private int runTime;
 	
-	DVD (String newTitle, // From base class Media
-		String newPublisher, 
+	protected DVD (int newId, // For Media super() variables
+		String newTitle,
+		String newPublisher,
 		String newGenre, 
 		int newTotalQuantity,
-		int quantityAvailable, 
-		Rating newAgeRating, // Unique to DVD subclass
+		int quantityAvailable,
+		Rating newAgeRating, // Variables unique to DVD subclass
 		int newRunTime)
 	{
-		this.title = newTitle;
-		this.publisher = newPublisher;
+		super(MediaType.DVD,newId, newTitle, newPublisher, newGenre, newTotalQuantity, quantityAvailable);
 		this.ageRating =  newAgeRating;
 		this.runTime = newRunTime;
 	}
 	
-	DVD () {
-		this.title = null;
-		this.publisher = null;
-		this.genre = null;
-		this.totalQuantity = 0;
-		this.quantityAvailable = 0;
-		this.ageRating = Rating.Unrated;
+	protected DVD () { // default constructor
+		super(MediaType.DVD);
+		this.ageRating = Rating.UNRATED;
 		this.runTime = 0;
 	}
 	
-	public String getTitle() {
-		return this.title;
-	}
-	
-	public Rating getAgeRating() {
-		return this.ageRating;
+	// public getters for DVD subclass variables, returns Strings and int where appropriate
+	public String getAgeRating() {
+		return ageRating.name();
 	}
 	
 	public int getRunTime() {
 		return this.runTime;
 	}
 	
+	@Override
 	public String toString() {
-		return getTitle() + "," +
-		getAgeRating() + "," +
-		getRunTime();
+		return super.toString() +
+		getMediaType() + 
+		" Category Info:{" + 
+		ageRating.name() + ":" + getAgeRating() + 
+		",RunTime:" + getRunTime() + "}\n";
 	}
 	
-	private void setTitle(String newTitle) {
-		this.title = newTitle;
-		return;
-	}
-	
+	// private setters for DVD subclass variables
 	private void setAgeRating(Rating newAgeRating) {
 		this.ageRating = newAgeRating;
 		return;

@@ -1,31 +1,42 @@
 package Inventory;
 
-public class BoardGame extends Media{
-	private String title;
+public class BoardGame extends Media{ // Variables unique to BoardGame subclass
 	private Rating ageRating;
 	private int playerCountMin;
 	private int playerCountMax;
 	private int gameLength;
 	
-	private BoardGame(String newTitle, Rating newAgeRating, int newPlayerCountMin, int newPlayerCountMax, int newGameLength) {
-		this.title = newTitle;
-		this.ageRating = newAgeRating;
+	 // inherited from base class Media, used in super() parent constructor call
+	protected BoardGame(int newId,
+		String newTitle,
+		String newPublisher,
+		String newGenre,
+		int newTotalQuantity,
+		int newQuantityAvailable,
+		Rating newAgeRating, // unique to Boardgame subclass, used for subclass constructor call
+		int newPlayerCountMin,
+		int newPlayerCountMax,
+		int newGameLength) 
+	{
+		super(MediaType.BOARD_GAME,newId,newTitle,newPublisher,newGenre,newTotalQuantity,newQuantityAvailable);
+		this.ageRating = newAgeRating; // regular constructor for BoardGame subclass
 		this.playerCountMin = newPlayerCountMin;
 		this.playerCountMax = newPlayerCountMax;
 		this.gameLength = newGameLength;
 	}
 	
-	private BoardGame() {
-		this.title = null;
+	protected BoardGame() {
+		super(MediaType.BOARD_GAME); // calls Media superclass default constructor
 		this.ageRating = Rating.Unrated;
 		this.playerCountMin = 0;
 		this.playerCountMax = 0;
 		this.gameLength = 0;
 	}
 	
-	public String getTitle() {
-		return this.title;
+	public MediaType getMediaType() {
+		return this.mediaType;
 	}
+	
 	public Rating getRating() {
 		return ageRating;
 	}
@@ -42,18 +53,15 @@ public class BoardGame extends Media{
 		return gameLength;
 	}
 	
+	@Override
 	public String toString() {
-		return "Board Game {" +
-	"Title:" + getTitle() + 
-	", Rating:" + getRating() + 
-	", Min Players:" + getPlayerCountMin() + 
-	", Max Players:" + getPlayerCountMax() + 
-	", Game Length:" + getGameLength() + "}\n";
-	}
-	
-	private void setTitle(String newTitle) {
-		this.title = newTitle;
-		return;
+		return super.toString() +
+		getMediaType() + 
+		" Category Info:{" + 
+		ageRating.name() + ":" + getRating() + 
+		",Min Players:" + getPlayerCountMin() + 
+		",Max Players:" + getPlayerCountMax() + 
+		",Game Length:" + getGameLength() + "}\n";
 	}
 	
 	private void setRating(Rating newRating) {
@@ -68,6 +76,11 @@ public class BoardGame extends Media{
 	
 	private void setPlayerCountMax(int newPlayerCountMax) {
 		this.playerCountMax = newPlayerCountMax;
+		return;
+	}
+	
+	private void setGameLength(int newGameLength) {
+		this.gameLength = newGameLength;
 		return;
 	}
 }
