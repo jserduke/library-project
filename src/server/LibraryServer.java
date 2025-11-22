@@ -2,11 +2,10 @@ package server;
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
+import java.util.Date;
 
-import message.Action;
-import message.Message;
-import message.Status;
-import message.Type;
+import account.*;
+import message.*;
 
 public class LibraryServer {
 	public static void main(String[] args) {
@@ -51,7 +50,9 @@ public class LibraryServer {
 				writerToClient = new ObjectOutputStream(clientSocket.getOutputStream());
 				readerFromClient = new ObjectInputStream(clientSocket.getInputStream());
 				Message messageFromClient = null, messageToClient = null;
-				boolean isLoggedIn = false;
+				AccountsDirectory accountsDirectory = new AccountsDirectory();
+				accountsDirectory.registerNewAccount(Permission.MEMBER, "test@test.test", "test123", "Tester Testington", new Date(2024 - 1900, 0, 1));
+				Account account = null;
 				try {
 					while (true) {
 						messageFromClient = (Message) readerFromClient.readObject();
@@ -67,23 +68,7 @@ public class LibraryServer {
 							// inventory = Library.getInventory();
 							// for item in inventory:
 							// add each piece of info
-							info.add("DVD");
-							info.add("1");
-							info.add("EEAAO");
-							info.add("R");
-							info.add("140 min");
-							info.add("Daniels");
-							info.add("5");
-							info.add("3");
-							
-							info.add("Book");
-							info.add("4");
-							info.add("Booksmart");
-							info.add("B. Smart");
-							info.add("1234566789");
-							info.add("Idk");
-							info.add("4");
-							info.add("0");
+							addFullInventoryDummyData(info);
 							
 							writerToClient.writeObject(messageToClient);
 						} else if (messageFromClient.getAction() == Action.GET_SEARCH) {
@@ -102,13 +87,46 @@ public class LibraryServer {
 							info.add("0");
 							
 							writerToClient.writeObject(messageToClient);
-						} else if (!isLoggedIn) {
-							// System.out.println("In");
+						} else if (account == null) {
 							if (messageFromClient.getAction() == Action.LOGIN) {
-								isLoggedIn = true;
-								info.add("Jason");
-								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.LOGIN, Status.SUCCESS, info);
+								account = accountsDirectory.login(messageFromClient.getInfo().getFirst(), messageFromClient.getInfo().getLast());
+								if (account == null) {
+									messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.LOGIN, Status.FAILURE, null);
+								} else {
+									info.add(account instanceof Admin ? "ADMIN" : "MEMBER");
+									info.add(account.getFullName());
+									if (info.getFirst().equals("MEMBER")) {
+										// inventory info
+										info.add("2"); // number of inventory items returned
+										addFullInventoryDummyData(info);
+										
+										// loan info
+										info.add("3");
+										info.add("BOOK");
+										info.add("3");
+										info.add("TITLE");
+										info.add("2025-11-15");
+										info.add("2025-12-01");
+										info.add("4");
+										info.add("");
+									}
+									messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.LOGIN, Status.SUCCESS, info);
+								}
+							} else if (messageFromClient.getAction() == Action.REGISTER) {
+								Account newAccount = accountsDirectory.registerNewAccount(Permission.MEMBER,
+										messageFromClient.getInfo().getFirst(), messageFromClient.getInfo().get(1),
+										messageFromClient.getInfo().get(2), new Date(messageFromClient.getInfo().getLast()));
+								if (newAccount != null) {
+									System.out.println(newAccount);
+									System.out.println(newAccount.getBirthday());
+									messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.REGISTER, Status.SUCCESS, info);
+								} else {
+									info.add("Account associated with this email address already exists");
+									messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.REGISTER, Status.FAILURE, info);
+								}
+								
 							} else {
+								info.add("This action is not valid until login!");
 								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.LOGIN, Status.FAILURE, info);
 							}
 							writerToClient.writeObject(messageToClient);
@@ -123,14 +141,31 @@ public class LibraryServer {
 								info.add("Networking 101 successfully checked out!");
 								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.CHECKOUT, Status.SUCCESS, info);
 								writerToClient.writeObject(messageToClient);
-							} else if (messageFromClient.getAction() == Action.LOGOUT) {
+							} else if (messageFromClient.getAction() == Action.GET_PROFILE) {
+								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.GET_PROFILE, Status.SUCCESS, info);
+								info.add(account.getFullName());
+								info.add(account.getBirthday().toString());
+								info.add(account.getEmail());
+								writerToClient.writeObject(messageToClient);
+							} else if (messageFromClient.getAction() == Action.SET_PROFILE) {
+								account.setFullName(messageFromClient.getInfo().getFirst());
+								account.setBirthday(new Date(messageFromClient.getInfo().get(1)));
+								account.setEmail(messageFromClient.getInfo().get(2));
+								System.out.println(account);
+								System.out.println(account.getBirthday());
+								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.SET_PROFILE, Status.SUCCESS, null);
+								writerToClient.writeObject(messageToClient);
+							}
+							else if (messageFromClient.getAction() == Action.LOGOUT) {
+								info.add("Our Little Library");
+								addFullInventoryDummyData(info);
 								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.LOGOUT, Status.SUCCESS, info);
 								writerToClient.writeObject(messageToClient);
 								
-								writerToClient.close();
-								readerFromClient.close();
-								clientSocket.close();
-								return;
+								// writerToClient.close();
+								// readerFromClient.close();
+								// clientSocket.close();
+								// return;
 							}
 						}
 						
@@ -153,5 +188,24 @@ public class LibraryServer {
 				}
 			}
 		}
+	}
+	private static void addFullInventoryDummyData(ArrayList<String> info) {
+		info.add("DVD");
+		info.add("1");
+		info.add("EEAAO");
+		info.add("R");
+		info.add("140 min");
+		info.add("Daniels");
+		info.add("5");
+		info.add("3");
+		
+		info.add("Book");
+		info.add("4");
+		info.add("Booksmart");
+		info.add("B. Smart");
+		info.add("1234566789");
+		info.add("Idk");
+		info.add("4");
+		info.add("0");
 	}
 }

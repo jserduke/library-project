@@ -2,15 +2,17 @@ package client;
 import java.io.*;
 import javax.swing.*;
 
-import gui.WelcomeDashboardFrame;
+import gui.*;
 import message.Action;
-import message.Message;
+import message.*;
 
 public class ResponseHandler implements Runnable {
 		private final ObjectInputStream responseReader;
 		private final ObjectOutputStream requestWriter;
 		// private GUIPreparer guiPreparer;
 		private JFrame oldFrame;
+		private JFrame oldOldFrame;
+		private JDialog oldDialog;
 		private int requestIdExpected;
 		
 		public ResponseHandler(ObjectInputStream responseReader, ObjectOutputStream requestWriter) {
@@ -18,6 +20,8 @@ public class ResponseHandler implements Runnable {
 			this.requestWriter = requestWriter;
 			// this.guiPreparer = null;
 			this.oldFrame = null;
+			this.oldOldFrame = null;
+			this.oldDialog = null;
 			this.requestIdExpected = -1;
 		}
 		
@@ -32,6 +36,18 @@ public class ResponseHandler implements Runnable {
 		// SET WINDOW TO BE EDITED, NULL IF NEW WINDOW WILL BE CREATED
 		public void setOldFrame(JFrame oldFrame) {
 			this.oldFrame = oldFrame;
+		}
+		
+		public JFrame getOldFrame() {
+			return oldFrame;
+		}
+		
+		public void setOldOldFrame() {
+			this.oldOldFrame = oldFrame;
+		}
+		
+		public void setOldDialog(JDialog oldDialog) {
+			this.oldDialog = oldDialog;
 		}
 		
 		// LATEST REQUEST THAT RESPONSE SHOULD BE IN SERVICE OF FULFILLING
@@ -54,10 +70,37 @@ public class ResponseHandler implements Runnable {
 								SwingUtilities.invokeLater(() -> new WelcomeDashboardFrame(requestWriter, this, response.getInfo()).setVisible(true));
 								break;
 							case Action.GET_SEARCH:
-								((WelcomeDashboardFrame) oldFrame).reloadResults(response.getInfo());
+								((WelcomeDashboardFrame) oldFrame).reloadResults(response.getInfo(), 0);
+								break;
+							case Action.REGISTER:
+								if (response.getStatus() == Status.SUCCESS) {
+									JOptionPane.showMessageDialog(oldDialog, "Account created. You can now log in.");
+									oldDialog.dispose();
+								} else if (response.getStatus() == Status.FAILURE) {
+									JOptionPane.showMessageDialog(oldDialog, "Something went wrong :(\n" + response.getInfo().getFirst());
+								}
 								break;
 							case Action.LOGIN:
-								// guiPreparer.updateHomePageToLoggedIn(frame, response);
+								if (response.getStatus() == Status.SUCCESS) {
+									if (response.getInfo().getFirst().equals("ADMIN")) {
+										response.getInfo().removeFirst();
+										JOptionPane.showMessageDialog(null, "Admin Login Successful! Welcome, " + response.getInfo().getFirst());
+										// GO TO ADMIN PORTAL
+										// (null /*new AdminPortalFrame(response.getInfo())*/).setVisible(true);
+										oldOldFrame.dispose();
+										oldFrame.dispose();
+									} else if (response.getInfo().getFirst().equals("MEMBER")) {
+										response.getInfo().removeFirst();
+										JOptionPane.showMessageDialog(null, "Member Login Successful! Welcome, " + response.getInfo().getFirst());
+										(new MemberPortalFrame(requestWriter, this, response.getInfo())).setVisible(true);
+										oldOldFrame.dispose();
+										oldFrame.dispose();
+									}
+								} else if (response.getStatus() == Status.FAILURE) {
+									JOptionPane.showMessageDialog(null, "Login Failed :(");
+								} else {
+									JOptionPane.showMessageDialog(null, "Huh?");
+								}
 								break;
 							case Action.CHECKOUT:
 								// WHEN RESPONSE RECEIVED, JUST LET USER KNOW THAT CHECKOUT WAS SUCCESSFUL
@@ -66,10 +109,31 @@ public class ResponseHandler implements Runnable {
 							case Action.GET_CHECKOUTS:
 								// guiPreparer.showCheckoutHistory(new JFrame("Checkout History"), response);
 								break;
+							case Action.GET_PROFILE:
+								if (response.getStatus() == Status.SUCCESS) {
+									((MemberPortalFrame) oldFrame).editAccount(requestWriter, this, response.getInfo());
+								} else if (response.getStatus() == Status.FAILURE) {
+									JOptionPane.showMessageDialog(oldFrame, "Failed to retrieve profile information");
+								}
+								break;
+							case Action.SET_PROFILE:
+								if (response.getStatus() == Status.SUCCESS) {
+									JOptionPane.showMessageDialog(oldFrame, "Your account was successfully updated!");
+								} else if (response.getStatus() == Status.FAILURE) {
+									JOptionPane.showMessageDialog(oldFrame, "There was a problem with editing your profile.");
+								}
+								break;
+							case Action.LOGOUT:
+								if (response.getStatus() == Status.SUCCESS) {
+									(new WelcomeDashboardFrame(requestWriter, this, response.getInfo())).setVisible(true); 
+						        	oldFrame.dispose();
+								} else if (response.getStatus() == Status.FAILURE) {
+									JOptionPane.showMessageDialog(oldFrame, "Logout Failed?");
+								}
+								break;
 							// IF CASE HASN'T BEEN WRITTEN YET
 							default:
 								System.out.println("not ready yet");
-								
 						}
 					}
 				}
