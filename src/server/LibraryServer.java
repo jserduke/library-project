@@ -88,7 +88,6 @@ public class LibraryServer {
 							
 							writerToClient.writeObject(messageToClient);
 						} else if (account == null) {
-							// System.out.println("In");
 							if (messageFromClient.getAction() == Action.LOGIN) {
 								account = accountsDirectory.login(messageFromClient.getInfo().getFirst(), messageFromClient.getInfo().getLast());
 								if (account == null) {
@@ -113,6 +112,19 @@ public class LibraryServer {
 									}
 									messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.LOGIN, Status.SUCCESS, info);
 								}
+							} else if (messageFromClient.getAction() == Action.REGISTER) {
+								Account newAccount = accountsDirectory.registerNewAccount(Permission.MEMBER,
+										messageFromClient.getInfo().getFirst(), messageFromClient.getInfo().get(1),
+										messageFromClient.getInfo().get(2), new Date(messageFromClient.getInfo().getLast()));
+								if (newAccount != null) {
+									System.out.println(newAccount);
+									System.out.println(newAccount.getBirthday());
+									messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.REGISTER, Status.SUCCESS, info);
+								} else {
+									info.add("Account associated with this email address already exists");
+									messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.REGISTER, Status.FAILURE, info);
+								}
+								
 							} else {
 								info.add("This action is not valid until login!");
 								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.LOGIN, Status.FAILURE, info);
@@ -139,8 +151,8 @@ public class LibraryServer {
 								account.setFullName(messageFromClient.getInfo().getFirst());
 								account.setBirthday(new Date(messageFromClient.getInfo().get(1)));
 								account.setEmail(messageFromClient.getInfo().get(2));
-								System.out.println(account.getBirthday());
 								System.out.println(account);
+								System.out.println(account.getBirthday());
 								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.SET_PROFILE, Status.SUCCESS, null);
 								writerToClient.writeObject(messageToClient);
 							}

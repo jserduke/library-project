@@ -12,6 +12,7 @@ public class ResponseHandler implements Runnable {
 		// private GUIPreparer guiPreparer;
 		private JFrame oldFrame;
 		private JFrame oldOldFrame;
+		private JDialog oldDialog;
 		private int requestIdExpected;
 		
 		public ResponseHandler(ObjectInputStream responseReader, ObjectOutputStream requestWriter) {
@@ -20,6 +21,7 @@ public class ResponseHandler implements Runnable {
 			// this.guiPreparer = null;
 			this.oldFrame = null;
 			this.oldOldFrame = null;
+			this.oldDialog = null;
 			this.requestIdExpected = -1;
 		}
 		
@@ -36,8 +38,16 @@ public class ResponseHandler implements Runnable {
 			this.oldFrame = oldFrame;
 		}
 		
+		public JFrame getOldFrame() {
+			return oldFrame;
+		}
+		
 		public void setOldOldFrame() {
 			this.oldOldFrame = oldFrame;
+		}
+		
+		public void setOldDialog(JDialog oldDialog) {
+			this.oldDialog = oldDialog;
 		}
 		
 		// LATEST REQUEST THAT RESPONSE SHOULD BE IN SERVICE OF FULFILLING
@@ -61,6 +71,14 @@ public class ResponseHandler implements Runnable {
 								break;
 							case Action.GET_SEARCH:
 								((WelcomeDashboardFrame) oldFrame).reloadResults(response.getInfo(), 0);
+								break;
+							case Action.REGISTER:
+								if (response.getStatus() == Status.SUCCESS) {
+									JOptionPane.showMessageDialog(oldDialog, "Account created. You can now log in.");
+									oldDialog.dispose();
+								} else if (response.getStatus() == Status.FAILURE) {
+									JOptionPane.showMessageDialog(oldDialog, "Something went wrong :(\n" + response.getInfo().getFirst());
+								}
 								break;
 							case Action.LOGIN:
 								if (response.getStatus() == Status.SUCCESS) {

@@ -85,7 +85,10 @@ public class WelcomeDashboardFrame extends JFrame {
         	responseHandler.setOldFrame(this);
         	new LoginFrame(requestWriter, responseHandler, info.getFirst()).setVisible(true);
         });
-        btnRegister.addActionListener(e -> new RegisterFrame(this).setVisible(true));
+        btnRegister.addActionListener(e -> {
+        	responseHandler.setOldFrame(this);
+        	new RegisterFrame(this, requestWriter, responseHandler).setVisible(true);
+        });
 
         // --- CATALOG view ----------------------------------------------------
         JPanel catalog = new JPanel(new BorderLayout());

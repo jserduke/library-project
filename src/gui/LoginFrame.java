@@ -60,7 +60,11 @@ public class LoginFrame extends JFrame {
         add(btns, BorderLayout.SOUTH);
 
         btnLogin.addActionListener(e -> doLogin(requestWriter, responseHandler));
-        btnRegister.addActionListener(e -> new RegisterFrame(this).setVisible(true));
+        btnRegister.addActionListener(e -> {
+        	dispose();
+        	new RegisterFrame(responseHandler.getOldFrame(), requestWriter, responseHandler).setVisible(true);
+        });
+        
     }
 
     private void doLogin(ObjectOutputStream requestWriter, ResponseHandler responseHandler) {

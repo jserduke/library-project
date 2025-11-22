@@ -1,19 +1,28 @@
 package gui;
 
 import javax.swing.*;
+
+import client.ResponseHandler;
+
 import java.awt.*;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Date;
+
+import message.*;
 
 public class RegisterFrame extends JDialog {
     private static final long serialVersionUID = 1L;
 	private JTextField txtFirst = new JTextField(12);
     private JTextField txtLast  = new JTextField(12);
     private JTextField txtBirth = new JTextField(10); // YYYY-MM-DD
-    private JTextField txtPhone = new JTextField(12);
+    // private JTextField txtPhone = new JTextField(12);
     private JTextField txtEmail = new JTextField(16);
     private JPasswordField txtPass = new JPasswordField(12);
 
-    public RegisterFrame(Window parent) {
+    public RegisterFrame(Window parent, ObjectOutputStream requestWriter, ResponseHandler responseHandler) {
         super(parent, "Create Account", ModalityType.APPLICATION_MODAL);
         setSize(420, 300);
         setLocationRelativeTo(parent);
@@ -31,8 +40,6 @@ public class RegisterFrame extends JDialog {
         gbc.gridy++; 
         form.add(new JLabel("Birthday (YYYY-MM-DD):"), gbc);
         gbc.gridy++;
-        form.add(new JLabel("Phone:"), gbc);
-        gbc.gridy++; 
         form.add(new JLabel("Email (username):"), gbc);
         gbc.gridy++; 
         form.add(new JLabel("Password:"), gbc);
@@ -45,9 +52,7 @@ public class RegisterFrame extends JDialog {
         form.add(txtLast, gbc);
         gbc.gridy++; 
         form.add(txtBirth, gbc);
-        gbc.gridy++; 
-        form.add(txtPhone, gbc);
-        gbc.gridy++; 
+        gbc.gridy++;
         form.add(txtEmail, gbc);
         gbc.gridy++;
         form.add(txtPass, gbc);
@@ -61,16 +66,17 @@ public class RegisterFrame extends JDialog {
         add(form, BorderLayout.CENTER);
         add(btns, BorderLayout.SOUTH);
 
-        btnCreate.addActionListener(e -> create());
+        btnCreate.addActionListener(e -> create(requestWriter, responseHandler));
         btnCancel.addActionListener(e -> dispose());
     }
 
-    private void create() {
+    private void create(ObjectOutputStream requestWriter, ResponseHandler responseHandler) {
         try {
             String first = txtFirst.getText().trim();
             String last  = txtLast.getText().trim();
-            LocalDate dob = LocalDate.parse(txtBirth.getText().trim());
-            String phone = txtPhone.getText().trim();
+            String dobString = txtBirth.getText().trim();
+            String[] dobParts = dobString.split("-");
+            Date dob = new Date(Integer.parseInt(dobParts[0]) - 1900, Integer.parseInt(dobParts[1]) - 1, Integer.parseInt(dobParts[2]));
             String email = txtEmail.getText().trim();
             String pass  = new String(txtPass.getPassword());
 
@@ -78,18 +84,36 @@ public class RegisterFrame extends JDialog {
                 JOptionPane.showMessageDialog(this, "Please fill all required fields.");
                 return;
             }
+            
+            ArrayList<String> info = new ArrayList<String>();
+            Message registrationMessage = new Message(0, message.Type.REQUEST, -1, message.Action.REGISTER, Status.PENDING, info);
+            info.add(email);
+            info.add(pass);
+            info.add(first + " " + last);
+            info.add(dob.toString());
+            responseHandler.setRequestIdExpected(registrationMessage.getId());
+            responseHandler.setOldDialog(this);
+            try {
+    			requestWriter.writeObject(registrationMessage);
+    		} catch (IOException e) {
+    			// TODO Auto-generated catch block
+    			e.printStackTrace();
+    		}
+
+            /*
             if (LibraryData.findUser(email, pass) != null) {
                 JOptionPane.showMessageDialog(this, "User already exists.");
                 return;
             }
             int id = LibraryData.nextMemberId();
-            Member m = new Member(id, first, last, dob, phone, email);
+            Member m = new Member(id, first, last, dob, "", email);
             LibraryData.MEMBERS.add(m);
             User u = new User(email, pass, User.Role.USER);
             u.setMemberId(id);
             LibraryData.USERS.add(u);
             JOptionPane.showMessageDialog(this, "Account created. You can now log in.");
-            dispose();
+            */
+            // dispose();
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Invalid data: " + ex.getMessage());
         }
