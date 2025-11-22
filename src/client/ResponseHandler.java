@@ -87,7 +87,7 @@ public class ResponseHandler implements Runnable {
 										JOptionPane.showMessageDialog(null, "Admin Login Successful! Welcome, " + response.getInfo().getFirst());
 										response.getInfo().removeFirst();
 										// GO TO ADMIN PORTAL
-										(new AdminPortalFrame(response.getInfo())).setVisible(true);
+										(new AdminPortalFrame(requestWriter, this, response.getInfo())).setVisible(true);
 										oldOldFrame.dispose();
 										oldFrame.dispose();
 									} else if (response.getInfo().getFirst().equals("MEMBER")) {

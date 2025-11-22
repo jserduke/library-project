@@ -185,6 +185,7 @@ public class LibraryServer {
 								writerToClient.writeObject(messageToClient);
 							}
 							else if (messageFromClient.getAction() == Action.LOGOUT) {
+								account = null;
 								info.add("Our Little Library");
 								addFullInventoryDummyData(info);
 								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.LOGOUT, Status.SUCCESS, info);

@@ -2,14 +2,21 @@ package gui;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+
+import client.ResponseHandler;
+import message.Message;
+import message.Status;
+
 import java.awt.*;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
 public class AdminPortalFrame extends JFrame {
     private static final long serialVersionUID = 1L;
 	// private final User currentUser;
 
-    public AdminPortalFrame(ArrayList<String> info) {
+    public AdminPortalFrame(ObjectOutputStream requestWriter, ResponseHandler responseHandler, ArrayList<String> info) {
         // this.currentUser = user;
         setTitle("Admin Portal — Manage Inventory");
         setSize(1000, 620);
@@ -41,8 +48,20 @@ public class AdminPortalFrame extends JFrame {
             AdminHoldsAndFeesDialog dialog = new AdminHoldsAndFeesDialog(this);
             dialog.setVisible(true);
         });
-
-
+        
+        btnLogout.addActionListener(e -> {
+        	responseHandler.setOldFrame(this);
+        	Message logoutMessage = new Message(0, message.Type.REQUEST, -1, message.Action.LOGOUT, Status.PENDING, null);
+        	responseHandler.setRequestIdExpected(logoutMessage.getId());
+        	responseHandler.setOldFrame(this);
+        	try {
+				requestWriter.writeObject(logoutMessage);
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+        });
+        
         add(new ManageInventoryPanel(info), BorderLayout.CENTER);
     }
 

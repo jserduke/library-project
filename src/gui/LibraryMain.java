@@ -15,6 +15,7 @@ public class LibraryMain {
     	(new MemberPortalFrame(found)).setVisible(true);
     	*/
     	// User found = LibraryData.findUser("admin", "admin123");
+    	/*
     	ArrayList<String> info = new ArrayList<String>();
     	info.add("BOOK");
     	info.add("1");
@@ -43,5 +44,6 @@ public class LibraryMain {
     	info.add("5");
     	info.add("5");
     	(new AdminPortalFrame(info)).setVisible(true);
+    	*/
     }
 }
