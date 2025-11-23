@@ -33,9 +33,9 @@ public class BoardGame extends Media{ // Variables unique to BoardGame subclass
 		this.gameLength = 0;
 	}
 	
-//	public MediaType getMediaType() {
-//		return this.mediaType;
-//	}
+	public MediaType getMediaType() {
+		return MediaType.BOARD_GAME;
+	}
 	
 	public Rating getRating() {
 		return ageRating;

@@ -36,8 +36,8 @@ abstract class Media {
 	}
 	
 	// public getters for Media superclass variables
-	public String getMediaType() {
-		return this.mediaType.name();
+	public MediaType getMediaType() {
+		return this.mediaType;
 	}
 
 	public int getId() {

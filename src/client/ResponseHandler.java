@@ -87,16 +87,33 @@ public class ResponseHandler implements Runnable {
 									if (response.getInfo().getFirst().equals("ADMIN")) {
 										response.getInfo().removeFirst();
 										JOptionPane.showMessageDialog(null, "Admin Login Successful! Welcome, " + response.getInfo().getFirst());
+										response.getInfo().removeFirst();
 										// GO TO ADMIN PORTAL
-										// (null /*new AdminPortalFrame(response.getInfo())*/).setVisible(true);
+										(new AdminPortalFrame(requestWriter, this, response.getInfo())).setVisible(true);
 										oldOldFrame.dispose();
 										oldFrame.dispose();
 									} else if (response.getInfo().getFirst().equals("MEMBER")) {
 										response.getInfo().removeFirst();
 										JOptionPane.showMessageDialog(null, "Member Login Successful! Welcome, " + response.getInfo().getFirst());
-										(new MemberPortalFrame(requestWriter, this, response.getInfo())).setVisible(true);
+										
+//										(new MemberPortalFrame(requestWriter, this, response.getInfo())).setVisible(true);
+										MemberPortalFrame f = new MemberPortalFrame(requestWriter, this, response.getInfo());
+										f.setVisible(true);
 										oldOldFrame.dispose();
 										oldFrame.dispose();
+										this.setOldFrame(f);
+										
+										ArrayList<String> dummy = new ArrayList<>();
+										Message dashboard = new Message(0, message.Type.REQUEST, -1, message.Action.GET_DASHBOARD, Status.PENDING, dummy);
+//										this.setOldFrame(null);
+										this.setRequestIdExpected(dashboard.getId());
+//										requestWriter.writeObject(dashboard);
+										
+										try {
+											requestWriter.writeObject(dashboard);
+										} catch (IOException ex) {
+											ex.printStackTrace();
+										}
 									}
 								} else if (response.getStatus() == Status.FAILURE) {
 									JOptionPane.showMessageDialog(null, "Login Failed :(");
@@ -108,7 +125,28 @@ public class ResponseHandler implements Runnable {
 								// WHEN RESPONSE RECEIVED, JUST LET USER KNOW THAT CHECKOUT WAS SUCCESSFUL
 								JOptionPane.showMessageDialog(oldFrame, "Your checkout was successfully made!", "Checkout", JOptionPane.INFORMATION_MESSAGE);
 								
+								ArrayList<String> dummy1 = new ArrayList<>();
+								Message refresh1 = new Message(0, message.Type.REQUEST, -1, message.Action.GET_CHECKOUTS, Status.PENDING, dummy1);
+								this.setRequestIdExpected(refresh1.getId());
+								this.setOldFrame(oldFrame);
+								try {
+									requestWriter.writeObject(refresh1);
+								} catch (IOException e) {
+									e.printStackTrace();
+								}
 								break;
+							case Action.RETURN:
+								JOptionPane.showMessageDialog(oldFrame, "Your return was successfully made!", "Return", JOptionPane.INFORMATION_MESSAGE);
+								
+								ArrayList<String> dummy2 = new ArrayList<>();
+								Message refresh2 = new Message(0, message.Type.REQUEST, -1, message.Action.GET_CHECKOUTS, Status.PENDING, dummy2);
+								this.setRequestIdExpected(refresh2.getId());
+								this.setOldFrame(oldFrame);
+								try {
+									requestWriter.writeObject(refresh2);
+								} catch (IOException e) {
+									e.printStackTrace();
+								}
 							case Action.GET_CHECKOUTS:
 								// guiPreparer.showCheckoutHistory(new JFrame("Checkout History"), response);
 								ArrayList<String> info = response.getInfo();

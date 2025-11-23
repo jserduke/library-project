@@ -108,9 +108,8 @@ public class LibraryServer {
 									
 									info.add(account instanceof Admin ? "ADMIN" : "MEMBER");
 									info.add(account.getFullName());
-									info.add(account.getEmail());
-									info.add(account.getBirthday().toString());
-									info.add(String.valueOf(account.getId()));
+								    addFullInventoryDummyData(info);
+								    
 //									Commenting out for now in case code doesn't work or to go back to something that does work									
 //									if (info.getFirst().equals("MEMBER")) {
 //										// inventory info
@@ -201,7 +200,7 @@ public class LibraryServer {
 									messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.CHECKOUT, Status.FAILURE, info);
 								} else {
 									String filename = "loans_" + account.getId() + ".txt";
-									loanRepository.loadLoansFromFile(filename);
+									loanRepository.saveLoansToFile(filename);
 									
 									info.add("Checkout successful!");	
 									messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.CHECKOUT, Status.SUCCESS, info);
@@ -218,7 +217,7 @@ public class LibraryServer {
 									messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.RETURN, Status.FAILURE, info);
 								} else {
 									String filename = "loans_" + account.getId() + ".txt";
-									loanRepository.loadLoansFromFile(filename);
+									loanRepository.saveLoansToFile(filename);
 									
 									info.add("Return successfull!");
 									messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.RETURN, Status.SUCCESS, info);

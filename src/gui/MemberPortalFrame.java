@@ -79,8 +79,21 @@ public class MemberPortalFrame extends JFrame {
         split.setBottomComponent(buildLoansPanel());
         add(split, BorderLayout.CENTER);
 
-        reloadCatalog(info, 2);
-        reloadLoans(info, 2 + Integer.parseInt(info.get(1)) * 8);
+//		  Commenting this out for now
+//        reloadCatalog(info, 2);
+//        reloadLoans(info, 2 + Integer.parseInt(info.get(1)) * 8);
+        ArrayList<String> dummy = new ArrayList<>();
+		Message dashboard = new Message(0, message.Type.REQUEST, -1, message.Action.GET_DASHBOARD, Status.PENDING, dummy);
+		responseHandler.setRequestIdExpected(dashboard.getId());
+		responseHandler.setOldFrame(this);
+		
+		try {
+			requestWriter.writeObject(dashboard);
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		setVisible(true);
     }
 
     /*

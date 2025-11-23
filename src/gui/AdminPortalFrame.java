@@ -2,14 +2,22 @@ package gui;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+
+import client.ResponseHandler;
+import message.Message;
+import message.Status;
+
 import java.awt.*;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 
 public class AdminPortalFrame extends JFrame {
     private static final long serialVersionUID = 1L;
-	private final User currentUser;
+	// private final User currentUser;
 
-    public AdminPortalFrame(User user) { // ArrayList<String> info here
-        this.currentUser = user;
+    public AdminPortalFrame(ObjectOutputStream requestWriter, ResponseHandler responseHandler, ArrayList<String> info) {
+        // this.currentUser = user;
         setTitle("Admin Portal — Manage Inventory");
         setSize(1000, 620);
         setLocationRelativeTo(null);
@@ -40,14 +48,28 @@ public class AdminPortalFrame extends JFrame {
             AdminHoldsAndFeesDialog dialog = new AdminHoldsAndFeesDialog(this);
             dialog.setVisible(true);
         });
-
-
-        add(new ManageInventoryPanel(), BorderLayout.CENTER);
+        
+        btnLogout.addActionListener(e -> {
+        	responseHandler.setOldFrame(this);
+        	Message logoutMessage = new Message(0, message.Type.REQUEST, -1, message.Action.LOGOUT, Status.PENDING, null);
+        	responseHandler.setRequestIdExpected(logoutMessage.getId());
+        	responseHandler.setOldFrame(this);
+        	try {
+				requestWriter.writeObject(logoutMessage);
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+        });
+        
+        add(new ManageInventoryPanel(info), BorderLayout.CENTER);
     }
 
+    /*
     public User getCurrentUser() {
 		return currentUser;
 	}
+	*/
 
 	// Embedded manage-inventory panel
     static class ManageInventoryPanel extends JPanel {
@@ -82,14 +104,14 @@ public class AdminPortalFrame extends JFrame {
         };
         private JTable gamesTable = new JTable(gamesModel);
 
-        public ManageInventoryPanel() {
+        public ManageInventoryPanel(ArrayList<String> info) {
             setLayout(new BorderLayout());
 
             tabs.add("Books", buildBooks());
             tabs.add("DVDs", buildDvds());
             tabs.add("Board Games", buildGames());
             add(tabs, BorderLayout.CENTER);
-            reloadAll();
+            reloadAll(info);
         }
 
         private JPanel buildBooks() {
@@ -162,7 +184,54 @@ public class AdminPortalFrame extends JFrame {
             return p;
         }
 
-        private void reloadAll() {
+        public void reloadAll(ArrayList<String> info) {
+        	System.out.println(info);
+        	booksModel.setRowCount(0);
+        	dvdsModel.setRowCount(0);
+        	gamesModel.setRowCount(0);
+        	for (int i = 0; i < info.size(); ) {
+        		System.out.println("i: " + i);
+        		if (info.get(i).equals("BOOK")) {
+        			i += 1;
+        			booksModel.addRow(new Object[] {
+        				info.get(i++),
+        				info.get(i++),
+        				info.get(i++),
+        				info.get(i++),
+        				info.get(i++),
+        				info.get(i++),
+        				info.get(i++),
+        				info.get(i++)
+        			});
+        			continue;
+        		} else if (info.get(i).equals("DVD")) {
+        			i += 1;
+        			dvdsModel.addRow(new Object[] {
+            			info.get(i++),
+            			info.get(i++),
+            			info.get(i++),
+            			info.get(i++),
+            			info.get(i++),
+            			info.get(i++)
+            		});
+        			continue;
+        		} else if (info.get(i).equals("BOARD_GAME")) {
+        			i += 1;
+        			gamesModel.addRow(new Object[] {
+            			info.get(i++),
+            			info.get(i++),
+            			info.get(i++),
+            			info.get(i++),
+            			info.get(i++),
+            			info.get(i++),
+            			info.get(i++)
+            		});
+        			continue;
+            	} else {
+            		System.out.println("Media of unknown type encountered");
+            	}
+        	}
+        	/*
             booksModel.setRowCount(0);
             for (Book b : LibraryData.BOOKS) {
                 booksModel.addRow(new Object[]{
@@ -199,6 +268,7 @@ public class AdminPortalFrame extends JFrame {
                     LibraryData.availableCountForBoardGame(g.getId())
                 });
             }
+            */
         }
 
         private void addBook() {
@@ -221,7 +291,7 @@ public class AdminPortalFrame extends JFrame {
                     publisher.getText().trim(), 
                     genre.getText().trim(), 
                     (Integer)qty.getValue()));
-                reloadAll();
+                reloadAll(null); // TODO: fix later
             }
         }
         private void editBook() {
@@ -256,7 +326,7 @@ public class AdminPortalFrame extends JFrame {
                 found.setPublisher(publisher.getText().trim());
                 found.setGenre(genre.getText().trim());
                 found.setTotalQuantity((Integer)qty.getValue());
-                reloadAll();
+                reloadAll(null); // TODO: fix later
             }
         }
         private void deleteBook() {
@@ -265,7 +335,7 @@ public class AdminPortalFrame extends JFrame {
             	return;
             int id = (Integer) booksModel.getValueAt(row, 0);
             LibraryData.BOOKS.removeIf(b -> b.getId()==id);
-            reloadAll();
+            reloadAll(null); // TODO: fix later
         }
 
         private void addDvd() {
@@ -282,7 +352,7 @@ public class AdminPortalFrame extends JFrame {
                 		rating.getText().trim(),
                     (Integer)runtime.getValue(), 
                     (Integer)qty.getValue()));
-                reloadAll();
+                reloadAll(null); // TODO: fix later
             }
         }
         private void editDvd() {
@@ -314,7 +384,7 @@ public class AdminPortalFrame extends JFrame {
                 found.setRating(rating.getText().trim());
                 found.setRuntimeMinutes((Integer)runtime.getValue());
                 found.setTotalQuantity((Integer)qty.getValue());
-                reloadAll();
+                reloadAll(null); // TODO: fix later
             }
         }
         private void deleteDvd() {
@@ -322,7 +392,7 @@ public class AdminPortalFrame extends JFrame {
             	return;
             int id = (Integer) dvdsModel.getValueAt(row, 0);
             LibraryData.DVDS.removeIf(d -> d.getId()==id);
-            reloadAll();
+            reloadAll(null); // TODO: fix later
         }
 
         private void addGame() {
@@ -343,7 +413,7 @@ public class AdminPortalFrame extends JFrame {
                     players.getText().trim(), 
                     (Integer)length.getValue(),
                     (Integer)qty.getValue()));
-                reloadAll();
+                reloadAll(null); // TODO: fix later
             }
         }
         private void editGame() {
@@ -377,7 +447,7 @@ public class AdminPortalFrame extends JFrame {
                 found.setPlayerCount(players.getText().trim());
                 found.setGameLengthMinutes((Integer)length.getValue());
                 found.setTotalQuantity((Integer)qty.getValue());
-                reloadAll();
+                reloadAll(null); // TODO: fix later
             }
         }
         private void deleteGame() {
@@ -386,7 +456,7 @@ public class AdminPortalFrame extends JFrame {
             	return;
             int id = (Integer) gamesModel.getValueAt(row, 0);
             LibraryData.BOARD_GAMES.removeIf(g -> g.getId()==id);
-            reloadAll();
+            reloadAll(null); // TODO: fix later
         }
     }
 }
