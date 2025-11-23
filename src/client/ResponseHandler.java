@@ -69,7 +69,14 @@ public class ResponseHandler implements Runnable {
 					} else {
 						switch (response.getAction()) {
 							case Action.GET_DASHBOARD:
-								SwingUtilities.invokeLater(() -> new WelcomeDashboardFrame(requestWriter, this, response.getInfo()).setVisible(true));
+								if (oldFrame instanceof MemberPortalFrame) {
+									ArrayList<String> info = response.getInfo();
+									((MemberPortalFrame)oldFrame).reloadCatalog(info, 2);
+									((MemberPortalFrame)oldFrame).reloadLoans(info, 2 + Integer.parseInt(info.get(1)) * 8);
+								} else {
+									SwingUtilities.invokeLater(() -> new WelcomeDashboardFrame(requestWriter, this, response.getInfo()).setVisible(true));
+								}
+//								SwingUtilities.invokeLater(() -> new WelcomeDashboardFrame(requestWriter, this, response.getInfo()).setVisible(true));
 								break;
 							case Action.GET_SEARCH:
 								((WelcomeDashboardFrame) oldFrame).reloadResults(response.getInfo(), 0);
@@ -99,15 +106,19 @@ public class ResponseHandler implements Runnable {
 //										(new MemberPortalFrame(requestWriter, this, response.getInfo())).setVisible(true);
 										MemberPortalFrame f = new MemberPortalFrame(requestWriter, this, response.getInfo());
 										f.setVisible(true);
-										oldOldFrame.dispose();
-										oldFrame.dispose();
-										this.setOldFrame(f);
+//										oldOldFrame.dispose();
+//										oldFrame.dispose();
+										if (oldOldFrame != null) {
+											oldOldFrame.dispose();
+										}
+										if (oldFrame != null) {
+											oldFrame.dispose();
+										}								
 										
 										ArrayList<String> dummy = new ArrayList<>();
 										Message dashboard = new Message(0, message.Type.REQUEST, -1, message.Action.GET_DASHBOARD, Status.PENDING, dummy);
-//										this.setOldFrame(null);
+										this.setOldFrame(f);
 										this.setRequestIdExpected(dashboard.getId());
-//										requestWriter.writeObject(dashboard);
 										
 										try {
 											requestWriter.writeObject(dashboard);

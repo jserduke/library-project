@@ -73,6 +73,8 @@ public class LibraryServer {
 						if (messageFromClient.getAction() == Action.GET_DASHBOARD) {
 							messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.GET_DASHBOARD, Status.SUCCESS, info);
 							info.add("Our Little Library");
+							int items = 2;
+							info.add(Integer.toString(items));
 							// TODO:
 							// inventory = Library.getInventory();
 							// for item in inventory:
@@ -110,7 +112,7 @@ public class LibraryServer {
 									info.add(account.getFullName());
 								    addFullInventoryDummyData(info);
 								    
-//									Commenting out for now in case code doesn't work or to go back to something that does work									
+//									Commenting out for now in case code doesn't work and need to go back to something that does work									
 //									if (info.getFirst().equals("MEMBER")) {
 //										// inventory info
 //										info.add("2"); // number of inventory items returned
@@ -148,7 +150,7 @@ public class LibraryServer {
 							writerToClient.writeObject(messageToClient);
 						} else {
 							if (messageFromClient.getAction() == Action.GET_CHECKOUTS) {
-//								Commenting out for now in case code doesn't work or to go back to something that does work
+//								Commenting out for now in case code doesn't work and need to go back to something that does work
 //								info.add("Harry Potter");
 //								info.add("Mouse Paint");
 //								info.add("If You Give a Mouse a Cookie");
@@ -170,14 +172,14 @@ public class LibraryServer {
 								for (Loan l : activeLoans) {
 									//When Inventory is integrated, necessary code goes in here
 									String title = lookupDummyTitle(l.getMediaId());
+									info.add(Integer.toString(l.getLoanId()));
 									info.add("BOOK");
 									info.add(Integer.toString(l.getMediaId()));
 									info.add(title);
 									info.add(l.getCheckoutDate().toString());
 									info.add(l.getDueDate().toString());
-									info.add("");		//return date placeholder
-									info.add("");		//fees placeholder
-									info.add("");		//reserved placeholder
+									info.add("");		//grace period??
+									info.add(l.getReturnedDate() == null ? "" : l.getReturnedDate().toString());
 								}
 								
 								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.GET_CHECKOUTS, Status.SUCCESS, info);
@@ -185,7 +187,7 @@ public class LibraryServer {
 								writerToClient.writeObject(messageToClient);
 								
 							} else if (messageFromClient.getAction() == Action.CHECKOUT) {
-//								Commenting out for now in case code doesn't work or to go back to something that does work								
+//								Commenting out for now in case code doesn't work and need to go back to something that does work								
 //								info.add("Networking 101 successfully checked out!");
 //								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.CHECKOUT, Status.SUCCESS, info);
 //								writerToClient.writeObject(messageToClient);
@@ -279,7 +281,7 @@ public class LibraryServer {
 		info.add("EEAAO");
 		info.add("R");
 		info.add("140 min");
-		info.add("Daniels");
+		info.add("Action");
 		info.add("5");
 		info.add("3");
 		
@@ -288,7 +290,7 @@ public class LibraryServer {
 		info.add("Booksmart");
 		info.add("B. Smart");
 		info.add("1234566789");
-		info.add("Idk");
+		info.add("Non-Fiction");
 		info.add("4");
 		info.add("0");
 	}
@@ -296,9 +298,9 @@ public class LibraryServer {
 	private static String lookupDummyTitle(int mediaId) {
 		switch(mediaId) {
 			case 1: return "EEAA0";
-			case 2: return "Booksmart";
+			case 2: return "The Housemaid";
 			case 3: return "Charlotte's Web";
-			case 4: return "The Housemain";
+			case 4: return "Booksmart";
 			default: return "Unknown Title";
 		}
 	}
