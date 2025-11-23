@@ -24,7 +24,7 @@ class DVD extends Media{
 		this.runTime = 0;
 	}
 	
-	// public getters for DVD subclass variables, returns Strings and int where appropriate
+	// public getters for DVD subclass variables
 	public String getAgeRating() {
 		return ageRating.name();
 	}
