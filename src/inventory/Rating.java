@@ -1,4 +1,4 @@
-package inventory;
+package Inventory;
 
 public enum Rating {
 	G,
@@ -7,6 +7,5 @@ public enum Rating {
 	NC_17,
 	R,
 	UNRATED;
-	
 }
 

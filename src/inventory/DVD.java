@@ -1,4 +1,4 @@
-package inventory;
+package Inventory;
 
 class DVD extends Media{
 	private Rating ageRating;
@@ -24,7 +24,7 @@ class DVD extends Media{
 		this.runTime = 0;
 	}
 	
-	// public getters for DVD subclass variables
+	// public getters for DVD subclass variables, returns Strings and int where appropriate
 	public String getAgeRating() {
 		return ageRating.name();
 	}

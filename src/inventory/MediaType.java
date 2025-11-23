@@ -1,4 +1,4 @@
-package inventory;
+package Inventory;
 
 public enum MediaType {
 	BOOK,

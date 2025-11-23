@@ -1,4 +1,4 @@
-package inventory;
+package Inventory;
 abstract class Media {
 	private final MediaType mediaType;
 	private int id; // all fields inherited by Book/DVD/Board Game
