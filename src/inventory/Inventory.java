@@ -2,7 +2,7 @@ package inventory;
 import java.util.ArrayList;
 
 public class Inventory {
-	protected int numMedia;
+	private int numMedia;
 	private ArrayList<Media> mediaItems; // array of Media superclass, accepts subclass objects
 	
 	public Inventory(int newNumMedia, ArrayList<Media> newMediaItems) {
