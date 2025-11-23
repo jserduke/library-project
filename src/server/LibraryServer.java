@@ -51,7 +51,8 @@ public class LibraryServer {
 				readerFromClient = new ObjectInputStream(clientSocket.getInputStream());
 				Message messageFromClient = null, messageToClient = null;
 				AccountsDirectory accountsDirectory = new AccountsDirectory();
-				accountsDirectory.registerNewAccount(Permission.MEMBER, "test@test.test", "test123", "Tester Testington", new Date(2024 - 1900, 0, 1));
+				accountsDirectory.registerNewAccount(Permission.MEMBER, "member@test.test", "test123", "Tester Testington", new Date(2024 - 1900, 0, 1));
+				accountsDirectory.registerNewAccount(Permission.ADMIN, "admin@test.test", "admin123", "Iam Admin", new Date(2000 - 1900, 5, 20));
 				Account account = null;
 				try {
 					while (true) {
@@ -109,6 +110,33 @@ public class LibraryServer {
 										info.add("2025-12-01");
 										info.add("4");
 										info.add("");
+									} else if (info.getFirst() == "ADMIN") {
+								    	info.add("BOOK");
+								    	info.add("1");
+								    	info.add("1234567890");
+								    	info.add("This Title");
+								    	info.add("Author");
+								    	info.add("Publishing House");
+								    	info.add("Horror");
+								    	info.add("4");
+								    	info.add("2");
+								    	
+								    	info.add("DVD");
+								    	info.add("2");
+								    	info.add("This Movie");
+								    	info.add("R");
+								    	info.add("150");
+								    	info.add("4");
+								    	info.add("2");
+								    	
+								    	info.add("BOARD_GAME");
+								    	info.add("3");
+								    	info.add("Fun Game");
+								    	info.add("12+");
+								    	info.add("2-4");
+								    	info.add("~120");
+								    	info.add("5");
+								    	info.add("5");
 									}
 									messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.LOGIN, Status.SUCCESS, info);
 								}
@@ -157,6 +185,7 @@ public class LibraryServer {
 								writerToClient.writeObject(messageToClient);
 							}
 							else if (messageFromClient.getAction() == Action.LOGOUT) {
+								account = null;
 								info.add("Our Little Library");
 								addFullInventoryDummyData(info);
 								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.LOGOUT, Status.SUCCESS, info);
