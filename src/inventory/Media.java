@@ -1,5 +1,6 @@
-package Inventory;
-abstract class Media {
+package inventory;
+public abstract class Media {
+	protected static int nextMediaId = 0;
 	private final MediaType mediaType;
 	private int id; // all fields inherited by Book/DVD/Board Game
 	private String title;
@@ -10,14 +11,14 @@ abstract class Media {
 
 	// protected constructors for subclass use to initialize variables unaccessible to subclasses
 	protected Media(MediaType newMediaType, 
-	int newId, 
+	// int newId, 
 	String newTitle, 
 	String newPublisher, 
 	String newGenre,
 	int newTotalQuantity,
 	int newQuantityAvailable) {
 		this.mediaType = newMediaType;
-		this.id = newId;
+		this.id = nextMediaId++;
 		this.title = newTitle;
 		this.publisher = newPublisher;
 		this.genre = newGenre;

@@ -1,11 +1,11 @@
-package Inventory;
+package inventory;
 
-public class Book extends Media{
+public class Book extends Media {
 	private String author;
 	private double ddCallNumber;
 	private String isbn;
 	
-	protected Book(int newId, // variables inherited from base class Media
+	public Book( // variables inherited from base class Media
 		String newTitle,
 		String newPublisher,
 		String newGenre,
@@ -15,7 +15,7 @@ public class Book extends Media{
 		double newDdCallNumber, 
 		String newIsbn) 
 	{
-		super(MediaType.BOOK,newId, newTitle, newPublisher, newGenre, newTotalQuantity, newQuantityAvailable);
+		super(MediaType.BOOK, newTitle, newPublisher, newGenre, newTotalQuantity, newQuantityAvailable);
 		this.author = newAuthor; //
 		this.ddCallNumber = newDdCallNumber;
 		this.isbn = newIsbn;

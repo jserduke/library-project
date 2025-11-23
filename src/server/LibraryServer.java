@@ -6,6 +6,8 @@ import java.util.Date;
 
 import account.*;
 import message.*;
+import inventory.*;
+
 
 public class LibraryServer {
 	public static void main(String[] args) {
@@ -50,9 +52,19 @@ public class LibraryServer {
 				writerToClient = new ObjectOutputStream(clientSocket.getOutputStream());
 				readerFromClient = new ObjectInputStream(clientSocket.getInputStream());
 				Message messageFromClient = null, messageToClient = null;
+				
+				// BACKEND DATA (should ideally get it to load in from files later)
 				AccountsDirectory accountsDirectory = new AccountsDirectory();
 				accountsDirectory.registerNewAccount(Permission.MEMBER, "member@test.test", "test123", "Tester Testington", new Date(2024 - 1900, 0, 1));
 				accountsDirectory.registerNewAccount(Permission.ADMIN, "admin@test.test", "admin123", "Iam Admin", new Date(2000 - 1900, 5, 20));
+				Inventory inventory = new Inventory(new ArrayList<Media>());
+				inventory.addMedia(new Book("The Book", "The Publishing House", "Horror", 5, 5, "Mr. Idk", 340.5, "351-64534-343"));
+				inventory.addMedia(new Book("Book, Too!", "The Publishing House", "Comedy", 3, 3, "Mr. Idk", 121.5, "987-245345"));
+				inventory.addMedia(new DVD("The Movie", "Paramount", "Drama", 5, 5, Rating.PG_13, 120));
+				inventory.addMedia(new DVD("Movie but Worse", "Paramount", "Drama", 3, 3, Rating.PG, 180));
+				inventory.addMedia(new BoardGame("Something's Missing", "Games Unlimited", "Party", 2, 2, Rating.G, 2, 4, 120));
+				inventory.addMedia(new BoardGame("Dreamers' Gate", "Games Unlimited", "Tabletop RPG", 3, 3, Rating.R, 1, 4, 600));
+				
 				Account account = null;
 				try {
 					while (true) {
@@ -65,11 +77,22 @@ public class LibraryServer {
 						if (messageFromClient.getAction() == Action.GET_DASHBOARD) {
 							messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.GET_DASHBOARD, Status.SUCCESS, info);
 							info.add("Our Little Library");
+							for (Media media : inventory.getMediaItems()) {
+								if (media instanceof Book) {
+									addBookToInfo(info, (Book) media);
+								} else if (media instanceof DVD) {
+									addDVDToInfo(info, (DVD) media);
+								} else if (media instanceof BoardGame) {
+									addBoardGameToInfo(info, (BoardGame) media);
+								} else {
+									System.out.println("Media of unexpected/unknown type found in inventory");
+								}
+							}
 							// TODO:
 							// inventory = Library.getInventory();
 							// for item in inventory:
 							// add each piece of info
-							addFullInventoryDummyData(info);
+							// addFullInventoryDummyData(info);
 							
 							writerToClient.writeObject(messageToClient);
 						} else if (messageFromClient.getAction() == Action.GET_SEARCH) {
@@ -236,5 +259,35 @@ public class LibraryServer {
 		info.add("Idk");
 		info.add("4");
 		info.add("0");
+	}
+	private static void addBookToInfo(ArrayList<String> info, Book book) {
+		info.add("Book");
+		info.add("" + book.getId());
+		info.add(book.getTitle());
+		info.add(book.getAuthor());
+		info.add(book.getIsbn());
+		info.add(book.getPublisher());
+		info.add("" + book.getTotalQuantity());
+		info.add("" + book.getQuantityAvailable());
+	}
+	private static void addDVDToInfo(ArrayList<String> info, DVD dvd) {
+		info.add("DVD");
+		info.add("" + dvd.getId());
+		info.add(dvd.getTitle());
+		info.add(dvd.getAgeRating());
+		info.add(dvd.getRunTime() + " min");
+		info.add(dvd.getPublisher());
+		info.add("" + dvd.getTotalQuantity());
+		info.add("" + dvd.getQuantityAvailable());
+	}
+	private static void addBoardGameToInfo(ArrayList<String> info, BoardGame boardGame) {
+		info.add("Board Game");
+		info.add("" + boardGame.getId());
+		info.add(boardGame.getTitle());
+		info.add(boardGame.getRating().toString());
+		info.add(boardGame.getPlayerCountMin() + "-" + boardGame.getPlayerCountMax());
+		info.add(boardGame.getGameLength() + " min");
+		info.add("" + boardGame.getTotalQuantity());
+		info.add("" + boardGame.getQuantityAvailable());
 	}
 }
