@@ -56,7 +56,6 @@ public abstract class Account {
 	public void setBirthday(Date birthday) {
 		this.birthday = birthday;
 	}
-	
 	@SuppressWarnings("deprecation")
 	public void setBirthday(int month, int day, int year) {
 		this.birthday = new Date(year - 1900, month - 1, day);

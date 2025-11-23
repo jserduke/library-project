@@ -17,7 +17,7 @@ public class Client {
 		// int serverPort = Integer.parseInt(scanner.nextLine());
 		
 		// CHANGE IP ADDRESS HERE IN ACCORDANCE WITH YOUR OWN SERVER-CLIENT CONFIGURATION
-		try (Socket socket = new Socket("localhost", 56789)) {
+		try (Socket socket = new Socket("192.168.86.35", 56789)) {
 			ObjectOutputStream writerToServer = new ObjectOutputStream(socket.getOutputStream());
 			ObjectInputStream readerFromServer = new ObjectInputStream(socket.getInputStream());
 			JFrame frame = new JFrame("Home Page");

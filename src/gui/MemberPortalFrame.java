@@ -13,15 +13,13 @@ import message.*;
 
 public class MemberPortalFrame extends JFrame {
     private static final long serialVersionUID = 1L;
-    private final ObjectOutputStream requestWriter;
-	private final ResponseHandler responseHandler;
 	// private final User user;
     // private final Member member;
 
     private JTextField txtSearch = new JTextField(18);
     private JComboBox<String> cbType = new JComboBox<>(new String[]{"All", "Books", "DVDs", "Board Games"});
     private DefaultTableModel catalogModel = new DefaultTableModel(new Object[]{
-    		"Type","Id","Title","Author / Rating","Publisher / Studio / Length","Genre","Total Qty","Available"
+    		"ID","ISBN","Title","Author","Publisher","Genre","Total Qty","Available"
     }, 0) { 
     	public boolean isCellEditable(int r,int c){
     		return false;
@@ -41,9 +39,7 @@ public class MemberPortalFrame extends JFrame {
     public MemberPortalFrame(ObjectOutputStream requestWriter, ResponseHandler responseHandler, ArrayList<String> info) {
         // this.user = user;
         // this.member = resolveMember(user);
-    	
-    	this.requestWriter = requestWriter;
-    	this.responseHandler = responseHandler;
+
         setTitle("Member Portal — " + info.getFirst()); // TODO: replace with username from message
         setSize(1100, 660);
         setLocationRelativeTo(null);
@@ -73,7 +69,6 @@ public class MemberPortalFrame extends JFrame {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-        	
         });
 
         // Split
@@ -83,21 +78,8 @@ public class MemberPortalFrame extends JFrame {
         split.setBottomComponent(buildLoansPanel());
         add(split, BorderLayout.CENTER);
 
-//		  Commenting this out for now
-//        reloadCatalog(info, 2);
-//        reloadLoans(info, 2 + Integer.parseInt(info.get(1)) * 8);
-//        ArrayList<String> dummy = new ArrayList<>();
-//		Message dashboard = new Message(0, message.Type.REQUEST, -1, message.Action.GET_DASHBOARD, Status.PENDING, dummy);
-//		responseHandler.setRequestIdExpected(dashboard.getId());
-//		responseHandler.setOldFrame(this);
-//		
-//		try {
-//			requestWriter.writeObject(dashboard);
-//		} catch (IOException e1) {
-//			// TODO Auto-generated catch block
-//			e1.printStackTrace();
-//		}
-//		setVisible(true);
+        reloadCatalog(info, 2);
+        reloadLoans(info, 2 + Integer.parseInt(info.get(1)) * 8);
     }
 
     /*
@@ -251,7 +233,7 @@ public class MemberPortalFrame extends JFrame {
         */
     }
 
-    public void reloadLoans(ArrayList<String> info, int loansStart) {
+    private void reloadLoans(ArrayList<String> info, int loansStart) {
         loansModel.setRowCount(0);
         for (int i = 0; i < (info.size() - loansStart) / 8; i += 1) {
 	        loansModel.addRow(new Object[] {
@@ -303,17 +285,14 @@ public class MemberPortalFrame extends JFrame {
 
     // WILL GET WORKING LATER
     private void checkoutSelected() {
-    	
+    	/*
         int row = catalogTable.getSelectedRow();
         if (row < 0) { 
         	JOptionPane.showMessageDialog(this, "Select a media item."); 
         	return;
         }
-        
-        /*
         String typeStr = catalogModel.getValueAt(row, 0).toString();
         int id = (Integer) catalogModel.getValueAt(row, 1);
-        
         MediaType type = "Book".equals(typeStr) ? MediaType.BOOK : ("DVD".equals(typeStr)? MediaType.DVD : MediaType.BOARD_GAME);
         Loan loan = LibraryData.checkout(member.getId(), type, id);
         if (loan == null) {
@@ -324,23 +303,6 @@ public class MemberPortalFrame extends JFrame {
         reloadCatalog();
         reloadLoans();
         */
-        
-        int mediaId = Integer.parseInt(catalogModel.getValueAt(row, 1).toString());
-        long dueMillis = System.currentTimeMillis() + (1000L*60*60*24*14);
-        
-        ArrayList<String> info = new ArrayList<String>();
-        info.add(Integer.toString(mediaId));
-        info.add(Long.toString(dueMillis));
-        Message checkoutMessage = new Message(0, message.Type.REQUEST, -1, message.Action.CHECKOUT, Status.PENDING, info);
-        responseHandler.setRequestIdExpected(checkoutMessage.getId());
-        responseHandler.setOldFrame(this);
-        
-        try {
-        	requestWriter.writeObject(checkoutMessage);
-        } catch (IOException ex) {
-        	ex.printStackTrace();
-        }
-        
     }
 
     // WILL GET WORKING LATER
