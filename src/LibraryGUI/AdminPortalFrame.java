@@ -31,9 +31,10 @@ public class AdminPortalFrame extends JFrame {
         right.setBackground(Theme.PRIMARY);
         right.add(btnHoldsFees);
         right.add(btnLogout);
-
         top.add(right, BorderLayout.EAST);
         add(top, BorderLayout.NORTH);
+        btnLogout.addActionListener(e -> { new WelcomeDashboardFrame().setVisible(true); 
+        dispose(); });
 
 
         btnHoldsFees.addActionListener(e -> {
