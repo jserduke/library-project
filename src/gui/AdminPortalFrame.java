@@ -62,7 +62,7 @@ public class AdminPortalFrame extends JFrame {
 			}
         });
         
-        add(new ManageInventoryPanel(info), BorderLayout.CENTER);
+        add(new ManageInventoryPanel(requestWriter, responseHandler, info), BorderLayout.CENTER);
     }
 
     /*
@@ -72,7 +72,7 @@ public class AdminPortalFrame extends JFrame {
 	*/
 
 	// Embedded manage-inventory panel
-    static class ManageInventoryPanel extends JPanel {
+    public static class ManageInventoryPanel extends JPanel {
         private static final long serialVersionUID = 1L;
 
 		private JTabbedPane tabs = new JTabbedPane();
@@ -104,17 +104,17 @@ public class AdminPortalFrame extends JFrame {
         };
         private JTable gamesTable = new JTable(gamesModel);
 
-        public ManageInventoryPanel(ArrayList<String> info) {
+        public ManageInventoryPanel(ObjectOutputStream requestWriter, ResponseHandler responseHandler, ArrayList<String> info) {
             setLayout(new BorderLayout());
 
-            tabs.add("Books", buildBooks());
-            tabs.add("DVDs", buildDvds());
-            tabs.add("Board Games", buildGames());
+            tabs.add("Books", buildBooks(requestWriter, responseHandler));
+            tabs.add("DVDs", buildDvds(requestWriter, responseHandler));
+            tabs.add("Board Games", buildGames(requestWriter, responseHandler));
             add(tabs, BorderLayout.CENTER);
             reloadAll(info);
         }
 
-        private JPanel buildBooks() {
+        private JPanel buildBooks(ObjectOutputStream requestWriter, ResponseHandler responseHandler) {
             JPanel p = new JPanel(new BorderLayout());
             p.setBackground(Theme.SURFACE);
             JScrollPane sc = new JScrollPane(booksTable);
@@ -132,12 +132,12 @@ public class AdminPortalFrame extends JFrame {
             Theme.styleButton(del, Theme.ACCENT_ORANGE);
             btns.add(add); btns.add(edit); btns.add(del);
             p.add(btns, BorderLayout.SOUTH);
-            add.addActionListener(e -> addBook());
-            edit.addActionListener(e -> editBook());
+            add.addActionListener(e -> addBook(requestWriter, responseHandler));
+            edit.addActionListener(e -> editBook(requestWriter, responseHandler));
             del.addActionListener(e -> deleteBook());
             return p;
         }
-        private JPanel buildDvds() {
+        private JPanel buildDvds(ObjectOutputStream requestWriter, ResponseHandler responseHandler) {
             JPanel p = new JPanel(new BorderLayout());
             p.setBackground(Theme.SURFACE);
             JScrollPane sc = new JScrollPane(dvdsTable);
@@ -160,7 +160,7 @@ public class AdminPortalFrame extends JFrame {
             del.addActionListener(e -> deleteDvd());
             return p;
         }
-        private JPanel buildGames() {
+        private JPanel buildGames(ObjectOutputStream requestWriter, ResponseHandler responseHandler) {
             JPanel p = new JPanel(new BorderLayout());
             p.setBackground(Theme.SURFACE);
             JScrollPane sc = new JScrollPane(gamesTable);
@@ -271,7 +271,7 @@ public class AdminPortalFrame extends JFrame {
             */
         }
 
-        private void addBook() {
+        private void addBook(ObjectOutputStream requestWriter, ResponseHandler responseHandler) {
             JTextField isbn = new JTextField();
             JTextField title = new JTextField();
             JTextField author = new JTextField();
@@ -284,50 +284,72 @@ public class AdminPortalFrame extends JFrame {
             }, "Add Book", JOptionPane.OK_CANCEL_OPTION);
             
             if (res == JOptionPane.OK_OPTION) {
-                LibraryData.BOOKS.add(new Book(LibraryData.nextBookId(), 
-                		isbn.getText().trim(), 
-                		title.getText().trim(),
-                    author.getText().trim(), 
-                    publisher.getText().trim(), 
-                    genre.getText().trim(), 
-                    (Integer)qty.getValue()));
-                reloadAll(null); // TODO: fix later
+            	ArrayList<String> newBookInfo = new ArrayList<String>();
+            	Message addBookMessage = new Message(0, message.Type.REQUEST, -1, message.Action.ADD_BOOK, Status.PENDING, newBookInfo);
+            	newBookInfo.add(isbn.getText().trim());
+            	newBookInfo.add(title.getText().trim());
+            	newBookInfo.add(author.getText().trim());
+            	newBookInfo.add(publisher.getText().trim());
+            	newBookInfo.add(genre.getText().trim());
+            	newBookInfo.add("" + (Integer) qty.getValue());
+                responseHandler.setRequestIdExpected(addBookMessage.getId());
+                responseHandler.setOldPanel(this);
+                try {
+        			requestWriter.writeObject(addBookMessage);
+        		} catch (IOException er) {
+        			// TODO Auto-generated catch block
+        			er.printStackTrace();
+        		}
             }
         }
-        private void editBook() {
+        private void editBook(ObjectOutputStream requestWriter, ResponseHandler responseHandler) {
+        	// /*
             int row = booksTable.getSelectedRow(); 
-            if (row<0) 
+            if (row < 0) {
             	return;
+            }
+            int idVal = Integer.parseInt((String) booksModel.getValueAt(row, 0));
+            String isbnVal = (String) booksModel.getValueAt(row, 1);
+            String titleVal = (String) booksModel.getValueAt(row, 2);
+            String authorVal = (String) booksModel.getValueAt(row, 3);
+            String publisherVal = (String) booksModel.getValueAt(row, 4);
+            String genreVal = (String) booksModel.getValueAt(row, 5);
+            int totalQuantVal = Integer.parseInt((String) booksModel.getValueAt(row, 6));
             
-            int id = (Integer) booksModel.getValueAt(row, 0);
-            
-            Book found = null; 
-            for (Book b : LibraryData.BOOKS) 
-            	if (b.getId()==id){
-            		found=b;
-            		break;
-            	}
-            if (found==null) 
-            	return;
-            
-            JTextField isbn = new JTextField(found.getIsbn());
-            JTextField title = new JTextField(found.getTitle());
-            JTextField author = new JTextField(found.getAuthor());
-            JTextField publisher = new JTextField(found.getPublisher());
-            JTextField genre = new JTextField(found.getGenre());
-            JSpinner qty = new JSpinner(new SpinnerNumberModel(found.getTotalQuantity(),1,999,1));
+            JTextField isbn = new JTextField(isbnVal);
+            JTextField title = new JTextField(titleVal);
+            JTextField author = new JTextField(authorVal);
+            JTextField publisher = new JTextField(publisherVal);
+            JTextField genre = new JTextField(genreVal);
+            JSpinner qtyTotal = new JSpinner(new SpinnerNumberModel(totalQuantVal,1,999,1));
+            JSpinner qtyAvail = new JSpinner(new SpinnerNumberModel(totalQuantVal,1,999,1));
+            // TODO: add quantity available?
             
             int res = JOptionPane.showConfirmDialog(this, new Object[]{
-                "ISBN:", isbn, "Title:", title, "Author:", author, "Publisher:", publisher, "Genre:", genre, "Total Qty:", qty
+                "ISBN:", isbn, "Title:", title, "Author:", author, "Publisher:", publisher, "Genre:", genre, "Total Qty:", qtyTotal, "Avail. Qty:", qtyAvail
             }, "Edit Book", JOptionPane.OK_CANCEL_OPTION);
             if (res == JOptionPane.OK_OPTION) {
-                found.setTitle(title.getText().trim());
-                found.setAuthor(author.getText().trim());
-                found.setPublisher(publisher.getText().trim());
-                found.setGenre(genre.getText().trim());
-                found.setTotalQuantity((Integer)qty.getValue());
-                reloadAll(null); // TODO: fix later
+            	ArrayList<String> editBookInfo = new ArrayList<String>();
+            	Message editBookMessage = new Message(0, message.Type.REQUEST, -1, message.Action.EDIT_BOOK, Status.PENDING, editBookInfo);
+            	editBookInfo.add("" + idVal);
+            	editBookInfo.add(isbn.getText().trim());
+            	editBookInfo.add(title.getText().trim());
+            	editBookInfo.add(author.getText().trim());
+            	editBookInfo.add(publisher.getText().trim());
+            	editBookInfo.add(genre.getText().trim());
+            	editBookInfo.add("" + (Integer) qtyTotal.getValue());
+            	editBookInfo.add("" + (Integer) qtyAvail.getValue());
+                responseHandler.setRequestIdExpected(editBookMessage.getId());
+                responseHandler.setOldPanel(this);
+                try {
+        			requestWriter.writeObject(editBookMessage);
+        		} catch (IOException er) {
+        			// TODO Auto-generated catch block
+        			er.printStackTrace();
+        		}
+                // reloadAll(null); // TODO: fix later
             }
+            // */
         }
         private void deleteBook() {
             int row = booksTable.getSelectedRow(); 

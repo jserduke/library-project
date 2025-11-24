@@ -8,6 +8,8 @@ public enum Action {
 	CHECKOUT,
 	GET_PROFILE,
 	SET_PROFILE,
+	ADD_BOOK,
+	EDIT_BOOK,
 	LOGOUT,
 	UNDEFINED
 }

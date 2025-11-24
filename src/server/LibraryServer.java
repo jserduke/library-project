@@ -153,6 +153,8 @@ public class LibraryServer {
 										info.add("4");
 										info.add("");
 									} else if (info.getFirst() == "ADMIN") {
+										addInventoryToInfoAdmin(inventory, info);
+										/*
 								    	info.add("BOOK");
 								    	info.add("1");
 								    	info.add("1234567890");
@@ -179,6 +181,7 @@ public class LibraryServer {
 								    	info.add("~120");
 								    	info.add("5");
 								    	info.add("5");
+								    	*/
 									}
 									messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.LOGIN, Status.SUCCESS, info);
 								}
@@ -225,8 +228,28 @@ public class LibraryServer {
 								System.out.println(account.getBirthday());
 								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.SET_PROFILE, Status.SUCCESS, null);
 								writerToClient.writeObject(messageToClient);
-							}
-							else if (messageFromClient.getAction() == Action.LOGOUT) {
+							} else if (messageFromClient.getAction() == Action.ADD_BOOK) {
+								ArrayList<String> newBookAttr = messageFromClient.getInfo();
+								int newQuant = Integer.parseInt(newBookAttr.get(5));
+								// TODO: dd number
+								inventory.addMedia(new Book(newBookAttr.get(1), newBookAttr.get(3), newBookAttr.get(4), newQuant, newQuant, newBookAttr.get(2), 0.0, newBookAttr.get(0)));
+								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.ADD_BOOK, Status.SUCCESS, info);
+								addInventoryToInfoAdmin(inventory, info);
+								writerToClient.writeObject(messageToClient);
+							} else if (messageFromClient.getAction() == Action.EDIT_BOOK) {
+								ArrayList<String> newBookAttr = messageFromClient.getInfo();
+								Book editBook = (Book) inventory.searchByID(Integer.parseInt(newBookAttr.getFirst())).getFirst();
+								editBook.setIsbn(newBookAttr.get(1));
+								editBook.setTitle(newBookAttr.get(2));
+								editBook.setAuthor(newBookAttr.get(3));
+								editBook.setPublisher(newBookAttr.get(4));
+								editBook.setGenre(newBookAttr.get(5));
+								editBook.setTotalQuantity(Integer.parseInt(newBookAttr.get(6)));
+								editBook.setQuantityAvailable(Integer.parseInt(newBookAttr.get(7)));
+								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.EDIT_BOOK, Status.SUCCESS, info);
+								addInventoryToInfoAdmin(inventory, info);
+								writerToClient.writeObject(messageToClient);
+							} else if (messageFromClient.getAction() == Action.LOGOUT) {
 								account = null;
 								info.add("Our Little Library");
 								addFullInventoryDummyData(info);
@@ -314,5 +337,42 @@ public class LibraryServer {
 		info.add(boardGame.getGameLength() + " min");
 		info.add("" + boardGame.getTotalQuantity());
 		info.add("" + boardGame.getQuantityAvailable());
+	}
+	private static void addInventoryToInfoAdmin(Inventory inventory, ArrayList<String> info) {
+		for (Media media : inventory.getMediaItems()) {
+			if (media instanceof Book) {
+				Book book = (Book) media;
+				info.add("BOOK");
+				info.add("" + book.getId());
+				info.add(book.getIsbn());
+				info.add(book.getTitle());
+				info.add(book.getAuthor());
+				info.add(book.getPublisher());
+				info.add(book.getGenre());
+				info.add("" + book.getTotalQuantity());
+				info.add("" + book.getQuantityAvailable());
+			} else if (media instanceof DVD) {
+				DVD dvd = (DVD) media;
+				info.add("DVD");
+				info.add("" + dvd.getId());
+				info.add(dvd.getTitle());
+				info.add(dvd.getAgeRating());
+				info.add("" + dvd.getRunTime());
+				info.add("" + dvd.getTotalQuantity());
+				info.add("" + dvd.getQuantityAvailable());
+			} else if (media instanceof BoardGame) {
+				BoardGame boardGame = (BoardGame) media;
+				info.add("BOARD_GAME");
+				info.add("" + boardGame.getId());
+				info.add(boardGame.getTitle());
+				info.add(boardGame.getRating().toString());
+				info.add(boardGame.getPlayerCountMin() + "-" + boardGame.getPlayerCountMax());
+				info.add("" + boardGame.getGameLength());
+				info.add("" + boardGame.getTotalQuantity());
+				info.add("" + boardGame.getQuantityAvailable());
+			} else {
+				System.out.println("Unrecognized media type in Inventory");
+			}
+		}
 	}
 }

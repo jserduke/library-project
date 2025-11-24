@@ -49,17 +49,17 @@ public class Book extends Media {
 		",ISBN:" + getIsbn() + "}\n";
 	}
 	
-	private void setAuthor(String newAuthor) {
+	public void setAuthor(String newAuthor) {
 		this.author = newAuthor;
 		return;
 	}
 	
-	private void setDdCallNumber(double newDdCallNumber) {
+	public void setDdCallNumber(double newDdCallNumber) {
 		this.ddCallNumber = newDdCallNumber;
 		return;
 	}
 	
-	private void setIsbn(String newIsbn) {
+	public void setIsbn(String newIsbn) {
 		this.isbn = newIsbn;
 		return;
 	}
