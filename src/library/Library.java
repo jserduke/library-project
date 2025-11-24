@@ -1,6 +1,6 @@
 package library;
 
-import inventoryy.Inventory;
+import inventory.Inventory;
 
 public class Library {
 	private Integer id;

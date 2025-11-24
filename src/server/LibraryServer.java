@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import account.*;
-import inventoryy.*;
+import inventory.*;
 import message.*;
 
 public class LibraryServer {

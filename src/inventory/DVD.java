@@ -1,4 +1,4 @@
-package inventoryy;
+package inventory;
 
 public class DVD extends Media{
 	private Rating ageRating;

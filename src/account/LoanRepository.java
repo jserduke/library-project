@@ -7,7 +7,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.util.Scanner;
 
-import inventoryy.*;
+import inventory.*;
 
 
 public class LoanRepository {

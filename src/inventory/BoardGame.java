@@ -1,4 +1,4 @@
-package inventoryy;
+package inventory;
 
 public class BoardGame extends Media{ // Variables unique to BoardGame subclass
 	private Rating ageRating;
