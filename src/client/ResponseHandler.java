@@ -163,6 +163,22 @@ public class ResponseHandler implements Runnable {
 									JOptionPane.showMessageDialog(oldPanel, "There was a problem with adding the new DVD.");
 								}
 								break;
+							case Action.EDIT_DVD:
+								if (response.getStatus() == Status.SUCCESS) {
+									JOptionPane.showMessageDialog(oldPanel, "The selected DVD was successfully edited!");
+									((ManageInventoryPanel) oldPanel).reloadAll(response.getInfo());
+								} else if (response.getStatus() == Status.FAILURE) {
+									JOptionPane.showMessageDialog(oldPanel, "There was a problem with editing the DVD.");
+								}
+								break;
+							case Action.DELETE_DVD:
+								if (response.getStatus() == Status.SUCCESS) {
+									JOptionPane.showMessageDialog(oldPanel, "The selected DVD was successfully deleted!");
+									((ManageInventoryPanel) oldPanel).reloadAll(response.getInfo());
+								} else if (response.getStatus() == Status.FAILURE) {
+									JOptionPane.showMessageDialog(oldPanel, "There was a problem with deleting the DVD.");
+								}
+								break;
 							case Action.LOGOUT:
 								if (response.getStatus() == Status.SUCCESS) {
 									(new WelcomeDashboardFrame(requestWriter, this, response.getInfo())).setVisible(true); 
