@@ -10,6 +10,7 @@ public enum Action {
 	SET_PROFILE,
 	ADD_BOOK,
 	EDIT_BOOK,
+	DELETE_BOOK,
 	LOGOUT,
 	UNDEFINED
 }

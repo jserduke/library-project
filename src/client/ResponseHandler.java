@@ -147,6 +147,14 @@ public class ResponseHandler implements Runnable {
 									JOptionPane.showMessageDialog(oldPanel, "There was a problem with editing the book.");
 								}
 								break;
+							case Action.DELETE_BOOK:
+								if (response.getStatus() == Status.SUCCESS) {
+									JOptionPane.showMessageDialog(oldPanel, "The selected book was successfully deleted!");
+									((ManageInventoryPanel) oldPanel).reloadAll(response.getInfo());
+								} else if (response.getStatus() == Status.FAILURE) {
+									JOptionPane.showMessageDialog(oldPanel, "There was a problem with deleting the book.");
+								}
+								break;
 							case Action.LOGOUT:
 								if (response.getStatus() == Status.SUCCESS) {
 									(new WelcomeDashboardFrame(requestWriter, this, response.getInfo())).setVisible(true); 

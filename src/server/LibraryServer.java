@@ -249,6 +249,21 @@ public class LibraryServer {
 								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.EDIT_BOOK, Status.SUCCESS, info);
 								addInventoryToInfoAdmin(inventory, info);
 								writerToClient.writeObject(messageToClient);
+							} else if (messageFromClient.getAction() == Action.DELETE_BOOK) {
+								int id = Integer.parseInt(messageFromClient.getInfo().getFirst());
+								boolean found = false;
+								for (int i = 0; i < inventory.getMediaItems().size(); i += 1) {
+									if (inventory.getMediaItems().get(i).getId() == id) {
+										found = true;
+										inventory.getMediaItems().remove(i);
+										messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.DELETE_BOOK, Status.SUCCESS, info);
+									}
+								}
+								if (!found) {
+									messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.DELETE_BOOK, Status.FAILURE, info);
+								}
+								addInventoryToInfoAdmin(inventory, info);
+								writerToClient.writeObject(messageToClient);
 							} else if (messageFromClient.getAction() == Action.LOGOUT) {
 								account = null;
 								info.add("Our Little Library");

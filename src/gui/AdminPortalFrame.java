@@ -134,7 +134,7 @@ public class AdminPortalFrame extends JFrame {
             p.add(btns, BorderLayout.SOUTH);
             add.addActionListener(e -> addBook(requestWriter, responseHandler));
             edit.addActionListener(e -> editBook(requestWriter, responseHandler));
-            del.addActionListener(e -> deleteBook());
+            del.addActionListener(e -> deleteBook(requestWriter, responseHandler));
             return p;
         }
         private JPanel buildDvds(ObjectOutputStream requestWriter, ResponseHandler responseHandler) {
@@ -351,13 +351,23 @@ public class AdminPortalFrame extends JFrame {
             }
             // */
         }
-        private void deleteBook() {
+        private void deleteBook(ObjectOutputStream requestWriter, ResponseHandler responseHandler) {
             int row = booksTable.getSelectedRow(); 
-            if (row<0) 
+            if (row < 0) {
             	return;
-            int id = (Integer) booksModel.getValueAt(row, 0);
-            LibraryData.BOOKS.removeIf(b -> b.getId()==id);
-            reloadAll(null); // TODO: fix later
+            }
+            String id = (String) booksModel.getValueAt(row, 0);
+        	ArrayList<String> deleteBookInfo = new ArrayList<String>();
+        	Message deleteBookMessage = new Message(0, message.Type.REQUEST, -1, message.Action.DELETE_BOOK, Status.PENDING, deleteBookInfo);
+        	deleteBookInfo.add(id);
+            responseHandler.setRequestIdExpected(deleteBookMessage.getId());
+            responseHandler.setOldPanel(this);
+            try {
+    			requestWriter.writeObject(deleteBookMessage);
+    		} catch (IOException er) {
+    			// TODO Auto-generated catch block
+    			er.printStackTrace();
+    		}
         }
 
         private void addDvd() {
