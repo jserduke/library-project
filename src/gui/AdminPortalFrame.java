@@ -179,8 +179,8 @@ public class AdminPortalFrame extends JFrame {
             btns.add(add); btns.add(edit); btns.add(del);
             p.add(btns, BorderLayout.SOUTH);
             add.addActionListener(e -> addGame(requestWriter, responseHandler));
-            edit.addActionListener(e -> editGame());
-            del.addActionListener(e -> deleteGame());
+            edit.addActionListener(e -> editGame(requestWriter, responseHandler));
+            del.addActionListener(e -> deleteGame(requestWriter, responseHandler));
             return p;
         }
 
@@ -437,13 +437,6 @@ public class AdminPortalFrame extends JFrame {
         			// TODO Auto-generated catch block
         			er.printStackTrace();
         		}
-            	/*
-                found.setTitle(title.getText().trim());
-                found.setRating(rating.getText().trim());
-                found.setRuntimeMinutes((Integer)runtime.getValue());
-                found.setTotalQuantity((Integer)qty.getValue());
-                reloadAll(null); // TODO: fix later
-                */
             }
         }
         private void deleteDvd(ObjectOutputStream requestWriter, ResponseHandler responseHandler) {
@@ -500,47 +493,70 @@ public class AdminPortalFrame extends JFrame {
         		}
             }
         }
-        private void editGame() {
+        private void editGame(ObjectOutputStream requestWriter, ResponseHandler responseHandler) {
             int row = gamesTable.getSelectedRow(); 
-            if (row<0) 
+            if (row < 0) {
             	return;
+            }
+            int id = Integer.parseInt((String) gamesModel.getValueAt(row, 0));
+            String titleVal = (String) gamesModel.getValueAt(row, 1);
+            String ratingVal = (String) gamesModel.getValueAt(row, 2);
+            String[] players = ((String) gamesModel.getValueAt(row, 3)).split("-");
+            String minPlayersVal = players[0];
+            String maxPlayersVal = players[1];
+            int lengthVal = Integer.parseInt((String) gamesModel.getValueAt(row, 4));
+            int totalQtyVal = Integer.parseInt((String) gamesModel.getValueAt(row, 5));
+            int availQtyVal = Integer.parseInt((String) gamesModel.getValueAt(row, 6));
             
-            int id = (Integer) gamesModel.getValueAt(row, 0);
-            
-            BoardGame found = null; 
-            for (BoardGame g : LibraryData.BOARD_GAMES) 
-            	if (g.getId()==id){
-            		found=g;
-            		break;
-            	}
-            if (found==null) 
-            	return;
-            
-            JTextField title = new JTextField(found.getTitle());
-            JTextField rating = new JTextField(found.getRating());
-            JTextField players = new JTextField(found.getPlayerCount());
-            JSpinner length = new JSpinner(new SpinnerNumberModel(found.getGameLengthMinutes(),1,10000,1));
-            JSpinner qty = new JSpinner(new SpinnerNumberModel(found.getTotalQuantity(),1,999,1));
+            JTextField title = new JTextField(titleVal);
+            JTextField rating = new JTextField(ratingVal);
+            JTextField minPlayers = new JTextField(minPlayersVal);
+            JTextField maxPlayers = new JTextField(maxPlayersVal);
+            JSpinner length = new JSpinner(new SpinnerNumberModel(lengthVal, 1, 10000, 1));
+            JSpinner totalQty = new JSpinner(new SpinnerNumberModel(totalQtyVal, 1, 999, 1));
+            JSpinner availQty = new JSpinner(new SpinnerNumberModel(availQtyVal, 1, 999, 1));
             int res = JOptionPane.showConfirmDialog(this, new Object[]{
-                "Title:", title, "Rating:", rating, "Players:", players, "Game Length (min):", length, "Total Qty:", qty
+                "Title:", title, "Rating:", rating, "Min. Players:", minPlayers, "Max. Players:", maxPlayers, "Game Length (min):", length, "Total Qty:", totalQty, "Avail. Qty:", availQty
             }, "Edit Board Game", JOptionPane.OK_CANCEL_OPTION);
             
             if (res == JOptionPane.OK_OPTION) {
-                found.setTitle(title.getText().trim());
-                found.setRating(rating.getText().trim());
-                found.setPlayerCount(players.getText().trim());
-                found.setGameLengthMinutes((Integer)length.getValue());
-                found.setTotalQuantity((Integer)qty.getValue());
-                reloadAll(null); // TODO: fix later
+            	ArrayList<String> editGameInfo = new ArrayList<String>();
+            	Message editGameMessage = new Message(0, message.Type.REQUEST, -1, message.Action.EDIT_GAME, Status.PENDING, editGameInfo);
+            	editGameInfo.add("" + id);
+            	editGameInfo.add(title.getText().trim());
+            	editGameInfo.add(rating.getText().trim());
+            	editGameInfo.add(minPlayers.getText().trim());
+            	editGameInfo.add(maxPlayers.getText().trim());
+            	editGameInfo.add("" + length.getValue());
+            	editGameInfo.add("" + totalQty.getValue());
+            	editGameInfo.add("" + availQty.getValue());
+                responseHandler.setRequestIdExpected(editGameMessage.getId());
+                responseHandler.setOldPanel(this);
+                try {
+        			requestWriter.writeObject(editGameMessage);
+        		} catch (IOException er) {
+        			// TODO Auto-generated catch block
+        			er.printStackTrace();
+        		}
             }
         }
-        private void deleteGame() {
+        private void deleteGame(ObjectOutputStream requestWriter, ResponseHandler responseHandler) {
             int row = gamesTable.getSelectedRow();
-            if (row<0) 
+            if (row < 0) { 
             	return;
-            int id = (Integer) gamesModel.getValueAt(row, 0);
-            LibraryData.BOARD_GAMES.removeIf(g -> g.getId()==id);
-            reloadAll(null); // TODO: fix later
+            }
+            String id = (String) gamesModel.getValueAt(row, 0);
+        	ArrayList<String> deleteGameInfo = new ArrayList<String>();
+        	Message deleteGameMessage = new Message(0, message.Type.REQUEST, -1, message.Action.DELETE_GAME, Status.PENDING, deleteGameInfo);
+        	deleteGameInfo.add(id);
+            responseHandler.setRequestIdExpected(deleteGameMessage.getId());
+            responseHandler.setOldPanel(this);
+            try {
+    			requestWriter.writeObject(deleteGameMessage);
+    		} catch (IOException er) {
+    			// TODO Auto-generated catch block
+    			er.printStackTrace();
+    		}
         }
     }
 }

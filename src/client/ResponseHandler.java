@@ -187,6 +187,22 @@ public class ResponseHandler implements Runnable {
 									JOptionPane.showMessageDialog(oldPanel, "There was a problem with adding the new board game.");
 								}
 								break;
+							case Action.EDIT_GAME:
+								if (response.getStatus() == Status.SUCCESS) {
+									JOptionPane.showMessageDialog(oldPanel, "The selected board game was successfully edited!");
+									((ManageInventoryPanel) oldPanel).reloadAll(response.getInfo());
+								} else if (response.getStatus() == Status.FAILURE) {
+									JOptionPane.showMessageDialog(oldPanel, "There was a problem with editing the board game.");
+								}
+								break;
+							case Action.DELETE_GAME:
+								if (response.getStatus() == Status.SUCCESS) {
+									JOptionPane.showMessageDialog(oldPanel, "The selected board game was successfully deleted!");
+									((ManageInventoryPanel) oldPanel).reloadAll(response.getInfo());
+								} else if (response.getStatus() == Status.FAILURE) {
+									JOptionPane.showMessageDialog(oldPanel, "There was a problem with deleting the board game.");
+								}
+								break;
 							case Action.LOGOUT:
 								if (response.getStatus() == Status.SUCCESS) {
 									(new WelcomeDashboardFrame(requestWriter, this, response.getInfo())).setVisible(true); 

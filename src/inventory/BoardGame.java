@@ -61,22 +61,22 @@ public class BoardGame extends Media{ // Variables unique to BoardGame subclass
 		",Game Length:" + getGameLength() + "}\n";
 	}
 	
-	private void setRating(Rating newRating) {
+	public void setRating(Rating newRating) {
 		this.ageRating = newRating;
 		return;
 	}
 	
-	private void setPlayerCountMin(int newPlayerCountMin) {
+	public void setPlayerCountMin(int newPlayerCountMin) {
 		this.playerCountMin = newPlayerCountMin;
 		return;
 	}
 	
-	private void setPlayerCountMax(int newPlayerCountMax) {
+	public void setPlayerCountMax(int newPlayerCountMax) {
 		this.playerCountMax = newPlayerCountMax;
 		return;
 	}
 	
-	private void setGameLength(int newGameLength) {
+	public void setGameLength(int newGameLength) {
 		this.gameLength = newGameLength;
 		return;
 	}

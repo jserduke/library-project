@@ -249,7 +249,7 @@ public class LibraryServer {
 								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.EDIT_BOOK, Status.SUCCESS, info);
 								addInventoryToInfoAdmin(inventory, info);
 								writerToClient.writeObject(messageToClient);
-							} else if (messageFromClient.getAction() == Action.DELETE_BOOK || messageFromClient.getAction() == Action.DELETE_DVD) {
+							} else if (messageFromClient.getAction() == Action.DELETE_BOOK || messageFromClient.getAction() == Action.DELETE_DVD || messageFromClient.getAction() == Action.DELETE_GAME) {
 								int id = Integer.parseInt(messageFromClient.getInfo().getFirst());
 								boolean found = false;
 								for (int i = 0; i < inventory.getMediaItems().size(); i += 1) {
@@ -293,6 +293,19 @@ public class LibraryServer {
 								int newLength = Integer.parseInt(newGameAttr.get(6));
 								inventory.addMedia(new BoardGame(newGameAttr.get(0), newGameAttr.get(2), newGameAttr.get(1), newQuant, newQuant, newRating, newMinPlayers, newMaxPlayers, newLength));
 								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.ADD_GAME, Status.SUCCESS, info);
+								addInventoryToInfoAdmin(inventory, info);
+								writerToClient.writeObject(messageToClient);
+							} else if (messageFromClient.getAction() == Action.EDIT_GAME) {
+								ArrayList<String> newGameAttr = messageFromClient.getInfo();
+								BoardGame editGame = (BoardGame) inventory.searchByID(Integer.parseInt(newGameAttr.getFirst())).getFirst();
+								editGame.setTitle(newGameAttr.get(1));
+								editGame.setRating(stringToRating(newGameAttr.get(2)));
+								editGame.setPlayerCountMin(Integer.parseInt(newGameAttr.get(3)));
+								editGame.setPlayerCountMax(Integer.parseInt(newGameAttr.get(4)));
+								editGame.setGameLength(Integer.parseInt(newGameAttr.get(5)));
+								editGame.setTotalQuantity(Integer.parseInt(newGameAttr.get(6)));
+								editGame.setQuantityAvailable(Integer.parseInt(newGameAttr.get(7)));
+								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.EDIT_GAME, Status.SUCCESS, info);
 								addInventoryToInfoAdmin(inventory, info);
 								writerToClient.writeObject(messageToClient);
 							} else if (messageFromClient.getAction() == Action.LOGOUT) {
