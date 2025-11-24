@@ -155,7 +155,7 @@ public class AdminPortalFrame extends JFrame {
             Theme.styleButton(del, Theme.ACCENT_ORANGE);
             btns.add(add); btns.add(edit); btns.add(del);
             p.add(btns, BorderLayout.SOUTH);
-            add.addActionListener(e -> addDvd());
+            add.addActionListener(e -> addDvd(requestWriter, responseHandler));
             edit.addActionListener(e -> editDvd());
             del.addActionListener(e -> deleteDvd());
             return p;
@@ -370,21 +370,33 @@ public class AdminPortalFrame extends JFrame {
     		}
         }
 
-        private void addDvd() {
+        private void addDvd(ObjectOutputStream requestWriter, ResponseHandler responseHandler) {
             JTextField title = new JTextField();
+            JTextField publisher = new JTextField();
+            JTextField genre = new JTextField();
             JTextField rating = new JTextField();
             JSpinner runtime = new JSpinner(new SpinnerNumberModel(90,1,10000,1));
             JSpinner qty = new JSpinner(new SpinnerNumberModel(1,1,999,1));
             int res = JOptionPane.showConfirmDialog(this, new Object[]{
-                "Title:", title, "Rating:", rating, "Runtime (min):", runtime, "Total Qty:", qty
+                "Title:", title, "Publisher:", publisher, "Genre:", genre, "Rating:", rating, "Runtime (min):", runtime, "Total Qty:", qty
             }, "Add DVD", JOptionPane.OK_CANCEL_OPTION);
             if (res == JOptionPane.OK_OPTION) {
-                LibraryData.DVDS.add(new Dvd(LibraryData.nextDvdId(), 
-                		title.getText().trim(), 
-                		rating.getText().trim(),
-                    (Integer)runtime.getValue(), 
-                    (Integer)qty.getValue()));
-                reloadAll(null); // TODO: fix later
+            	ArrayList<String> newDvdInfo = new ArrayList<String>();
+            	Message addDvdMessage = new Message(0, message.Type.REQUEST, -1, message.Action.ADD_DVD, Status.PENDING, newDvdInfo);
+            	newDvdInfo.add(title.getText().trim());
+            	newDvdInfo.add(publisher.getText().trim());
+            	newDvdInfo.add(genre.getText().trim());
+            	newDvdInfo.add("" + (Integer) qty.getValue());
+            	newDvdInfo.add(rating.getText().trim());
+            	newDvdInfo.add("" + (Integer) runtime.getValue());
+                responseHandler.setRequestIdExpected(addDvdMessage.getId());
+                responseHandler.setOldPanel(this);
+                try {
+        			requestWriter.writeObject(addDvdMessage);
+        		} catch (IOException er) {
+        			// TODO Auto-generated catch block
+        			er.printStackTrace();
+        		}
             }
         }
         private void editDvd() {

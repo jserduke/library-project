@@ -264,6 +264,28 @@ public class LibraryServer {
 								}
 								addInventoryToInfoAdmin(inventory, info);
 								writerToClient.writeObject(messageToClient);
+							} else if (messageFromClient.getAction() == Action.ADD_DVD) {
+								ArrayList<String> newDvdAttr = messageFromClient.getInfo();
+								int newQuant = Integer.parseInt(newDvdAttr.get(3));
+								Rating newRating;
+								if (newDvdAttr.get(4).equalsIgnoreCase("G")) {
+									newRating = Rating.G;
+								} else if (newDvdAttr.get(4).equalsIgnoreCase("PG")) {
+									newRating = Rating.PG;
+								} else if (newDvdAttr.get(4).equalsIgnoreCase("PG-13")) {
+									newRating = Rating.PG_13;
+								} else if (newDvdAttr.get(4).equalsIgnoreCase("NC-17")) {
+									newRating = Rating.NC_17;
+								} else if (newDvdAttr.get(4).equalsIgnoreCase("R")) {
+									newRating = Rating.R;
+								} else {
+									newRating = Rating.UNRATED;
+								}
+								int newRuntime = Integer.parseInt(newDvdAttr.get(5));
+								inventory.addMedia(new DVD(newDvdAttr.get(0), newDvdAttr.get(1), newDvdAttr.get(2), newQuant, newQuant, newRating, newRuntime));
+								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.ADD_DVD, Status.SUCCESS, info);
+								addInventoryToInfoAdmin(inventory, info);
+								writerToClient.writeObject(messageToClient);
 							} else if (messageFromClient.getAction() == Action.LOGOUT) {
 								account = null;
 								info.add("Our Little Library");

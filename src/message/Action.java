@@ -11,6 +11,7 @@ public enum Action {
 	ADD_BOOK,
 	EDIT_BOOK,
 	DELETE_BOOK,
+	ADD_DVD,
 	LOGOUT,
 	UNDEFINED
 }
