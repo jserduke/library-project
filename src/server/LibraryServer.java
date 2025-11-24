@@ -80,13 +80,24 @@ public class LibraryServer {
 						if (messageFromClient.getAction() == Action.GET_DASHBOARD) {
 							messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.GET_DASHBOARD, Status.SUCCESS, info);
 							info.add("Our Little Library");
-							int items = 2;
-							info.add(Integer.toString(items));
-							// TODO:
-							// inventory = Library.getInventory();
-							// for item in inventory:
-							// add each piece of info
-							addFullInventoryDummyData(info);
+//							int items = 2;
+//							info.add(Integer.toString(items));
+//							// TODO:
+//							// inventory = Library.getInventory();
+//							// for item in inventory:
+//							// add each piece of info
+//							addFullInventoryDummyData(info);
+							for (Media media : inventory.getMediaItems()) {
+								if (media instanceof Book) {
+									addBookToInfo(info, (Book) media);
+								} else if (media instanceof DVD) {
+									addDVDToInfo(info, (DVD) media);
+								} else if (media instanceof BoardGame) {
+									addBoardGameToInfo(info, (BoardGame) media);
+								} else {
+									System.out.println("Media of unexpected/unknown type found in inventory");
+								}
+							}
 							
 							writerToClient.writeObject(messageToClient);
 						} else if (messageFromClient.getAction() == Action.GET_SEARCH) {
@@ -95,14 +106,30 @@ public class LibraryServer {
 							// library.searchByName
 							// for item in results
 							// add piece of info
-							info.add("Book");
-							info.add("4");
-							info.add("Booksmart");
-							info.add("B. Smart");
-							info.add("1234566789");
-							info.add("Idk");
-							info.add("4");
-							info.add("0");
+//							info.add("Book");
+//							info.add("4");
+//							info.add("Booksmart");
+//							info.add("B. Smart");
+//							info.add("1234566789");
+//							info.add("Idk");
+//							info.add("4");
+//							info.add("0");
+							
+							String requestMediaType = messageFromClient.getInfo().getFirst();
+							boolean shouldIncludeType = requestMediaType.equals("All");
+							String requestMediaTitle = messageFromClient.getInfo().getLast();
+							ArrayList<Media> relevantInventory = requestMediaTitle.equals("") ? inventory.getMediaItems() : inventory.searchByTitle(requestMediaTitle);
+							for (Media media : relevantInventory) {
+								if ((requestMediaType.equals("All") || requestMediaType.equals("Books")) && media instanceof Book) {
+									addBookToInfo(info, (Book) media);
+								} else if ((requestMediaType.equals("All") || requestMediaType.equals("DVDs")) && media instanceof DVD) {
+									addDVDToInfo(info, (DVD) media);
+								} else if ((requestMediaType.equals("All") || requestMediaType.equals("Board Games")) && media instanceof BoardGame) {
+									addBoardGameToInfo(info, (BoardGame) media);
+								} else {
+									System.out.println("Request type unknown or media type in Inventory unknown");
+								}
+							}
 							
 							writerToClient.writeObject(messageToClient);
 						} else if (account == null) {
@@ -343,7 +370,7 @@ public class LibraryServer {
 							} else if(messageFromClient.getAction() == Action.RETURN) {
 								int mediaId = Integer.parseInt(messageFromClient.getInfo().get(0));
 								
-								boolean success = loanRepository.returnMedia(mediaId, account.getId());
+								boolean success = loanRepository.returnMedia(mediaId, account.getId(), inventory);
 								if (!success) {
 									info.add("Return failed.");
 									messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.RETURN, Status.FAILURE, info);
@@ -356,6 +383,7 @@ public class LibraryServer {
 								}
 								
 								writerToClient.writeObject(messageToClient); 
+								continue;
 							} else if (messageFromClient.getAction() == Action.GET_PROFILE) {
 								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.GET_PROFILE, Status.SUCCESS, info);
 								info.add(account.getFullName());
