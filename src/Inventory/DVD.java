@@ -43,12 +43,12 @@ public class DVD extends Media{
 	}
 	
 	// private setters for DVD subclass variables
-	private void setAgeRating(Rating newAgeRating) {
+	public void setAgeRating(Rating newAgeRating) {
 		this.ageRating = newAgeRating;
 		return;
 	}
 	
-	private void setRunTime(int newRunTime) {
+	public void setRunTime(int newRunTime) {
 		this.runTime = newRunTime;
 		return;
 	}
