@@ -120,9 +120,7 @@ public class LibraryServer {
 							
 							writerToClient.writeObject(messageToClient);
 						} else if (account == null) {
-							
-							info.add(Integer.toString(inventory.getNumMedia()));
-							
+							// info.add(Integer.toString(inventory.getNumMedia()));
 							if (messageFromClient.getAction() == Action.LOGIN) {
 								account = accountsDirectory.login(messageFromClient.getInfo().getFirst(), messageFromClient.getInfo().getLast());
 								if (account == null) {
@@ -133,7 +131,7 @@ public class LibraryServer {
 									String filename = "loans_" + account.getId() + ".txt";
 									loanRepository.loadLoansFromFile(filename);
 									
-									info = new ArrayList<>();
+									// info = new ArrayList<>();
 									
 //									Permission permission = account.getPermission();
 //									info.add(permission == Permission.ADMIN ? "ADMIN" : "MEMBER");
@@ -141,9 +139,8 @@ public class LibraryServer {
 									info.add(account.getFullName());
 //									addFullInventoryDummyData(info);
 									
-									info.add(Integer.toString(inventory.getNumMedia()));
-									
 									if (info.getFirst().equals("MEMBER")) {
+										info.add(Integer.toString(inventory.getNumMedia()));
 										// inventory info
 										info.add(Integer.toString(inventory.getMediaItems().size())); // number of inventory items returned
 //										addFullInventoryDummyData(info);
@@ -170,43 +167,7 @@ public class LibraryServer {
 											}
 										}
 									} else if (info.getFirst().equals("ADMIN")) {
-										
-										for (Media media : inventory.getMediaItems()) {
-											if (media instanceof Book) {
-												Book b = (Book) media;
-												info.add("BOOK");
-										    	info.add(Integer.toString(b.getId()));
-										    	info.add(b.getIsbn());
-										    	info.add(b.getTitle());
-										    	info.add(b.getAuthor());
-										    	info.add(b.getPublisher());
-										    	info.add(b.getAuthor());
-										    	info.add(Integer.toString(b.getTotalQuantity()));
-										    	info.add(Integer.toString(b.getQuantityAvailable()));
-											} else if (media instanceof DVD) {
-												DVD d = (DVD) media;
-												info.add("DVD");
-										    	info.add(Integer.toString(d.getId()));
-										    	info.add(d.getTitle());
-										    	info.add(d.getAgeRating());
-										    	info.add(Integer.toString(d.getRunTime()));
-										    	info.add(Integer.toString(d.getTotalQuantity()));
-										    	info.add(Integer.toString(d.getQuantityAvailable()));
-											} else if (media instanceof BoardGame) {
-												BoardGame g = (BoardGame) media;
-												info.add("BOARD GAME");
-										    	info.add(Integer.toString(g.getId()));
-										    	info.add(g.getTitle());
-										    	info.add(g.getRating().toString());
-										    	info.add(g.getPlayerCountMin() + "-" + g.getPlayerCountMax());
-										    	info.add(Integer.toString(g.getGameLength()));
-										    	info.add(Integer.toString(g.getTotalQuantity()));
-										    	info.add(Integer.toString(g.getQuantityAvailable()));
-											} else {
-												System.out.println("Media of unexpected/unknown type found in inventory");
-											}
-										}
-										
+										addInventoryToInfoAdmin(inventory, info);
 //								    	info.add("BOOK");
 //								    	info.add("1");
 //								    	info.add("1234567890");
@@ -238,7 +199,6 @@ public class LibraryServer {
 									writerToClient.writeObject(messageToClient);
 									continue;
 								}
-//								writerToClient.writeObject(messageToClient);
 							} else if (messageFromClient.getAction() == Action.REGISTER) {
 								Account newAccount = accountsDirectory.registerNewAccount(Permission.MEMBER,
 										messageFromClient.getInfo().getFirst(), messageFromClient.getInfo().get(1),
@@ -468,7 +428,17 @@ public class LibraryServer {
 							} else if (messageFromClient.getAction() == Action.LOGOUT) {
 								account = null;
 								info.add("Our Little Library");
-								addFullInventoryDummyData(info);
+								for (Media media : inventory.getMediaItems()) {
+									if (media instanceof Book) {
+										addBookToInfo(info, (Book) media, true);
+									} else if (media instanceof DVD) {
+										addDVDToInfo(info, (DVD) media, true);
+									} else if (media instanceof BoardGame) {
+										addBoardGameToInfo(info, (BoardGame) media, true);
+									} else {
+										System.out.println("Media of unexpected/unknown type found in inventory");
+									}
+								}
 								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.LOGOUT, Status.SUCCESS, info);
 								writerToClient.writeObject(messageToClient);
 								
