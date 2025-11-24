@@ -1,5 +1,7 @@
 package Library;
 
+import inventory.Inventory;
+
 public class Library {
 	private Integer id;
 	private String name;
