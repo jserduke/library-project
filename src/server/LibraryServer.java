@@ -231,8 +231,8 @@ public class LibraryServer {
 							} else if (messageFromClient.getAction() == Action.ADD_BOOK) {
 								ArrayList<String> newBookAttr = messageFromClient.getInfo();
 								int newQuant = Integer.parseInt(newBookAttr.get(5));
-								// TODO: dd number
-								inventory.addMedia(new Book(newBookAttr.get(1), newBookAttr.get(3), newBookAttr.get(4), newQuant, newQuant, newBookAttr.get(2), 0.0, newBookAttr.get(0)));
+								double newDd = Double.parseDouble(newBookAttr.getLast());
+								inventory.addMedia(new Book(newBookAttr.get(1), newBookAttr.get(3), newBookAttr.get(4), newQuant, newQuant, newBookAttr.get(2), newDd, newBookAttr.get(0)));
 								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.ADD_BOOK, Status.SUCCESS, info);
 								addInventoryToInfoAdmin(inventory, info);
 								writerToClient.writeObject(messageToClient);

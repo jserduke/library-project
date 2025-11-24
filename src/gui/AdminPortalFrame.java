@@ -277,10 +277,11 @@ public class AdminPortalFrame extends JFrame {
             JTextField author = new JTextField();
             JTextField publisher = new JTextField();
             JTextField genre = new JTextField();
+            JTextField ddNumber = new JTextField();
             JSpinner qty = new JSpinner(new SpinnerNumberModel(1,1,999,1));
             
             int res = JOptionPane.showConfirmDialog(this, new Object[]{
-                "ISBN:", isbn, "Title:", title, "Author:", author, "Publisher:", publisher, "Genre:", genre, "Total Qty:", qty
+                "ISBN:", isbn, "Title:", title, "Author:", author, "Publisher:", publisher, "Genre:", genre, "Dewey decimal #:", ddNumber, "Total Qty:", qty
             }, "Add Book", JOptionPane.OK_CANCEL_OPTION);
             
             if (res == JOptionPane.OK_OPTION) {
@@ -292,6 +293,7 @@ public class AdminPortalFrame extends JFrame {
             	newBookInfo.add(publisher.getText().trim());
             	newBookInfo.add(genre.getText().trim());
             	newBookInfo.add("" + (Integer) qty.getValue());
+            	newBookInfo.add(ddNumber.getText().trim());
                 responseHandler.setRequestIdExpected(addBookMessage.getId());
                 responseHandler.setOldPanel(this);
                 try {
