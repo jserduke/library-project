@@ -33,6 +33,7 @@ public class BoardGame extends Media { // Variables unique to BoardGame subclass
 		this.gameLength = 0;
 	}
 	
+	// public getters for BoardGame subclass variables
 	public MediaType getMediaType() {
 		return MediaType.BOARD_GAME;
 	}
