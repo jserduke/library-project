@@ -154,7 +154,7 @@ public class LibraryServer {
 									info.add(account.getFullName());
 //									addFullInventoryDummyData(info);
 									
-//									info.add(Integer.toString(inventory.getNumMedia()));
+									info.add(Integer.toString(inventory.getNumMedia()));
 									
 									if (info.getFirst().equals("MEMBER")) {
 										// inventory info
@@ -398,86 +398,86 @@ public class LibraryServer {
 								System.out.println(account.getBirthday());
 								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.SET_PROFILE, Status.SUCCESS, null);
 								writerToClient.writeObject(messageToClient);
-//							} else if (messageFromClient.getAction() == Action.ADD_BOOK) {
-//								ArrayList<String> newBookAttr = messageFromClient.getInfo();
-//								int newQuant = Integer.parseInt(newBookAttr.get(5));
-//								double newDd = Double.parseDouble(newBookAttr.getLast());
-//								inventory.addMedia(new Book(newBookAttr.get(1), newBookAttr.get(3), newBookAttr.get(4), newQuant, newQuant, newBookAttr.get(2), newDd, newBookAttr.get(0)));
-//								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.ADD_BOOK, Status.SUCCESS, info);
-//								addInventoryToInfoAdmin(inventory, info);
-//								writerToClient.writeObject(messageToClient);
-//							} else if (messageFromClient.getAction() == Action.EDIT_BOOK) {
-//								ArrayList<String> newBookAttr = messageFromClient.getInfo();
-//								Book editBook = (Book) inventory.searchByID(Integer.parseInt(newBookAttr.getFirst())).getFirst();
-//								editBook.setIsbn(newBookAttr.get(1));
-//								editBook.setTitle(newBookAttr.get(2));
-//								editBook.setAuthor(newBookAttr.get(3));
-//								editBook.setPublisher(newBookAttr.get(4));
-//								editBook.setGenre(newBookAttr.get(5));
-//								editBook.setTotalQuantity(Integer.parseInt(newBookAttr.get(6)));
-//								editBook.setQuantityAvailable(Integer.parseInt(newBookAttr.get(7)));
-//								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.EDIT_BOOK, Status.SUCCESS, info);
-//								addInventoryToInfoAdmin(inventory, info);
-//								writerToClient.writeObject(messageToClient);
-//							} else if (messageFromClient.getAction() == Action.DELETE_BOOK || messageFromClient.getAction() == Action.DELETE_DVD || messageFromClient.getAction() == Action.DELETE_GAME) {
-//								int id = Integer.parseInt(messageFromClient.getInfo().getFirst());
-//								boolean found = false;
-//								for (int i = 0; i < inventory.getMediaItems().size(); i += 1) {
-//									if (inventory.getMediaItems().get(i).getId() == id) {
-//										found = true;
-//										inventory.getMediaItems().remove(i);
-//										messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), messageFromClient.getAction(), Status.SUCCESS, info);
-//									}
-//								}
-//								if (!found) {
-//									messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), messageFromClient.getAction(), Status.FAILURE, info);
-//								}
-//								addInventoryToInfoAdmin(inventory, info);
-//								writerToClient.writeObject(messageToClient);
-//							} else if (messageFromClient.getAction() == Action.ADD_DVD) {
-//								ArrayList<String> newDvdAttr = messageFromClient.getInfo();
-//								int newQuant = Integer.parseInt(newDvdAttr.get(3));
-//								Rating newRating = stringToRating(newDvdAttr.get(4));
-//								int newRuntime = Integer.parseInt(newDvdAttr.get(5));
-//								inventory.addMedia(new DVD(newDvdAttr.get(0), newDvdAttr.get(1), newDvdAttr.get(2), newQuant, newQuant, newRating, newRuntime));
-//								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.ADD_DVD, Status.SUCCESS, info);
-//								addInventoryToInfoAdmin(inventory, info);
-//								writerToClient.writeObject(messageToClient);
-//							} else if (messageFromClient.getAction() == Action.EDIT_DVD) {
-//								ArrayList<String> newDvdAttr = messageFromClient.getInfo();
-//								DVD editDvd = (DVD) inventory.searchByID(Integer.parseInt(newDvdAttr.getFirst())).getFirst();
-//								editDvd.setTitle(newDvdAttr.get(1));
-//								editDvd.setAgeRating(stringToRating(newDvdAttr.get(2)));
-//								editDvd.setRunTime(Integer.parseInt(newDvdAttr.get(3)));
-//								editDvd.setTotalQuantity(Integer.parseInt(newDvdAttr.get(4)));
-//								editDvd.setQuantityAvailable(Integer.parseInt(newDvdAttr.get(5)));
-//								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.EDIT_DVD, Status.SUCCESS, info);
-//								addInventoryToInfoAdmin(inventory, info);
-//								writerToClient.writeObject(messageToClient);
-//							} else if (messageFromClient.getAction() == Action.ADD_GAME) {
-//								ArrayList<String> newGameAttr = messageFromClient.getInfo();
-//								int newQuant = Integer.parseInt(newGameAttr.get(7));
-//								Rating newRating = stringToRating(newGameAttr.get(3));
-//								int newMinPlayers = Integer.parseInt(newGameAttr.get(4));
-//								int newMaxPlayers = Integer.parseInt(newGameAttr.get(5));
-//								int newLength = Integer.parseInt(newGameAttr.get(6));
-//								inventory.addMedia(new BoardGame(newGameAttr.get(0), newGameAttr.get(2), newGameAttr.get(1), newQuant, newQuant, newRating, newMinPlayers, newMaxPlayers, newLength));
-//								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.ADD_GAME, Status.SUCCESS, info);
-//								addInventoryToInfoAdmin(inventory, info);
-//								writerToClient.writeObject(messageToClient);
-//							} else if (messageFromClient.getAction() == Action.EDIT_GAME) {
-//								ArrayList<String> newGameAttr = messageFromClient.getInfo();
-//								BoardGame editGame = (BoardGame) inventory.searchByID(Integer.parseInt(newGameAttr.getFirst())).getFirst();
-//								editGame.setTitle(newGameAttr.get(1));
-//								editGame.setRating(stringToRating(newGameAttr.get(2)));
-//								editGame.setPlayerCountMin(Integer.parseInt(newGameAttr.get(3)));
-//								editGame.setPlayerCountMax(Integer.parseInt(newGameAttr.get(4)));
-//								editGame.setGameLength(Integer.parseInt(newGameAttr.get(5)));
-//								editGame.setTotalQuantity(Integer.parseInt(newGameAttr.get(6)));
-//								editGame.setQuantityAvailable(Integer.parseInt(newGameAttr.get(7)));
-//								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.EDIT_GAME, Status.SUCCESS, info);
-//								addInventoryToInfoAdmin(inventory, info);
-//								writerToClient.writeObject(messageToClient);
+							} else if (messageFromClient.getAction() == Action.ADD_BOOK) {
+								ArrayList<String> newBookAttr = messageFromClient.getInfo();
+								int newQuant = Integer.parseInt(newBookAttr.get(5));
+								double newDd = Double.parseDouble(newBookAttr.getLast());
+								inventory.addMedia(new Book(Integer.parseInt(newBookAttr.get(0)),newBookAttr.get(1), newBookAttr.get(2), newBookAttr.get(3), newQuant, newQuant, newBookAttr.get(4), newDd, newBookAttr.get(5)));
+								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.ADD_BOOK, Status.SUCCESS, info);
+								addInventoryToInfoAdmin(inventory, info);
+								writerToClient.writeObject(messageToClient);
+							} else if (messageFromClient.getAction() == Action.EDIT_BOOK) {
+								ArrayList<String> newBookAttr = messageFromClient.getInfo();
+								Book editBook = (Book) inventory.searchByID(Integer.parseInt(newBookAttr.getFirst())).getFirst();
+								editBook.setIsbn(newBookAttr.get(1));
+								editBook.setTitle(newBookAttr.get(2));
+								editBook.setAuthor(newBookAttr.get(3));
+								editBook.setPublisher(newBookAttr.get(4));
+								editBook.setGenre(newBookAttr.get(5));
+								editBook.setTotalQuantity(Integer.parseInt(newBookAttr.get(6)));
+								editBook.setQuantityAvailable(Integer.parseInt(newBookAttr.get(7)));
+								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.EDIT_BOOK, Status.SUCCESS, info);
+								addInventoryToInfoAdmin(inventory, info);
+								writerToClient.writeObject(messageToClient);
+							} else if (messageFromClient.getAction() == Action.DELETE_BOOK || messageFromClient.getAction() == Action.DELETE_DVD || messageFromClient.getAction() == Action.DELETE_GAME) {
+								int id = Integer.parseInt(messageFromClient.getInfo().getFirst());
+								boolean found = false;
+								for (int i = 0; i < inventory.getMediaItems().size(); i += 1) {
+									if (inventory.getMediaItems().get(i).getId() == id) {
+										found = true;
+										inventory.getMediaItems().remove(i);
+										messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), messageFromClient.getAction(), Status.SUCCESS, info);
+									}
+								}
+								if (!found) {
+									messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), messageFromClient.getAction(), Status.FAILURE, info);
+								}
+								addInventoryToInfoAdmin(inventory, info);
+								writerToClient.writeObject(messageToClient);
+							} else if (messageFromClient.getAction() == Action.ADD_DVD) {
+								ArrayList<String> newDvdAttr = messageFromClient.getInfo();
+								int newQuant = Integer.parseInt(newDvdAttr.get(3));
+								Rating newRating = stringToRating(newDvdAttr.get(4));
+								int newRuntime = Integer.parseInt(newDvdAttr.get(5));
+								inventory.addMedia(new DVD(Integer.parseInt(newDvdAttr.get(0)), newDvdAttr.get(1), newDvdAttr.get(2), newDvdAttr.get(3), newQuant, newQuant, newRating, newRuntime));
+								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.ADD_DVD, Status.SUCCESS, info);
+								addInventoryToInfoAdmin(inventory, info);
+								writerToClient.writeObject(messageToClient);
+							} else if (messageFromClient.getAction() == Action.EDIT_DVD) {
+								ArrayList<String> newDvdAttr = messageFromClient.getInfo();
+								DVD editDvd = (DVD) inventory.searchByID(Integer.parseInt(newDvdAttr.getFirst())).getFirst();
+								editDvd.setTitle(newDvdAttr.get(1));
+								editDvd.setAgeRating(stringToRating(newDvdAttr.get(2)));
+								editDvd.setRunTime(Integer.parseInt(newDvdAttr.get(3)));
+								editDvd.setTotalQuantity(Integer.parseInt(newDvdAttr.get(4)));
+								editDvd.setQuantityAvailable(Integer.parseInt(newDvdAttr.get(5)));
+								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.EDIT_DVD, Status.SUCCESS, info);
+								addInventoryToInfoAdmin(inventory, info);
+								writerToClient.writeObject(messageToClient);
+							} else if (messageFromClient.getAction() == Action.ADD_GAME) {
+								ArrayList<String> newGameAttr = messageFromClient.getInfo();
+								int newQuant = Integer.parseInt(newGameAttr.get(7));
+								Rating newRating = stringToRating(newGameAttr.get(3));
+								int newMinPlayers = Integer.parseInt(newGameAttr.get(4));
+								int newMaxPlayers = Integer.parseInt(newGameAttr.get(5));
+								int newLength = Integer.parseInt(newGameAttr.get(6));
+								inventory.addMedia(new BoardGame(Integer.parseInt(newGameAttr.get(0)), newGameAttr.get(1), newGameAttr.get(2), newGameAttr.get(3), newQuant, newQuant, newRating, newMinPlayers, newMaxPlayers, newLength));
+								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.ADD_GAME, Status.SUCCESS, info);
+								addInventoryToInfoAdmin(inventory, info);
+								writerToClient.writeObject(messageToClient);
+							} else if (messageFromClient.getAction() == Action.EDIT_GAME) {
+								ArrayList<String> newGameAttr = messageFromClient.getInfo();
+								BoardGame editGame = (BoardGame) inventory.searchByID(Integer.parseInt(newGameAttr.getFirst())).getFirst();
+								editGame.setTitle(newGameAttr.get(1));
+								editGame.setRating(stringToRating(newGameAttr.get(2)));
+								editGame.setPlayerCountMin(Integer.parseInt(newGameAttr.get(3)));
+								editGame.setPlayerCountMax(Integer.parseInt(newGameAttr.get(4)));
+								editGame.setGameLength(Integer.parseInt(newGameAttr.get(5)));
+								editGame.setTotalQuantity(Integer.parseInt(newGameAttr.get(6)));
+								editGame.setQuantityAvailable(Integer.parseInt(newGameAttr.get(7)));
+								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.EDIT_GAME, Status.SUCCESS, info);
+								addInventoryToInfoAdmin(inventory, info);
+								writerToClient.writeObject(messageToClient);
 							} else if (messageFromClient.getAction() == Action.LOGOUT) {
 								account = null;
 								info.add("Our Little Library");
