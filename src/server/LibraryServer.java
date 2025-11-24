@@ -89,11 +89,11 @@ public class LibraryServer {
 //							addFullInventoryDummyData(info);
 							for (Media media : inventory.getMediaItems()) {
 								if (media instanceof Book) {
-									addBookToInfo(info, (Book) media);
+									addBookToInfo(info, (Book) media, true);
 								} else if (media instanceof DVD) {
-									addDVDToInfo(info, (DVD) media);
+									addDVDToInfo(info, (DVD) media, true);
 								} else if (media instanceof BoardGame) {
-									addBoardGameToInfo(info, (BoardGame) media);
+									addBoardGameToInfo(info, (BoardGame) media, true);
 								} else {
 									System.out.println("Media of unexpected/unknown type found in inventory");
 								}
@@ -121,11 +121,11 @@ public class LibraryServer {
 							ArrayList<Media> relevantInventory = requestMediaTitle.equals("") ? inventory.getMediaItems() : inventory.searchByTitle(requestMediaTitle);
 							for (Media media : relevantInventory) {
 								if ((requestMediaType.equals("All") || requestMediaType.equals("Books")) && media instanceof Book) {
-									addBookToInfo(info, (Book) media);
+									addBookToInfo(info, (Book) media, shouldIncludeType);
 								} else if ((requestMediaType.equals("All") || requestMediaType.equals("DVDs")) && media instanceof DVD) {
-									addDVDToInfo(info, (DVD) media);
+									addDVDToInfo(info, (DVD) media, shouldIncludeType);
 								} else if ((requestMediaType.equals("All") || requestMediaType.equals("Board Games")) && media instanceof BoardGame) {
-									addBoardGameToInfo(info, (BoardGame) media);
+									addBoardGameToInfo(info, (BoardGame) media, shouldIncludeType);
 								} else {
 									System.out.println("Request type unknown or media type in Inventory unknown");
 								}
@@ -173,11 +173,11 @@ public class LibraryServer {
 										
 										for (Media media : inventory.getMediaItems()) {
 											if (media instanceof Book) {
-												addBookToInfo(info, (Book) media);
+												addBookToInfo(info, (Book) media, true);
 											} else if (media instanceof DVD) {
-												addDVDToInfo(info, (DVD) media);
+												addDVDToInfo(info, (DVD) media, true);
 											} else if (media instanceof BoardGame) {
-												addBoardGameToInfo(info, (BoardGame) media);
+												addBoardGameToInfo(info, (BoardGame) media, true);
 											} else {
 												System.out.println("Media of unexpected/unknown type found in inventory");
 											}
@@ -551,12 +551,10 @@ public class LibraryServer {
 		return null;
 	}
 	
-//	public static void addBookToInfo(ArrayList<String> info, Book book, boolean shouldIncludeType) {
-	public static void addBookToInfo(ArrayList<String> info, Book book) {
-//		if (shouldIncludeType) {
-//			info.add("Book");
-//		}
-		info.add("BOOK");
+	private static void addBookToInfo(ArrayList<String> info, Book book, boolean shouldIncludeType) {
+		if (shouldIncludeType) {
+			info.add("Book");
+		}
 		info.add("" + book.getId());
 		info.add(book.getTitle());
 		info.add(book.getAuthor());
@@ -565,12 +563,10 @@ public class LibraryServer {
 		info.add("" + book.getTotalQuantity());
 		info.add("" + book.getQuantityAvailable());
 	}
-//	public static void addDVDToInfo(ArrayList<String> info, DVD dvd, boolean shouldIncludeType) {
-	public static void addDVDToInfo(ArrayList<String> info, DVD dvd) {
-//		if (shouldIncludeType) {
-//			info.add("DVD");
-//		}
-		info.add("DVD");
+	private static void addDVDToInfo(ArrayList<String> info, DVD dvd, boolean shouldIncludeType) {
+		if (shouldIncludeType) {
+			info.add("DVD");
+		}
 		info.add("" + dvd.getId());
 		info.add(dvd.getTitle());
 		info.add(dvd.getAgeRating());
@@ -579,12 +575,10 @@ public class LibraryServer {
 		info.add("" + dvd.getTotalQuantity());
 		info.add("" + dvd.getQuantityAvailable());
 	}
-//	public static void addBoardGameToInfo(ArrayList<String> info, BoardGame boardGame, boolean shouldIncludeType) {
-	public static void addBoardGameToInfo(ArrayList<String> info, BoardGame boardGame) {
-//		if (shouldIncludeType) {
-//			info.add("Board Game");
-//		}
-		info.add("BOARD GAME");
+	private static void addBoardGameToInfo(ArrayList<String> info, BoardGame boardGame, boolean shouldIncludeType) {
+		if (shouldIncludeType) {
+			info.add("Board Game");
+		}
 		info.add("" + boardGame.getId());
 		info.add(boardGame.getTitle());
 		info.add(boardGame.getRating().toString());
