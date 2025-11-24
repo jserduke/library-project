@@ -249,41 +249,50 @@ public class LibraryServer {
 								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.EDIT_BOOK, Status.SUCCESS, info);
 								addInventoryToInfoAdmin(inventory, info);
 								writerToClient.writeObject(messageToClient);
-							} else if (messageFromClient.getAction() == Action.DELETE_BOOK) {
+							} else if (messageFromClient.getAction() == Action.DELETE_BOOK || messageFromClient.getAction() == Action.DELETE_DVD) {
 								int id = Integer.parseInt(messageFromClient.getInfo().getFirst());
 								boolean found = false;
 								for (int i = 0; i < inventory.getMediaItems().size(); i += 1) {
 									if (inventory.getMediaItems().get(i).getId() == id) {
 										found = true;
 										inventory.getMediaItems().remove(i);
-										messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.DELETE_BOOK, Status.SUCCESS, info);
+										messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), messageFromClient.getAction(), Status.SUCCESS, info);
 									}
 								}
 								if (!found) {
-									messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.DELETE_BOOK, Status.FAILURE, info);
+									messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), messageFromClient.getAction(), Status.FAILURE, info);
 								}
 								addInventoryToInfoAdmin(inventory, info);
 								writerToClient.writeObject(messageToClient);
 							} else if (messageFromClient.getAction() == Action.ADD_DVD) {
 								ArrayList<String> newDvdAttr = messageFromClient.getInfo();
 								int newQuant = Integer.parseInt(newDvdAttr.get(3));
-								Rating newRating;
-								if (newDvdAttr.get(4).equalsIgnoreCase("G")) {
-									newRating = Rating.G;
-								} else if (newDvdAttr.get(4).equalsIgnoreCase("PG")) {
-									newRating = Rating.PG;
-								} else if (newDvdAttr.get(4).equalsIgnoreCase("PG-13")) {
-									newRating = Rating.PG_13;
-								} else if (newDvdAttr.get(4).equalsIgnoreCase("NC-17")) {
-									newRating = Rating.NC_17;
-								} else if (newDvdAttr.get(4).equalsIgnoreCase("R")) {
-									newRating = Rating.R;
-								} else {
-									newRating = Rating.UNRATED;
-								}
+								Rating newRating = stringToRating(newDvdAttr.get(4));
 								int newRuntime = Integer.parseInt(newDvdAttr.get(5));
 								inventory.addMedia(new DVD(newDvdAttr.get(0), newDvdAttr.get(1), newDvdAttr.get(2), newQuant, newQuant, newRating, newRuntime));
 								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.ADD_DVD, Status.SUCCESS, info);
+								addInventoryToInfoAdmin(inventory, info);
+								writerToClient.writeObject(messageToClient);
+							} else if (messageFromClient.getAction() == Action.EDIT_DVD) {
+								ArrayList<String> newDvdAttr = messageFromClient.getInfo();
+								DVD editDvd = (DVD) inventory.searchByID(Integer.parseInt(newDvdAttr.getFirst())).getFirst();
+								editDvd.setTitle(newDvdAttr.get(1));
+								editDvd.setAgeRating(stringToRating(newDvdAttr.get(2)));
+								editDvd.setRunTime(Integer.parseInt(newDvdAttr.get(3)));
+								editDvd.setTotalQuantity(Integer.parseInt(newDvdAttr.get(4)));
+								editDvd.setQuantityAvailable(Integer.parseInt(newDvdAttr.get(5)));
+								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.EDIT_DVD, Status.SUCCESS, info);
+								addInventoryToInfoAdmin(inventory, info);
+								writerToClient.writeObject(messageToClient);
+							} else if (messageFromClient.getAction() == Action.ADD_GAME) {
+								ArrayList<String> newGameAttr = messageFromClient.getInfo();
+								int newQuant = Integer.parseInt(newGameAttr.get(7));
+								Rating newRating = stringToRating(newGameAttr.get(3));
+								int newMinPlayers = Integer.parseInt(newGameAttr.get(4));
+								int newMaxPlayers = Integer.parseInt(newGameAttr.get(5));
+								int newLength = Integer.parseInt(newGameAttr.get(6));
+								inventory.addMedia(new BoardGame(newGameAttr.get(0), newGameAttr.get(2), newGameAttr.get(1), newQuant, newQuant, newRating, newMinPlayers, newMaxPlayers, newLength));
+								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.ADD_GAME, Status.SUCCESS, info);
 								addInventoryToInfoAdmin(inventory, info);
 								writerToClient.writeObject(messageToClient);
 							} else if (messageFromClient.getAction() == Action.LOGOUT) {
@@ -410,6 +419,21 @@ public class LibraryServer {
 			} else {
 				System.out.println("Unrecognized media type in Inventory");
 			}
+		}
+	}
+	private static Rating stringToRating(String rating) {
+		if (rating.equalsIgnoreCase("G")) {
+			return Rating.G;
+		} else if (rating.equalsIgnoreCase("PG")) {
+			return Rating.PG;
+		} else if (rating.equalsIgnoreCase("PG-13")) {
+			return Rating.PG_13;
+		} else if (rating.equalsIgnoreCase("NC-17")) {
+			return Rating.NC_17;
+		} else if (rating.equalsIgnoreCase("R")) {
+			return Rating.R;
+		} else {
+			return Rating.UNRATED;
 		}
 	}
 }

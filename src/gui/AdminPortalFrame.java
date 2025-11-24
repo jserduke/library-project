@@ -156,8 +156,8 @@ public class AdminPortalFrame extends JFrame {
             btns.add(add); btns.add(edit); btns.add(del);
             p.add(btns, BorderLayout.SOUTH);
             add.addActionListener(e -> addDvd(requestWriter, responseHandler));
-            edit.addActionListener(e -> editDvd());
-            del.addActionListener(e -> deleteDvd());
+            edit.addActionListener(e -> editDvd(requestWriter, responseHandler));
+            del.addActionListener(e -> deleteDvd(requestWriter, responseHandler));
             return p;
         }
         private JPanel buildGames(ObjectOutputStream requestWriter, ResponseHandler responseHandler) {
@@ -178,7 +178,7 @@ public class AdminPortalFrame extends JFrame {
             Theme.styleButton(del, Theme.ACCENT_ORANGE);
             btns.add(add); btns.add(edit); btns.add(del);
             p.add(btns, BorderLayout.SOUTH);
-            add.addActionListener(e -> addGame());
+            add.addActionListener(e -> addGame(requestWriter, responseHandler));
             edit.addActionListener(e -> editGame());
             del.addActionListener(e -> deleteGame());
             return p;
@@ -399,65 +399,105 @@ public class AdminPortalFrame extends JFrame {
         		}
             }
         }
-        private void editDvd() {
+        private void editDvd(ObjectOutputStream requestWriter, ResponseHandler responseHandler) {
             int row = dvdsTable.getSelectedRow(); 
-            if (row<0) 
+            if (row < 0) {
             	return;
+            }
+            int idVal = Integer.parseInt((String) dvdsModel.getValueAt(row, 0));
+            String titleVal = (String) dvdsModel.getValueAt(row, 1);
+            String ratingVal = (String) dvdsModel.getValueAt(row, 2);
+            int runtimeVal = Integer.parseInt((String) dvdsModel.getValueAt(row, 3));
+            int quantTotal = Integer.parseInt((String) dvdsModel.getValueAt(row, 4));
+            int quantAvail = Integer.parseInt((String) dvdsModel.getValueAt(row, 5));
             
-            int id = (Integer) dvdsModel.getValueAt(row, 0);
-            
-            Dvd found = null; 
-            for (Dvd d : LibraryData.DVDS) 
-            	if (d.getId()==id){
-            		found=d;
-            		break;
-            	}
-            if (found==null) 
-            	return;
-            
-            JTextField title = new JTextField(found.getTitle());
-            JTextField rating = new JTextField(found.getRating());
-            JSpinner runtime = new JSpinner(new SpinnerNumberModel(found.getRuntimeMinutes(),1,10000,1));
-            JSpinner qty = new JSpinner(new SpinnerNumberModel(found.getTotalQuantity(),1,999,1));
+            JTextField title = new JTextField(titleVal);
+            JTextField rating = new JTextField(ratingVal);
+            JSpinner runtime = new JSpinner(new SpinnerNumberModel(runtimeVal,1,10000,1));
+            JSpinner qtyTotal = new JSpinner(new SpinnerNumberModel(quantTotal,1,999,1));
+            JSpinner qtyAvail = new JSpinner(new SpinnerNumberModel(quantAvail,1,999,1));
             
             int res = JOptionPane.showConfirmDialog(this, new Object[]{
-                "Title:", title, "Rating:", rating, "Runtime (min):", runtime, "Total Qty:", qty
+                "Title:", title, "Rating:", rating, "Runtime (min):", runtime, "Total Qty:", qtyTotal, "Avail. Qty:", qtyAvail
             }, "Edit DVD", JOptionPane.OK_CANCEL_OPTION);
             if (res == JOptionPane.OK_OPTION) {
+            	ArrayList<String> editDvdInfo = new ArrayList<String>();
+            	Message editDvdMessage = new Message(0, message.Type.REQUEST, -1, message.Action.EDIT_DVD, Status.PENDING, editDvdInfo);
+            	editDvdInfo.add("" + idVal);
+            	editDvdInfo.add(title.getText().trim());
+            	editDvdInfo.add(rating.getText().trim());
+            	editDvdInfo.add("" + runtime.getValue());
+            	editDvdInfo.add("" + qtyTotal.getValue());
+            	editDvdInfo.add("" + qtyAvail.getValue());
+                responseHandler.setRequestIdExpected(editDvdMessage.getId());
+                responseHandler.setOldPanel(this);
+                try {
+        			requestWriter.writeObject(editDvdMessage);
+        		} catch (IOException er) {
+        			// TODO Auto-generated catch block
+        			er.printStackTrace();
+        		}
+            	/*
                 found.setTitle(title.getText().trim());
                 found.setRating(rating.getText().trim());
                 found.setRuntimeMinutes((Integer)runtime.getValue());
                 found.setTotalQuantity((Integer)qty.getValue());
                 reloadAll(null); // TODO: fix later
+                */
             }
         }
-        private void deleteDvd() {
-            int row = dvdsTable.getSelectedRow(); if (row<0) 
+        private void deleteDvd(ObjectOutputStream requestWriter, ResponseHandler responseHandler) {
+            int row = dvdsTable.getSelectedRow();
+            if (row<0) {
             	return;
-            int id = (Integer) dvdsModel.getValueAt(row, 0);
-            LibraryData.DVDS.removeIf(d -> d.getId()==id);
-            reloadAll(null); // TODO: fix later
+            }
+            String id = (String) dvdsModel.getValueAt(row, 0);
+        	ArrayList<String> deleteDvdInfo = new ArrayList<String>();
+        	Message deleteDvdMessage = new Message(0, message.Type.REQUEST, -1, message.Action.DELETE_DVD, Status.PENDING, deleteDvdInfo);
+        	deleteDvdInfo.add(id);
+            responseHandler.setRequestIdExpected(deleteDvdMessage.getId());
+            responseHandler.setOldPanel(this);
+            try {
+    			requestWriter.writeObject(deleteDvdMessage);
+    		} catch (IOException er) {
+    			// TODO Auto-generated catch block
+    			er.printStackTrace();
+    		}
         }
 
-        private void addGame() {
+        private void addGame(ObjectOutputStream requestWriter, ResponseHandler responseHandler) {
             JTextField title = new JTextField();
+            JTextField genre = new JTextField();
+            JTextField publisher = new JTextField();
             JTextField rating = new JTextField();
-            JTextField players = new JTextField("2-4");
+            JTextField minPlayers = new JTextField();
+            JTextField maxPlayers = new JTextField();
             JSpinner length = new JSpinner(new SpinnerNumberModel(60,1,10000,1));
             JSpinner qty = new JSpinner(new SpinnerNumberModel(1,1,999,1));
             
             int res = JOptionPane.showConfirmDialog(this, new Object[]{
-                "Title:", title, "Rating:", rating, "Players:", players, "Game Length (min):", length, "Total Qty:", qty
+                "Title:", title, "Genre:", genre, "Publisher:", publisher, "Rating:", rating, "Min. Players:", minPlayers, "Max. Players:", maxPlayers, "Game Length (min):", length, "Total Qty:", qty
             }, "Add Board Game", JOptionPane.OK_CANCEL_OPTION);
             
             if (res == JOptionPane.OK_OPTION) {
-                LibraryData.BOARD_GAMES.add(new BoardGame(LibraryData.nextBoardGameId(), 
-                		title.getText().trim(),
-                    rating.getText().trim(),
-                    players.getText().trim(), 
-                    (Integer)length.getValue(),
-                    (Integer)qty.getValue()));
-                reloadAll(null); // TODO: fix later
+            	ArrayList<String> newGameInfo = new ArrayList<String>();
+            	Message addGameMessage = new Message(0, message.Type.REQUEST, -1, message.Action.ADD_GAME, Status.PENDING, newGameInfo);
+            	newGameInfo.add(title.getText().trim());
+            	newGameInfo.add(genre.getText().trim());
+            	newGameInfo.add(publisher.getText().trim());
+            	newGameInfo.add(rating.getText().trim());
+            	newGameInfo.add(minPlayers.getText().trim());
+            	newGameInfo.add(maxPlayers.getText().trim());
+            	newGameInfo.add("" + (Integer) length.getValue());
+            	newGameInfo.add("" + (Integer) qty.getValue());
+                responseHandler.setRequestIdExpected(addGameMessage.getId());
+                responseHandler.setOldPanel(this);
+                try {
+        			requestWriter.writeObject(addGameMessage);
+        		} catch (IOException er) {
+        			// TODO Auto-generated catch block
+        			er.printStackTrace();
+        		}
             }
         }
         private void editGame() {
