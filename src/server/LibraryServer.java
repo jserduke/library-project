@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import account.*;
-import inventory.*;
 import message.*;
+import inventory.*;
 
 public class LibraryServer {
 	public static void main(String[] args) {
@@ -57,14 +57,14 @@ public class LibraryServer {
 				accountsDirectory.registerNewAccount(Permission.ADMIN, "admin@test.test", "admin123", "Iam Admin", new Date(2000 - 1900, 5, 20));
 				
 				Inventory inventory = new Inventory(new ArrayList<Media>());
-				inventory.addMedia(new Book(1, "The Book", "The Publishing House", "Horror", 5, 5, "Mr. Idk", 340.5, "351-64534-343"));
-				inventory.addMedia(new Book(2, "Book, Too!", "The Publishing House", "Comedy", 3, 3, "Mr. Idk", 121.5, "987-245345"));
-				inventory.addMedia(new Book(3, "You Never Know", "Different Publisher", "Mystery", 2, 2, "Mrs. _", 145.6, "35-234343"));
-				inventory.addMedia(new DVD(12, "The Movie", "Paramount", "Drama", 5, 5, Rating.PG_13, 120));
-				inventory.addMedia(new DVD(13, "Movie but Worse", "Paramount", "Drama", 3, 3, Rating.PG, 180));
-				inventory.addMedia(new DVD(14, "You Never Know", "Innovation Prod.", "Comedy", 2, 2, Rating.G, 140));
-				inventory.addMedia(new BoardGame(123, "Something's Missing", "Games Unlimited", "Party", 2, 2, Rating.G, 2, 4, 120));
-				inventory.addMedia(new BoardGame(124, "Dreamers' Gate", "Games Unlimited", "Tabletop RPG", 3, 3, Rating.R, 1, 4, 600));
+				inventory.addMedia(new Book("The Book", "The Publishing House", "Horror", 5, 5, "Mr. Idk", 340.5, "351-64534-343"));
+				inventory.addMedia(new Book("Book, Too!", "The Publishing House", "Comedy", 3, 3, "Mr. Idk", 121.5, "987-245345"));
+				inventory.addMedia(new Book("You Never Know", "Different Publisher", "Mystery", 2, 2, "Mrs. _", 145.6, "35-234343"));
+				inventory.addMedia(new DVD("The Movie", "Paramount", "Drama", 5, 5, Rating.PG_13, 120));
+				inventory.addMedia(new DVD("Movie but Worse", "Paramount", "Drama", 3, 3, Rating.PG, 180));
+				inventory.addMedia(new DVD("You Never Know", "Innovation Prod.", "Comedy", 2, 2, Rating.G, 140));
+				inventory.addMedia(new BoardGame("Something's Missing", "Games Unlimited", "Party", 2, 2, Rating.G, 2, 4, 120));
+				inventory.addMedia(new BoardGame("Dreamers' Gate", "Games Unlimited", "Tabletop RPG", 3, 3, Rating.R, 1, 4, 600));
 				
 				LoanRepository loanRepository = new LoanRepository();
 				HoldsRepository holdRepository = new HoldsRepository();
@@ -402,7 +402,7 @@ public class LibraryServer {
 								ArrayList<String> newBookAttr = messageFromClient.getInfo();
 								int newQuant = Integer.parseInt(newBookAttr.get(5));
 								double newDd = Double.parseDouble(newBookAttr.getLast());
-								inventory.addMedia(new Book(Integer.parseInt(newBookAttr.get(0)),newBookAttr.get(1), newBookAttr.get(2), newBookAttr.get(3), newQuant, newQuant, newBookAttr.get(4), newDd, newBookAttr.get(5)));
+								inventory.addMedia(new Book(newBookAttr.get(1), newBookAttr.get(3), newBookAttr.get(4), newQuant, newQuant, newBookAttr.get(2), newDd, newBookAttr.get(0)));
 								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.ADD_BOOK, Status.SUCCESS, info);
 								addInventoryToInfoAdmin(inventory, info);
 								writerToClient.writeObject(messageToClient);
@@ -439,7 +439,7 @@ public class LibraryServer {
 								int newQuant = Integer.parseInt(newDvdAttr.get(3));
 								Rating newRating = stringToRating(newDvdAttr.get(4));
 								int newRuntime = Integer.parseInt(newDvdAttr.get(5));
-								inventory.addMedia(new DVD(Integer.parseInt(newDvdAttr.get(0)), newDvdAttr.get(1), newDvdAttr.get(2), newDvdAttr.get(3), newQuant, newQuant, newRating, newRuntime));
+								inventory.addMedia(new DVD(newDvdAttr.get(0), newDvdAttr.get(1), newDvdAttr.get(2), newQuant, newQuant, newRating, newRuntime));
 								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.ADD_DVD, Status.SUCCESS, info);
 								addInventoryToInfoAdmin(inventory, info);
 								writerToClient.writeObject(messageToClient);
@@ -461,7 +461,7 @@ public class LibraryServer {
 								int newMinPlayers = Integer.parseInt(newGameAttr.get(4));
 								int newMaxPlayers = Integer.parseInt(newGameAttr.get(5));
 								int newLength = Integer.parseInt(newGameAttr.get(6));
-								inventory.addMedia(new BoardGame(Integer.parseInt(newGameAttr.get(0)), newGameAttr.get(1), newGameAttr.get(2), newGameAttr.get(3), newQuant, newQuant, newRating, newMinPlayers, newMaxPlayers, newLength));
+								inventory.addMedia(new BoardGame(newGameAttr.get(0), newGameAttr.get(2), newGameAttr.get(1), newQuant, newQuant, newRating, newMinPlayers, newMaxPlayers, newLength));
 								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.ADD_GAME, Status.SUCCESS, info);
 								addInventoryToInfoAdmin(inventory, info);
 								writerToClient.writeObject(messageToClient);
