@@ -8,6 +8,7 @@ import account.*;
 import message.*;
 import inventory.*;
 
+
 public class LibraryServer {
 	public static void main(String[] args) {
 		ServerSocket server = null;
@@ -52,10 +53,10 @@ public class LibraryServer {
 				readerFromClient = new ObjectInputStream(clientSocket.getInputStream());
 				Message messageFromClient = null, messageToClient = null;
 				
+				// BACKEND DATA (should ideally get it to load in from files later)
 				AccountsDirectory accountsDirectory = new AccountsDirectory();
 				accountsDirectory.registerNewAccount(Permission.MEMBER, "member@test.test", "test123", "Tester Testington", new Date(2024 - 1900, 0, 1));
 				accountsDirectory.registerNewAccount(Permission.ADMIN, "admin@test.test", "admin123", "Iam Admin", new Date(2000 - 1900, 5, 20));
-				
 				Inventory inventory = new Inventory(new ArrayList<Media>());
 				inventory.addMedia(new Book("The Book", "The Publishing House", "Horror", 5, 5, "Mr. Idk", 340.5, "351-64534-343"));
 				inventory.addMedia(new Book("Book, Too!", "The Publishing House", "Comedy", 3, 3, "Mr. Idk", 121.5, "987-245345"));
@@ -86,7 +87,6 @@ public class LibraryServer {
 //							// inventory = Library.getInventory();
 //							// for item in inventory:
 //							// add each piece of info
-//							addFullInventoryDummyData(info);
 							for (Media media : inventory.getMediaItems()) {
 								if (media instanceof Book) {
 									addBookToInfo(info, (Book) media, true);
@@ -102,19 +102,6 @@ public class LibraryServer {
 							writerToClient.writeObject(messageToClient);
 						} else if (messageFromClient.getAction() == Action.GET_SEARCH) {
 							messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.GET_SEARCH, Status.SUCCESS, info);
-							// TODO:
-							// library.searchByName
-							// for item in results
-							// add piece of info
-//							info.add("Book");
-//							info.add("4");
-//							info.add("Booksmart");
-//							info.add("B. Smart");
-//							info.add("1234566789");
-//							info.add("Idk");
-//							info.add("4");
-//							info.add("0");
-							
 							String requestMediaType = messageFromClient.getInfo().getFirst();
 							boolean shouldIncludeType = requestMediaType.equals("All");
 							String requestMediaTitle = messageFromClient.getInfo().getLast();
