@@ -6,7 +6,8 @@ import java.util.ArrayList;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.Scanner;
-import inventory.*;
+
+import inventoryy.*;
 
 
 public class LoanRepository {

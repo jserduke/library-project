@@ -1,4 +1,4 @@
-package inventory;
+package inventoryy;
 
 public class Book extends Media{
 	private String author;
