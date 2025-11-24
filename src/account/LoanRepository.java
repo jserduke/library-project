@@ -1,10 +1,12 @@
 package account;
+
 import java.io.*;
 import java.util.Date;
 import java.util.ArrayList;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.Scanner;
+import inventory.*;
 
 
 public class LoanRepository {
@@ -61,13 +63,20 @@ public class LoanRepository {
 		return loan;
 	}
 	
-	public boolean returnMedia(int mediaId, int memberId) {
+	public boolean returnMedia(int mediaId, int memberId, Inventory inventory) {
 		for (Loan loan : history) {
 			if (loan.getMediaId() == mediaId && 
 				loan.getMemberId() == memberId && 
 				loan.getReturnedDate() == null) {
 				
 				loan.setReturnDate(new Date());
+				
+				ArrayList<Media> mediaList = inventory.searchByID(mediaId);
+				if (mediaList != null && !mediaList.isEmpty()) {
+					Media m = mediaList.get(0);
+					m.setQuantityAvailable(m.getQuantityAvailable() + 1);
+				}
+				
 				return true;
 			}
 		}
