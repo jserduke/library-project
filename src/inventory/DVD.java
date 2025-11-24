@@ -1,10 +1,10 @@
-package Inventory;
+package inventory;
 
-class DVD extends Media{
+public class DVD extends Media{
 	private Rating ageRating;
 	private int runTime;
 	
-	protected DVD (int newId, // For Media super() variables
+	public DVD (int newId, // For Media super() variables
 		String newTitle,
 		String newPublisher,
 		String newGenre, 
@@ -18,7 +18,7 @@ class DVD extends Media{
 		this.runTime = newRunTime;
 	}
 	
-	protected DVD () { // default constructor
+	public DVD () { // default constructor
 		super(MediaType.DVD);
 		this.ageRating = Rating.UNRATED;
 		this.runTime = 0;

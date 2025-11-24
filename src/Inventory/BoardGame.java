@@ -1,4 +1,4 @@
-package Inventory;
+package inventory;
 
 public class BoardGame extends Media{ // Variables unique to BoardGame subclass
 	private Rating ageRating;
@@ -7,7 +7,7 @@ public class BoardGame extends Media{ // Variables unique to BoardGame subclass
 	private int gameLength;
 	
 	 // inherited from base class Media, used in super() parent constructor call
-	protected BoardGame(int newId,
+	public BoardGame(int newId,
 		String newTitle,
 		String newPublisher,
 		String newGenre,
@@ -25,7 +25,7 @@ public class BoardGame extends Media{ // Variables unique to BoardGame subclass
 		this.gameLength = newGameLength;
 	}
 	
-	protected BoardGame() {
+	public BoardGame() {
 		super(MediaType.BOARD_GAME); // calls Media superclass default constructor
 		this.ageRating = Rating.UNRATED;
 		this.playerCountMin = 0;

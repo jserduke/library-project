@@ -1,5 +1,5 @@
-package Inventory;
-abstract class Media {
+package inventory;
+public abstract class Media {
 	private final MediaType mediaType;
 	private int id; // all fields inherited by Book/DVD/Board Game
 	private String title;
