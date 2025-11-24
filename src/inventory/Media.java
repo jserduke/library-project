@@ -1,5 +1,6 @@
-package Inventory;
-abstract class Media {
+package inventory;
+public abstract class Media {
+	protected static int nextMediaId = 0;
 	private final MediaType mediaType;
 	private int id; // all fields inherited by Book/DVD/Board Game
 	private String title;
@@ -10,14 +11,14 @@ abstract class Media {
 
 	// protected constructors for subclass use to initialize variables unaccessible to subclasses
 	protected Media(MediaType newMediaType, 
-	int newId, 
+	// int newId, 
 	String newTitle, 
 	String newPublisher, 
 	String newGenre,
 	int newTotalQuantity,
 	int newQuantityAvailable) {
 		this.mediaType = newMediaType;
-		this.id = newId;
+		this.id = nextMediaId++;
 		this.title = newTitle;
 		this.publisher = newPublisher;
 		this.genre = newGenre;
@@ -75,31 +76,31 @@ abstract class Media {
 	}
 	
 	// Setters are protected for subclass access since variables are private
-	protected void setId(int newId) {
+	public void setId(int newId) {
 		this.id = newId;
 	}
 	
-	protected void setTitle(String newTitle) {
+	public void setTitle(String newTitle) {
 		this.title = newTitle;
 	}
 	
-	protected void setPublisher(String newPublisher) {
+	public void setPublisher(String newPublisher) {
 		this.publisher = newPublisher;
 	}
 	
-	protected void setGenre(String newGenre) {
+	public void setGenre(String newGenre) {
 		this.genre = newGenre;
 	}
 	
-	protected void setTotalQuantity(int newTotalQuantity) {
+	public void setTotalQuantity(int newTotalQuantity) {
 		this.totalQuantity = newTotalQuantity;
 	}
 	
-	protected void setQuantityAvailable(int newQuantityAvailable) {
+	public void setQuantityAvailable(int newQuantityAvailable) {
 		this.quantityAvailable = newQuantityAvailable;
 	}
 	
-	protected void setQuantityAll(int newTotalQuantity, int newQuantityAvailable) {
+	public void setQuantityAll(int newTotalQuantity, int newQuantityAvailable) {
 		setTotalQuantity(newTotalQuantity);
 		setQuantityAvailable(newQuantityAvailable);
 	}

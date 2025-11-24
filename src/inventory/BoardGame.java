@@ -1,4 +1,4 @@
-package Inventory;
+package inventory;
 
 public class BoardGame extends Media{ // Variables unique to BoardGame subclass
 	private Rating ageRating;
@@ -7,7 +7,7 @@ public class BoardGame extends Media{ // Variables unique to BoardGame subclass
 	private int gameLength;
 	
 	 // inherited from base class Media, used in super() parent constructor call
-	protected BoardGame(int newId,
+	public BoardGame(
 		String newTitle,
 		String newPublisher,
 		String newGenre,
@@ -18,7 +18,7 @@ public class BoardGame extends Media{ // Variables unique to BoardGame subclass
 		int newPlayerCountMax,
 		int newGameLength) 
 	{
-		super(MediaType.BOARD_GAME,newId,newTitle,newPublisher,newGenre,newTotalQuantity,newQuantityAvailable);
+		super(MediaType.BOARD_GAME, newTitle, newPublisher, newGenre, newTotalQuantity, newQuantityAvailable);
 		this.ageRating = newAgeRating; // regular constructor for BoardGame subclass
 		this.playerCountMin = newPlayerCountMin;
 		this.playerCountMax = newPlayerCountMax;
@@ -61,22 +61,22 @@ public class BoardGame extends Media{ // Variables unique to BoardGame subclass
 		",Game Length:" + getGameLength() + "}\n";
 	}
 	
-	private void setRating(Rating newRating) {
+	public void setRating(Rating newRating) {
 		this.ageRating = newRating;
 		return;
 	}
 	
-	private void setPlayerCountMin(int newPlayerCountMin) {
+	public void setPlayerCountMin(int newPlayerCountMin) {
 		this.playerCountMin = newPlayerCountMin;
 		return;
 	}
 	
-	private void setPlayerCountMax(int newPlayerCountMax) {
+	public void setPlayerCountMax(int newPlayerCountMax) {
 		this.playerCountMax = newPlayerCountMax;
 		return;
 	}
 	
-	private void setGameLength(int newGameLength) {
+	public void setGameLength(int newGameLength) {
 		this.gameLength = newGameLength;
 		return;
 	}

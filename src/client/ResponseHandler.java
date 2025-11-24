@@ -3,6 +3,7 @@ import java.io.*;
 import javax.swing.*;
 
 import gui.*;
+import gui.AdminPortalFrame.ManageInventoryPanel;
 import message.Action;
 import message.*;
 
@@ -13,6 +14,7 @@ public class ResponseHandler implements Runnable {
 		private JFrame oldFrame;
 		private JFrame oldOldFrame;
 		private JDialog oldDialog;
+		private JPanel oldPanel;
 		private int requestIdExpected;
 		
 		public ResponseHandler(ObjectInputStream responseReader, ObjectOutputStream requestWriter) {
@@ -22,6 +24,7 @@ public class ResponseHandler implements Runnable {
 			this.oldFrame = null;
 			this.oldOldFrame = null;
 			this.oldDialog = null;
+			this.oldPanel = null;
 			this.requestIdExpected = -1;
 		}
 		
@@ -48,6 +51,10 @@ public class ResponseHandler implements Runnable {
 		
 		public void setOldDialog(JDialog oldDialog) {
 			this.oldDialog = oldDialog;
+		}
+		
+		public void setOldPanel(JPanel oldPanel) {
+			this.oldPanel = oldPanel;
 		}
 		
 		// LATEST REQUEST THAT RESPONSE SHOULD BE IN SERVICE OF FULFILLING
@@ -122,6 +129,78 @@ public class ResponseHandler implements Runnable {
 									JOptionPane.showMessageDialog(oldFrame, "Your account was successfully updated!");
 								} else if (response.getStatus() == Status.FAILURE) {
 									JOptionPane.showMessageDialog(oldFrame, "There was a problem with editing your profile.");
+								}
+								break;
+							case Action.ADD_BOOK:
+								if (response.getStatus() == Status.SUCCESS) {
+									JOptionPane.showMessageDialog(oldPanel, "The new book was successfully added!");
+									((ManageInventoryPanel) oldPanel).reloadAll(response.getInfo());
+								} else if (response.getStatus() == Status.FAILURE) {
+									JOptionPane.showMessageDialog(oldPanel, "There was a problem with adding the new book.");
+								}
+								break;
+							case Action.EDIT_BOOK:
+								if (response.getStatus() == Status.SUCCESS) {
+									JOptionPane.showMessageDialog(oldPanel, "The selected book was successfully edited!");
+									((ManageInventoryPanel) oldPanel).reloadAll(response.getInfo());
+								} else if (response.getStatus() == Status.FAILURE) {
+									JOptionPane.showMessageDialog(oldPanel, "There was a problem with editing the book.");
+								}
+								break;
+							case Action.DELETE_BOOK:
+								if (response.getStatus() == Status.SUCCESS) {
+									JOptionPane.showMessageDialog(oldPanel, "The selected book was successfully deleted!");
+									((ManageInventoryPanel) oldPanel).reloadAll(response.getInfo());
+								} else if (response.getStatus() == Status.FAILURE) {
+									JOptionPane.showMessageDialog(oldPanel, "There was a problem with deleting the book.");
+								}
+								break;
+							case Action.ADD_DVD:
+								if (response.getStatus() == Status.SUCCESS) {
+									JOptionPane.showMessageDialog(oldPanel, "The new DVD was successfully added!");
+									((ManageInventoryPanel) oldPanel).reloadAll(response.getInfo());
+								} else if (response.getStatus() == Status.FAILURE) {
+									JOptionPane.showMessageDialog(oldPanel, "There was a problem with adding the new DVD.");
+								}
+								break;
+							case Action.EDIT_DVD:
+								if (response.getStatus() == Status.SUCCESS) {
+									JOptionPane.showMessageDialog(oldPanel, "The selected DVD was successfully edited!");
+									((ManageInventoryPanel) oldPanel).reloadAll(response.getInfo());
+								} else if (response.getStatus() == Status.FAILURE) {
+									JOptionPane.showMessageDialog(oldPanel, "There was a problem with editing the DVD.");
+								}
+								break;
+							case Action.DELETE_DVD:
+								if (response.getStatus() == Status.SUCCESS) {
+									JOptionPane.showMessageDialog(oldPanel, "The selected DVD was successfully deleted!");
+									((ManageInventoryPanel) oldPanel).reloadAll(response.getInfo());
+								} else if (response.getStatus() == Status.FAILURE) {
+									JOptionPane.showMessageDialog(oldPanel, "There was a problem with deleting the DVD.");
+								}
+								break;
+							case Action.ADD_GAME:
+								if (response.getStatus() == Status.SUCCESS) {
+									JOptionPane.showMessageDialog(oldPanel, "The new board game was successfully added!");
+									((ManageInventoryPanel) oldPanel).reloadAll(response.getInfo());
+								} else if (response.getStatus() == Status.FAILURE) {
+									JOptionPane.showMessageDialog(oldPanel, "There was a problem with adding the new board game.");
+								}
+								break;
+							case Action.EDIT_GAME:
+								if (response.getStatus() == Status.SUCCESS) {
+									JOptionPane.showMessageDialog(oldPanel, "The selected board game was successfully edited!");
+									((ManageInventoryPanel) oldPanel).reloadAll(response.getInfo());
+								} else if (response.getStatus() == Status.FAILURE) {
+									JOptionPane.showMessageDialog(oldPanel, "There was a problem with editing the board game.");
+								}
+								break;
+							case Action.DELETE_GAME:
+								if (response.getStatus() == Status.SUCCESS) {
+									JOptionPane.showMessageDialog(oldPanel, "The selected board game was successfully deleted!");
+									((ManageInventoryPanel) oldPanel).reloadAll(response.getInfo());
+								} else if (response.getStatus() == Status.FAILURE) {
+									JOptionPane.showMessageDialog(oldPanel, "There was a problem with deleting the board game.");
 								}
 								break;
 							case Action.LOGOUT:
