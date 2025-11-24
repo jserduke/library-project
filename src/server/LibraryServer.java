@@ -311,7 +311,17 @@ public class LibraryServer {
 							} else if (messageFromClient.getAction() == Action.LOGOUT) {
 								account = null;
 								info.add("Our Little Library");
-								addFullInventoryDummyData(info);
+								for (Media media : inventory.getMediaItems()) {
+									if (media instanceof Book) {
+										addBookToInfo(info, (Book) media, true);
+									} else if (media instanceof DVD) {
+										addDVDToInfo(info, (DVD) media, true);
+									} else if (media instanceof BoardGame) {
+										addBoardGameToInfo(info, (BoardGame) media, true);
+									} else {
+										System.out.println("Media of unexpected/unknown type found in inventory");
+									}
+								}
 								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.LOGOUT, Status.SUCCESS, info);
 								writerToClient.writeObject(messageToClient);
 								
