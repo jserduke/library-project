@@ -7,11 +7,36 @@ import java.util.Date;
 import account.*;
 import message.*;
 import inventory.*;
+import library.*;
 
 
 public class LibraryServer {
 	public static void main(String[] args) {
 		ServerSocket server = null;
+		LibrarySystem librarySystem = new LibrarySystem("Double Library System");
+		librarySystem.addLibrary(new Library(0, "The First One", new Inventory(new ArrayList<Media>())));
+		librarySystem.addLibrary(new Library(1, "The Other One", new Inventory(new ArrayList<Media>())));
+		// TODO: read inventory from file into each library's Inventory object
+		Inventory firstOneInventory = librarySystem.getlibrary(0).getInventory();
+		firstOneInventory.addMedia(new Book("The Book", "The Publishing House", "Horror", 5, 5, "Mr. Idk", 340.5, "351-64534-343"));
+		firstOneInventory.addMedia(new Book("Book, Too!", "The Publishing House", "Comedy", 3, 3, "Mr. Idk", 121.5, "987-245345"));
+		firstOneInventory.addMedia(new Book("You Never Know", "Different Publisher", "Mystery", 2, 2, "Mrs. _", 145.6, "35-234343"));
+		firstOneInventory.addMedia(new DVD("The Movie", "Paramount", "Drama", 5, 5, Rating.PG_13, 120));
+		firstOneInventory.addMedia(new DVD("Movie but Worse", "Paramount", "Drama", 3, 3, Rating.PG, 180));
+		firstOneInventory.addMedia(new DVD("You Never Know", "Innovation Prod.", "Comedy", 2, 2, Rating.G, 140));
+		firstOneInventory.addMedia(new BoardGame("Something's Missing", "Games Unlimited", "Party", 2, 2, Rating.G, 2, 4, 120));
+		firstOneInventory.addMedia(new BoardGame("Dreamers' Gate", "Games Unlimited", "Tabletop RPG", 3, 3, Rating.R, 1, 4, 600));
+		Inventory secondOneInventory = librarySystem.getlibrary(1).getInventory();
+		secondOneInventory.addMedia(new Book("Help", "Publishers", "Horror", 4, 4, "Milton", 325.7, "351-12334-343"));
+		secondOneInventory.addMedia(new Book("Why", "Incorporated", "Drama", 2, 2, "Hilton", 411.7, "45434-3423434"));
+		secondOneInventory.addMedia(new DVD("Help", "A24", "Horror", 3, 3, Rating.R, 200));
+		secondOneInventory.addMedia(new BoardGame("Trains", "Games Unlimited", "Dice Game", 2, 2, Rating.NC_17, 3, 6, 240));
+		secondOneInventory.addMedia(new BoardGame("Gains", "Games Unlimited", "Party Game", 3, 3, Rating.PG, 4, 6, 30));
+		
+		// TODO: read inventory from file into each library's Inventory object
+		AccountsDirectory librarySystemAccounts = librarySystem.getAccountsDirectory();
+		librarySystemAccounts.registerNewAccount(Permission.MEMBER, "member@test.test", "test123", "Tester Testington", new Date(2024 - 1900, 0, 1));
+		librarySystemAccounts.registerNewAccount(Permission.ADMIN, "admin@test.test", "admin123", "Iam Admin", new Date(2000 - 1900, 5, 20));
 		try {
 			server = new ServerSocket(56789);
 			server.setReuseAddress(true);
@@ -22,7 +47,7 @@ public class LibraryServer {
 			while (true) {
 				Socket client = server.accept();
 				System.out.println("new client IPv4 address: " + client.getInetAddress().getHostAddress());
-				ClientHandler clientHandler = new ClientHandler(client);
+				ClientHandler clientHandler = new ClientHandler(client, librarySystem);
 				(new Thread(clientHandler)).start();
 			}
 		} catch (IOException e) {
@@ -40,9 +65,11 @@ public class LibraryServer {
 	
 	private static class ClientHandler implements Runnable {
 		private final Socket clientSocket;
+		private LibrarySystem librarySystem;
 		
-		public ClientHandler(Socket clientSocket) {
+		public ClientHandler(Socket clientSocket, LibrarySystem librarySystem) {
 			this.clientSocket = clientSocket;
+			this.librarySystem = librarySystem;
 		}
 		
 		public void run() {
@@ -52,8 +79,8 @@ public class LibraryServer {
 				writerToClient = new ObjectOutputStream(clientSocket.getOutputStream());
 				readerFromClient = new ObjectInputStream(clientSocket.getInputStream());
 				Message messageFromClient = null, messageToClient = null;
-				
 				// BACKEND DATA (should ideally get it to load in from files later)
+				/*
 				AccountsDirectory accountsDirectory = new AccountsDirectory();
 				accountsDirectory.registerNewAccount(Permission.MEMBER, "member@test.test", "test123", "Tester Testington", new Date(2024 - 1900, 0, 1));
 				accountsDirectory.registerNewAccount(Permission.ADMIN, "admin@test.test", "admin123", "Iam Admin", new Date(2000 - 1900, 5, 20));
@@ -66,7 +93,10 @@ public class LibraryServer {
 				inventory.addMedia(new DVD("You Never Know", "Innovation Prod.", "Comedy", 2, 2, Rating.G, 140));
 				inventory.addMedia(new BoardGame("Something's Missing", "Games Unlimited", "Party", 2, 2, Rating.G, 2, 4, 120));
 				inventory.addMedia(new BoardGame("Dreamers' Gate", "Games Unlimited", "Tabletop RPG", 3, 3, Rating.R, 1, 4, 600));
-				
+				*/
+				AccountsDirectory accountsDirectory = librarySystem.getAccountsDirectory();
+				Library library = null;
+				Inventory inventory = null;
 				Account account = null;
 				try {
 					while (true) {
@@ -77,8 +107,14 @@ public class LibraryServer {
 						// System.out.println("Is logged in? " + isLoggedIn);
 						ArrayList<String> info = new ArrayList<String>();
 						if (messageFromClient.getAction() == Action.GET_DASHBOARD) {
+							for (Library l : librarySystem.getLibraries()) {
+								if (l.getName().equalsIgnoreCase(messageFromClient.getInfo().getFirst())) {
+									library = l;
+									inventory = library.getInventory();
+								}
+							}
 							messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.GET_DASHBOARD, Status.SUCCESS, info);
-							info.add("Our Little Library");
+							info.add(library.getName());
 							for (Media media : inventory.getMediaItems()) {
 								if (media instanceof Book) {
 									addBookToInfo(info, (Book) media, true);
