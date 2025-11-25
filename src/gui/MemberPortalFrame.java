@@ -311,7 +311,7 @@ public class MemberPortalFrame extends JFrame {
         reloadLoans();
         */
         
-        int mediaId = Integer.parseInt(catalogModel.getValueAt(row, 2).toString());
+        int mediaId = Integer.parseInt(catalogModel.getValueAt(row, 1).toString());
         long dueMillis = System.currentTimeMillis() + (1000L*60*60*24*14);
         
         ArrayList<String> info = new ArrayList<String>();
