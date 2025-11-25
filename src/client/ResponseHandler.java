@@ -125,12 +125,12 @@ public class ResponseHandler implements Runnable {
 										}								
 										
 										ArrayList<String> dummyList = new ArrayList<>();
-										Message dashboard = new Message(0, message.Type.REQUEST, -1, message.Action.GET_DASHBOARD, Status.PENDING, dummyList);
+										Message info = new Message(0, message.Type.REQUEST, -1, message.Action.GET_DASHBOARD, Status.PENDING, dummyList);
 										this.setOldFrame(f);
-										this.setRequestIdExpected(dashboard.getId());
+										this.setRequestIdExpected(info.getId());
 										
 										try {
-											requestWriter.writeObject(dashboard);
+											requestWriter.writeObject(info);
 										} catch (IOException ex) {
 											ex.printStackTrace();
 										}
