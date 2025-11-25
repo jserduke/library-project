@@ -222,12 +222,14 @@ public class LibraryServer {
 									messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.LOGIN, Status.SUCCESS, info);
 								}
 							} else if (messageFromClient.getAction() == Action.REGISTER) {
-								Account newAccount = accountsDirectory.registerNewAccount(Permission.MEMBER,
+								boolean newAccountIsAdmin = Boolean.parseBoolean(messageFromClient.getInfo().getLast());
+								Account newAccount = accountsDirectory.registerNewAccount(newAccountIsAdmin ? Permission.ADMIN : Permission.MEMBER,
 										messageFromClient.getInfo().getFirst(), messageFromClient.getInfo().get(1),
-										messageFromClient.getInfo().get(2), new Date(messageFromClient.getInfo().getLast()));
+										messageFromClient.getInfo().get(2), new Date(messageFromClient.getInfo().get(3)));
 								if (newAccount != null) {
 									System.out.println(newAccount);
 									System.out.println(newAccount.getBirthday());
+									info.add(newAccountIsAdmin ? "Admin" : "Member");
 									messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.REGISTER, Status.SUCCESS, info);
 								} else {
 									info.add("Account associated with this email address already exists");
