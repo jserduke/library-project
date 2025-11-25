@@ -1,11 +1,9 @@
 package inventory;
-
 import java.util.ArrayList;
 
 public class Inventory {
 	private int numMedia;
 	private ArrayList<Media> mediaItems; // array of Media superclass, accepts subclass objects
-	
 	
 	public Inventory(int newNumMedia, ArrayList<Media> newMediaItems) {
 		this.numMedia = newNumMedia;
@@ -21,7 +19,7 @@ public class Inventory {
 		return this.numMedia;
 	}
 	
-	public ArrayList<Media>getMediaItems() {
+	public ArrayList<Media> getMediaItems() {
 		return this.mediaItems;
 	}
 	
@@ -33,6 +31,7 @@ public class Inventory {
 		return inventoryString;
 	}
 	
+	// switch back to private?
 	public void addMedia(Media newMedia) {
 		switch(newMedia.getMediaType()) {
 			case MediaType.BOOK:

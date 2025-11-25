@@ -63,7 +63,7 @@ public class AdminPortalFrame extends JFrame {
         });
         
         add(new ManageInventoryPanel(requestWriter, responseHandler, info), BorderLayout.CENTER);
-    }       
+    }
 
     /*
     public User getCurrentUser() {

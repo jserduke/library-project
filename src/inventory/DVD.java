@@ -1,10 +1,10 @@
 package inventory;
 
-public class DVD extends Media{
+public class DVD extends Media {
 	private Rating ageRating;
 	private int runTime;
 	
-	public DVD (int newId, // For Media super() variables
+	public DVD ( // For Media super() variables
 		String newTitle,
 		String newPublisher,
 		String newGenre, 
@@ -13,7 +13,7 @@ public class DVD extends Media{
 		Rating newAgeRating, // Variables unique to DVD subclass
 		int newRunTime)
 	{
-		super(MediaType.DVD,newId, newTitle, newPublisher, newGenre, newTotalQuantity, quantityAvailable);
+		super(MediaType.DVD, newTitle, newPublisher, newGenre, newTotalQuantity, quantityAvailable);
 		this.ageRating =  newAgeRating;
 		this.runTime = newRunTime;
 	}

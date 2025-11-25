@@ -152,7 +152,21 @@ public class WelcomeDashboardFrame extends JFrame {
 			}
         });
         // TODO: should be the same as btnSearch, I think
-        cbType.addActionListener(e -> reloadResults(info, 0));
+        cbType.addActionListener(e -> {
+        	ArrayList<String> queryInfo = new ArrayList<String>();
+        	queryInfo.add((String) cbType.getSelectedItem());
+        	queryInfo.add(txtSearch.getText().trim().toLowerCase());
+        	Message searchMessage = new Message(0, message.Type.REQUEST, -1, message.Action.GET_SEARCH, Status.PENDING, queryInfo);
+        	responseHandler.setRequestIdExpected(searchMessage.getId());
+        	responseHandler.setOldFrame(this);
+        	try {
+				requestWriter.writeObject(searchMessage);
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+        	// reloadResults(info, 1);
+        });
         btnAdmin.addActionListener(e -> {
         	responseHandler.setOldFrame(this);
         	(new LoginFrame(requestWriter, responseHandler, info.getFirst())).setVisible(true);
@@ -182,6 +196,37 @@ public class WelcomeDashboardFrame extends JFrame {
     }
 
     public void reloadResults(ArrayList<String> info, int invStart) {
+        String type = (String) cbType.getSelectedItem();
+        setCatalogColumnsForType(type);
+        model.setRowCount(0);
+        cardsGrid.removeAll();
+        if (type.equals("All")) {
+	    	for (int i = 0; i < (info.size() - invStart) / 8; i += 1) {
+	    		model.addRow(new Object[] {
+	    				info.get(invStart + i * 8 + 0),
+	    				info.get(invStart + i * 8 + 1),
+	    				info.get(invStart + i * 8 + 2),
+	    				info.get(invStart + i * 8 + 3),
+	    				info.get(invStart + i * 8 + 4),
+	    				info.get(invStart + i * 8 + 5),
+	    				info.get(invStart + i * 8 + 6),
+	    				info.get(invStart + i * 8 + 7),
+	    		});
+	    	}
+        } else {
+	    	for (int i = 0; i < (info.size() - invStart) / 7; i += 1) {
+	    		model.addRow(new Object[] {
+	    				info.get(invStart + i * 7 + 0),
+	    				info.get(invStart + i * 7 + 1),
+	    				info.get(invStart + i * 7 + 2),
+	    				info.get(invStart + i * 7 + 3),
+	    				info.get(invStart + i * 7 + 4),
+	    				info.get(invStart + i * 7 + 5),
+	    				info.get(invStart + i * 7 + 6),
+	    		});
+	    	}
+        }
+    	/*
         String type = (String) cbType.getSelectedItem();
         String q = txtSearch.getText().trim().toLowerCase();
         setCatalogColumnsForType(type);
@@ -240,18 +285,6 @@ public class WelcomeDashboardFrame extends JFrame {
                 });
             }
         } else { // All
-        	for (int i = 0; i < (info.size() - invStart) / 8; i += 1) {
-        		model.addRow(new Object[] {
-        				info.get(invStart + i * 8 + 0),
-        				info.get(invStart + i * 8 + 1),
-        				info.get(invStart + i * 8 + 2),
-        				info.get(invStart + i * 8 + 3),
-        				info.get(invStart + i * 8 + 4),
-        				info.get(invStart + i * 8 + 5),
-        				info.get(invStart + i * 8 + 6),
-        				info.get(invStart + i * 8 + 7),
-        		});
-        	}
         	/*
             for (int i=0;i<LibraryData.BOOKS.size();i++) {
                 Book b = LibraryData.BOOKS.get(i);
@@ -301,8 +334,8 @@ public class WelcomeDashboardFrame extends JFrame {
                     });
                 }
             }
-            */
         }
+        */
 
         cardsGrid.revalidate();
         cardsGrid.repaint();

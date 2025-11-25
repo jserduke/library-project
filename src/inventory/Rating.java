@@ -6,6 +6,6 @@ public enum Rating {
 	PG_13,
 	NC_17,
 	R,
-	UNRATED;
+	UNRATED
 }
 
