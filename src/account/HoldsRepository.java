@@ -1,4 +1,5 @@
 package account;
+
 import java.io.*;
 import java.util.Date;
 import java.util.ArrayList;
@@ -9,6 +10,7 @@ import java.util.Scanner;
 public class HoldsRepository {
 	private ArrayList<Hold> holds;
 	private int numHolds;
+	private int nextHoldId = 2001;
 	
 	public HoldsRepository() {
 		this.holds = new ArrayList<>();
