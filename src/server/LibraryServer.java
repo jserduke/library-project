@@ -68,6 +68,7 @@ public class LibraryServer {
 	
 	private static class ClientHandler implements Runnable {
 		private final Socket clientSocket;
+		private LibrarySystem librarySystem;
 		
 //		public ClientHandler(Socket clientSocket) {
 		public ClientHandler(Socket clientSocket, LibrarySystem librarySystem) {

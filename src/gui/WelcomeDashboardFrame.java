@@ -68,7 +68,7 @@ public class WelcomeDashboardFrame extends JFrame {
                 // TODO: add old frame here
                 case "My Account" -> b.addActionListener(e -> {
                 	responseHandler.setOldFrame(this);
-                	new LoginFrame(requestWriter, responseHandler, info.getFirst()).setVisible(true);
+                	new LoginFrame(requestWriter, responseHandler, info.getFirst(), false).setVisible(true);
                 });
                 case "Services" -> b.addActionListener(e -> JOptionPane.showMessageDialog(this, "Services panel coming soon."));
                 case "Calendar" -> b.addActionListener(e -> centerCards.show(center, "EVENTS"));
@@ -83,11 +83,11 @@ public class WelcomeDashboardFrame extends JFrame {
 
         btnLogin.addActionListener(e -> {
         	responseHandler.setOldFrame(this);
-        	new LoginFrame(requestWriter, responseHandler, info.getFirst()).setVisible(true);
+        	new LoginFrame(requestWriter, responseHandler, info.getFirst(), false).setVisible(true);
         });
         btnRegister.addActionListener(e -> {
         	responseHandler.setOldFrame(this);
-        	new RegisterFrame(this, requestWriter, responseHandler).setVisible(true);
+        	new RegisterFrame(this, requestWriter, responseHandler, false).setVisible(true);
         });
 
         // --- CATALOG view ----------------------------------------------------
@@ -169,7 +169,7 @@ public class WelcomeDashboardFrame extends JFrame {
         });
         btnAdmin.addActionListener(e -> {
         	responseHandler.setOldFrame(this);
-        	(new LoginFrame(requestWriter, responseHandler, info.getFirst())).setVisible(true);
+        	(new LoginFrame(requestWriter, responseHandler, info.getFirst(), true)).setVisible(true);
         });
 
         // Initial data
