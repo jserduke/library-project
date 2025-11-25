@@ -25,6 +25,7 @@ public class ResponseHandler implements Runnable {
 			this.oldFrame = null;
 			this.oldOldFrame = null;
 			this.oldDialog = null;
+			this.oldPanel = null;
 			this.requestIdExpected = -1;
 		}
 		
