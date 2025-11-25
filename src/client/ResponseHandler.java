@@ -210,6 +210,9 @@ public class ResponseHandler implements Runnable {
 									JOptionPane.showMessageDialog(oldFrame, "There was a problem with editing your profile.");
 								}
 								break;
+							case Action.GET_SEARCH_MEMBER:
+								((MemberPortalFrame) oldFrame).reloadCatalog(response.getInfo(), 0, false);
+								break;
 							case Action.ADD_BOOK:
 								if (response.getStatus() == Status.SUCCESS) {
 									JOptionPane.showMessageDialog(oldPanel, "The new book was successfully added!");

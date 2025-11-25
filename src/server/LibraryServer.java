@@ -138,10 +138,10 @@ public class LibraryServer {
 							}
 							
 							writerToClient.writeObject(messageToClient);
-						} else if (messageFromClient.getAction() == Action.GET_SEARCH) {
-							messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.GET_SEARCH, Status.SUCCESS, info);
+						} else if (messageFromClient.getAction() == Action.GET_SEARCH || messageFromClient.getAction() == Action.GET_SEARCH_MEMBER) {
+							messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), messageFromClient.getAction(), Status.SUCCESS, info);
 							String requestMediaType = messageFromClient.getInfo().getFirst();
-							boolean shouldIncludeType = requestMediaType.equals("All");
+							boolean shouldIncludeType = requestMediaType.equals("All") || messageFromClient.getAction() == Action.GET_SEARCH_MEMBER;
 							String requestMediaTitle = messageFromClient.getInfo().getLast();
 							ArrayList<Media> relevantInventory = requestMediaTitle.equals("") ? inventory.getMediaItems() : inventory.searchByTitle(requestMediaTitle);
 							for (Media media : relevantInventory) {
