@@ -7,11 +7,36 @@ import java.util.Date;
 import account.*;
 import message.*;
 import inventory.*;
+import library.*;
 
 
 public class LibraryServer {
 	public static void main(String[] args) {
 		ServerSocket server = null;
+		LibrarySystem librarySystem = new LibrarySystem("Double Library System");
+		librarySystem.addLibrary(new Library(0, "The First One", new Inventory(new ArrayList<Media>())));
+		librarySystem.addLibrary(new Library(1, "The Other One", new Inventory(new ArrayList<Media>())));
+		// TODO: read inventory from file into each library's Inventory object
+		Inventory firstOneInventory = librarySystem.getlibrary(0).getInventory();
+		firstOneInventory.addMedia(new Book("The Book", "The Publishing House", "Horror", 5, 5, "Mr. Idk", 340.5, "351-64534-343"));
+		firstOneInventory.addMedia(new Book("Book, Too!", "The Publishing House", "Comedy", 3, 3, "Mr. Idk", 121.5, "987-245345"));
+		firstOneInventory.addMedia(new Book("You Never Know", "Different Publisher", "Mystery", 2, 2, "Mrs. _", 145.6, "35-234343"));
+		firstOneInventory.addMedia(new DVD("The Movie", "Paramount", "Drama", 5, 5, Rating.PG_13, 120));
+		firstOneInventory.addMedia(new DVD("Movie but Worse", "Paramount", "Drama", 3, 3, Rating.PG, 180));
+		firstOneInventory.addMedia(new DVD("You Never Know", "Innovation Prod.", "Comedy", 2, 2, Rating.G, 140));
+		firstOneInventory.addMedia(new BoardGame("Something's Missing", "Games Unlimited", "Party", 2, 2, Rating.G, 2, 4, 120));
+		firstOneInventory.addMedia(new BoardGame("Dreamers' Gate", "Games Unlimited", "Tabletop RPG", 3, 3, Rating.R, 1, 4, 600));
+		Inventory secondOneInventory = librarySystem.getlibrary(1).getInventory();
+		secondOneInventory.addMedia(new Book("Help", "Publishers", "Horror", 4, 4, "Milton", 325.7, "351-12334-343"));
+		secondOneInventory.addMedia(new Book("Why", "Incorporated", "Drama", 2, 2, "Hilton", 411.7, "45434-3423434"));
+		secondOneInventory.addMedia(new DVD("Help", "A24", "Horror", 3, 3, Rating.R, 200));
+		secondOneInventory.addMedia(new BoardGame("Trains", "Games Unlimited", "Dice Game", 2, 2, Rating.NC_17, 3, 6, 240));
+		secondOneInventory.addMedia(new BoardGame("Gains", "Games Unlimited", "Party Game", 3, 3, Rating.PG, 4, 6, 30));
+		
+		// TODO: read inventory from file into each library's Inventory object
+		AccountsDirectory librarySystemAccounts = librarySystem.getAccountsDirectory();
+		librarySystemAccounts.registerNewAccount(Permission.MEMBER, "member@test.test", "test123", "Tester Testington", new Date(2024 - 1900, 0, 1));
+		librarySystemAccounts.registerNewAccount(Permission.ADMIN, "admin@test.test", "admin123", "Iam Admin", new Date(2000 - 1900, 5, 20));
 		try {
 			server = new ServerSocket(56789);
 			server.setReuseAddress(true);
@@ -22,7 +47,7 @@ public class LibraryServer {
 			while (true) {
 				Socket client = server.accept();
 				System.out.println("new client IPv4 address: " + client.getInetAddress().getHostAddress());
-				ClientHandler clientHandler = new ClientHandler(client);
+				ClientHandler clientHandler = new ClientHandler(client, librarySystem);
 				(new Thread(clientHandler)).start();
 			}
 		} catch (IOException e) {
@@ -40,9 +65,11 @@ public class LibraryServer {
 	
 	private static class ClientHandler implements Runnable {
 		private final Socket clientSocket;
+		private LibrarySystem librarySystem;
 		
-		public ClientHandler(Socket clientSocket) {
+		public ClientHandler(Socket clientSocket, LibrarySystem librarySystem) {
 			this.clientSocket = clientSocket;
+			this.librarySystem = librarySystem;
 		}
 		
 		public void run() {
@@ -52,8 +79,8 @@ public class LibraryServer {
 				writerToClient = new ObjectOutputStream(clientSocket.getOutputStream());
 				readerFromClient = new ObjectInputStream(clientSocket.getInputStream());
 				Message messageFromClient = null, messageToClient = null;
-				
 				// BACKEND DATA (should ideally get it to load in from files later)
+				/*
 				AccountsDirectory accountsDirectory = new AccountsDirectory();
 				accountsDirectory.registerNewAccount(Permission.MEMBER, "member@test.test", "test123", "Tester Testington", new Date(2024 - 1900, 0, 1));
 				accountsDirectory.registerNewAccount(Permission.ADMIN, "admin@test.test", "admin123", "Iam Admin", new Date(2000 - 1900, 5, 20));
@@ -66,7 +93,12 @@ public class LibraryServer {
 				inventory.addMedia(new DVD("You Never Know", "Innovation Prod.", "Comedy", 2, 2, Rating.G, 140));
 				inventory.addMedia(new BoardGame("Something's Missing", "Games Unlimited", "Party", 2, 2, Rating.G, 2, 4, 120));
 				inventory.addMedia(new BoardGame("Dreamers' Gate", "Games Unlimited", "Tabletop RPG", 3, 3, Rating.R, 1, 4, 600));
-				
+				*/
+				AccountsDirectory accountsDirectory = librarySystem.getAccountsDirectory();
+				Library library = null;
+				Inventory inventory = null;
+				LoanRepository loanRepository = new LoanRepository();
+				HoldsRepository holdRepository = new HoldsRepository();
 				Account account = null;
 				try {
 					while (true) {
@@ -77,8 +109,20 @@ public class LibraryServer {
 						// System.out.println("Is logged in? " + isLoggedIn);
 						ArrayList<String> info = new ArrayList<String>();
 						if (messageFromClient.getAction() == Action.GET_DASHBOARD) {
+							for (Library l : librarySystem.getLibraries()) {
+								if (l.getName().equalsIgnoreCase(messageFromClient.getInfo().getFirst())) {
+									library = l;
+									inventory = library.getInventory();
+								}
+							}
 							messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.GET_DASHBOARD, Status.SUCCESS, info);
-							info.add("Our Little Library");
+							info.add(library.getName());
+//							int items = 2;
+//							info.add(Integer.toString(items));
+//							// TODO:
+//							// inventory = Library.getInventory();
+//							// for item in inventory:
+//							// add each piece of info
 							for (Media media : inventory.getMediaItems()) {
 								if (media instanceof Book) {
 									addBookToInfo(info, (Book) media, true);
@@ -90,11 +134,6 @@ public class LibraryServer {
 									System.out.println("Media of unexpected/unknown type found in inventory");
 								}
 							}
-							// TODO:
-							// inventory = Library.getInventory();
-							// for item in inventory:
-							// add each piece of info
-							// addFullInventoryDummyData(info);
 							
 							writerToClient.writeObject(messageToClient);
 						} else if (messageFromClient.getAction() == Action.GET_SEARCH) {
@@ -114,84 +153,97 @@ public class LibraryServer {
 									System.out.println("Request type unknown or media type in Inventory unknown");
 								}
 							}
-							// TODO:
-							// library.searchByName
-							// for item in results
-							// add piece of info
-							/*
-							info.add("Book");
-							info.add("4");
-							info.add("Booksmart");
-							info.add("B. Smart");
-							info.add("1234566789");
-							info.add("Idk");
-							info.add("4");
-							info.add("0");
-							*/
 							
 							writerToClient.writeObject(messageToClient);
 						} else if (account == null) {
+							// info.add(Integer.toString(inventory.getNumMedia()));
 							if (messageFromClient.getAction() == Action.LOGIN) {
 								account = accountsDirectory.login(messageFromClient.getInfo().getFirst(), messageFromClient.getInfo().getLast());
 								if (account == null) {
 									messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.LOGIN, Status.FAILURE, null);
+									writerToClient.writeObject(messageToClient);
+									continue;
 								} else {
+									String filename = "loans_" + account.getId() + ".txt";
+									loanRepository.loadLoansFromFile(filename);
+									
+									// info = new ArrayList<>();
+									
+//									Permission permission = account.getPermission();
+//									info.add(permission == Permission.ADMIN ? "ADMIN" : "MEMBER");
 									info.add(account instanceof Admin ? "ADMIN" : "MEMBER");
 									info.add(account.getFullName());
+//									addFullInventoryDummyData(info);
+									
 									if (info.getFirst().equals("MEMBER")) {
+										info.add(Integer.toString(inventory.getNumMedia()));
 										// inventory info
-										info.add("2"); // number of inventory items returned
-										addFullInventoryDummyData(info);
+										info.add(Integer.toString(inventory.getMediaItems().size())); // number of inventory items returned
+//										addFullInventoryDummyData(info);
 										
 										// loan info
-										info.add("3");
-										info.add("BOOK");
-										info.add("3");
-										info.add("TITLE");
-										info.add("2025-11-15");
-										info.add("2025-12-01");
-										info.add("4");
-										info.add("");
-									} else if (info.getFirst() == "ADMIN") {
+//										info.add("3");
+//										info.add("BOOK");
+//										info.add("3");
+//										info.add("TITLE");
+//										info.add("2025-11-15");
+//										info.add("2025-12-01");
+//										info.add("4");
+//										info.add("");
+										
+										for (Media media : inventory.getMediaItems()) {
+											if (media instanceof Book) {
+												addBookToInfo(info, (Book) media, true);
+											} else if (media instanceof DVD) {
+												addDVDToInfo(info, (DVD) media, true);
+											} else if (media instanceof BoardGame) {
+												addBoardGameToInfo(info, (BoardGame) media, true);
+											} else {
+												System.out.println("Media of unexpected/unknown type found in inventory");
+											}
+										}
+									} else if (info.getFirst().equals("ADMIN")) {
 										addInventoryToInfoAdmin(inventory, info);
-										/*
-								    	info.add("BOOK");
-								    	info.add("1");
-								    	info.add("1234567890");
-								    	info.add("This Title");
-								    	info.add("Author");
-								    	info.add("Publishing House");
-								    	info.add("Horror");
-								    	info.add("4");
-								    	info.add("2");
-								    	
-								    	info.add("DVD");
-								    	info.add("2");
-								    	info.add("This Movie");
-								    	info.add("R");
-								    	info.add("150");
-								    	info.add("4");
-								    	info.add("2");
-								    	
-								    	info.add("BOARD_GAME");
-								    	info.add("3");
-								    	info.add("Fun Game");
-								    	info.add("12+");
-								    	info.add("2-4");
-								    	info.add("~120");
-								    	info.add("5");
-								    	info.add("5");
-								    	*/
+//								    	info.add("BOOK");
+//								    	info.add("1");
+//								    	info.add("1234567890");
+//								    	info.add("This Title");
+//								    	info.add("Author");
+//								    	info.add("Publishing House");
+//								    	info.add("Horror");
+//								    	info.add("4");
+//								    	info.add("2");
+//								    	
+//								    	info.add("DVD");
+//								    	info.add("2");
+//								    	info.add("This Movie");
+//								    	info.add("R");
+//								    	info.add("150");
+//								    	info.add("4");
+//								    	info.add("2");
+//								    	
+//								    	info.add("BOARD_GAME");
+//								    	info.add("3");
+//								    	info.add("Fun Game");
+//								    	info.add("12+");
+//								    	info.add("2-4");
+//								    	info.add("~120");
+//								    	info.add("5");
+//								    	info.add("5");
 									}
 									messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.LOGIN, Status.SUCCESS, info);
+									writerToClient.writeObject(messageToClient);
+									continue;
 								}
 							} else if (messageFromClient.getAction() == Action.REGISTER) {
-								Account newAccount = accountsDirectory.registerNewAccount(Permission.MEMBER,
+								boolean newAccountIsAdmin = Boolean.parseBoolean(messageFromClient.getInfo().getLast());
+								Account newAccount = accountsDirectory.registerNewAccount(newAccountIsAdmin ? Permission.ADMIN : Permission.MEMBER,
 										messageFromClient.getInfo().getFirst(), messageFromClient.getInfo().get(1),
-										messageFromClient.getInfo().get(2), new Date(messageFromClient.getInfo().getLast()));
+										messageFromClient.getInfo().get(2), new Date(messageFromClient.getInfo().get(3)));
 								if (newAccount != null) {
 									System.out.println(newAccount);
 									System.out.println(newAccount.getBirthday());
+									info.add(newAccountIsAdmin ? "Admin" : "Member");
 									messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.REGISTER, Status.SUCCESS, info);
 								} else {
 									info.add("Account associated with this email address already exists");
@@ -205,15 +257,118 @@ public class LibraryServer {
 							writerToClient.writeObject(messageToClient);
 						} else {
 							if (messageFromClient.getAction() == Action.GET_CHECKOUTS) {
-								info.add("Harry Potter");
-								info.add("Mouse Paint");
-								info.add("If You Give a Mouse a Cookie");
-								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.GET_CHECKOUTS, Status.SUCCESS, info);
+//								Commenting out for now in case code doesn't work and need to go back to something that does work
+//								info.add("Harry Potter");
+//								info.add("Mouse Paint");
+//								info.add("If You Give a Mouse a Cookie");
+//								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.GET_CHECKOUTS, Status.SUCCESS, info);
+//								writerToClient.writeObject(messageToClient);
+								
+								ArrayList<Loan> all = loanRepository.getHistory();
+								int memberId = account.getId();
+								
+								ArrayList<Loan> activeLoans = new ArrayList<>();
+								for (Loan l : all) {
+									if (l.getMemberId() == memberId && l.getReturnedDate() == null) {
+										activeLoans.add(l);
+									}
+								}
+								
+								info.clear();
+								info.add(Integer.toString(activeLoans.size()));
+								
+								for (Loan l : activeLoans) {
+									Media media = findMediaInInventory(inventory, l.getMediaId());
+									if (media == null) {
+										continue;
+									}
+									
+									info.add(Integer.toString(l.getLoanId()));
+									
+									if (media instanceof Book) {
+										info.add("BOOK");
+										info.add(Integer.toString(media.getId()));
+										Book b = (Book)media;
+										info.add(b.getTitle());
+									} else if (media instanceof DVD) {
+										info.add("DVD");
+										info.add(Integer.toString(media.getId()));
+										DVD d = (DVD)media;
+										info.add(d.getTitle());
+									} else if (media instanceof BoardGame) {
+										info.add("BOARD GAME");
+										info.add(Integer.toString(media.getId()));
+										BoardGame bg = (BoardGame)media;
+										info.add(bg.getTitle());
+									}
+									
+									info.add(l.getCheckoutDate().toString());
+									info.add(l.getDueDate().toString());
+									info.add("");
+									info.add("");
+								}
+								
+//								Commenting this out because this works with dummy data
+//								for (Loan l : activeLoans) {
+//									//When Inventory is integrated, necessary code goes in here
+//									String title = lookupDummyTitle(l.getMediaId());
+//									info.add(Integer.toString(l.getLoanId()));
+//									info.add("BOOK");
+//									info.add(Integer.toString(l.getMediaId()));
+//									info.add(title);
+//									info.add(l.getCheckoutDate().toString());
+//									info.add(l.getDueDate().toString());
+//									info.add("");		//grace period??
+//									info.add(l.getReturnedDate() == null ? "" : l.getReturnedDate().toString());
+//								}
+								
+								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.GET_CHECKOUTS, Status.SUCCESS, info);							
 								writerToClient.writeObject(messageToClient);
+								
 							} else if (messageFromClient.getAction() == Action.CHECKOUT) {
-								info.add("Networking 101 successfully checked out!");
-								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.CHECKOUT, Status.SUCCESS, info);
+//								Commenting out for now in case code doesn't work and need to go back to something that does work								
+//								info.add("Networking 101 successfully checked out!");
+//								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.CHECKOUT, Status.SUCCESS, info);
+//								writerToClient.writeObject(messageToClient);
+								
+								ArrayList<String> str = new ArrayList<>();
+								
+								int mediaId = Integer.parseInt(messageFromClient.getInfo().get(0));
+								long dueMillis = Long.parseLong(messageFromClient.getInfo().get(1));
+								Date due = new Date(dueMillis);
+								
+								Loan newLoan = loanRepository.checkoutMedia(mediaId, account.getId(), due, (Member)account);
+//								Loan newLoan = loanRepository.checkoutMedia(account.getId(), mediaId, dueMillis);
+								
+								if (newLoan == null) {
+									str.add("Checkout failed!");
+									messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.CHECKOUT, Status.FAILURE, str);
+								} else {
+									String filename = "loans_" + account.getId() + ".txt";
+									loanRepository.saveLoansToFile(filename);
+									
+									str.add("Checkout successful!");	
+									messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.CHECKOUT, Status.SUCCESS, str);
+								}
+								
 								writerToClient.writeObject(messageToClient);
+							} else if(messageFromClient.getAction() == Action.RETURN) {
+								int mediaId = Integer.parseInt(messageFromClient.getInfo().get(0));
+								
+								boolean success = loanRepository.returnMedia(mediaId, account.getId(), inventory);
+								if (!success) {
+									info.add("Return failed.");
+									messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.RETURN, Status.FAILURE, info);
+								} else {
+									String filename = "loans_" + account.getId() + ".txt";
+									loanRepository.saveLoansToFile(filename);
+									
+									info.add("Return successfull!");
+									messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.RETURN, Status.SUCCESS, info);
+								}
+								
+								writerToClient.writeObject(messageToClient); 
+								continue;
 							} else if (messageFromClient.getAction() == Action.GET_PROFILE) {
 								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.GET_PROFILE, Status.SUCCESS, info);
 								info.add(account.getFullName());
@@ -371,6 +526,26 @@ public class LibraryServer {
 		info.add("4");
 		info.add("0");
 	}
+	
+	public static String lookupDummyTitle(int mediaId) {
+		switch(mediaId) {
+			case 1: return "EEAA0";
+			case 2: return "The Housemaid";
+			case 3: return "Charlotte's Web";
+			case 4: return "Booksmart";
+			default: return "Unknown Title";
+		}
+	}
+	
+	private static Media findMediaInInventory(Inventory inventory, int mediaId) {
+		for (Media m : inventory.getMediaItems()) {
+			if (m.getId() == mediaId) {
+				return m;
+			}
+		}
+		return null;
+	}
+	
 	private static void addBookToInfo(ArrayList<String> info, Book book, boolean shouldIncludeType) {
 		if (shouldIncludeType) {
 			info.add("Book");

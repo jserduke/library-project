@@ -18,13 +18,13 @@ public class DVD extends Media {
 		this.runTime = newRunTime;
 	}
 	
-	protected DVD () { // default constructor
+	public DVD () { // default constructor
 		super(MediaType.DVD);
 		this.ageRating = Rating.UNRATED;
 		this.runTime = 0;
 	}
 	
-	// public getters for DVD subclass variables
+	// public getters for DVD subclass variables, returns Strings and int where appropriate
 	public String getAgeRating() {
 		return ageRating.name();
 	}

@@ -22,8 +22,8 @@ public class RegisterFrame extends JDialog {
     private JTextField txtEmail = new JTextField(16);
     private JPasswordField txtPass = new JPasswordField(12);
 
-    public RegisterFrame(Window parent, ObjectOutputStream requestWriter, ResponseHandler responseHandler) {
-        super(parent, "Create Account", ModalityType.APPLICATION_MODAL);
+    public RegisterFrame(Window parent, ObjectOutputStream requestWriter, ResponseHandler responseHandler, boolean isFromAdmin) {
+        super(parent, "Create " + (isFromAdmin ? "Admin" : "Member") + " Account", ModalityType.APPLICATION_MODAL);
         setSize(420, 300);
         setLocationRelativeTo(parent);
 
@@ -66,11 +66,11 @@ public class RegisterFrame extends JDialog {
         add(form, BorderLayout.CENTER);
         add(btns, BorderLayout.SOUTH);
 
-        btnCreate.addActionListener(e -> create(requestWriter, responseHandler));
+        btnCreate.addActionListener(e -> create(requestWriter, responseHandler, isFromAdmin));
         btnCancel.addActionListener(e -> dispose());
     }
 
-    private void create(ObjectOutputStream requestWriter, ResponseHandler responseHandler) {
+    private void create(ObjectOutputStream requestWriter, ResponseHandler responseHandler, boolean isFromAdmin) {
         try {
             String first = txtFirst.getText().trim();
             String last  = txtLast.getText().trim();
@@ -91,6 +91,7 @@ public class RegisterFrame extends JDialog {
             info.add(pass);
             info.add(first + " " + last);
             info.add(dob.toString());
+            info.add(Boolean.toString(isFromAdmin));
             responseHandler.setRequestIdExpected(registrationMessage.getId());
             responseHandler.setOldDialog(this);
             try {

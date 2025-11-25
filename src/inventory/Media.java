@@ -104,4 +104,8 @@ public abstract class Media {
 		setTotalQuantity(newTotalQuantity);
 		setQuantityAvailable(newQuantityAvailable);
 	}
+	
+	public void increaseAvailable(int plus) {
+		this.quantityAvailable += plus;
+	}
 }

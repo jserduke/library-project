@@ -1,6 +1,6 @@
 package inventory;
 
-public class BoardGame extends Media{ // Variables unique to BoardGame subclass
+public class BoardGame extends Media { // Variables unique to BoardGame subclass
 	private Rating ageRating;
 	private int playerCountMin;
 	private int playerCountMax;
@@ -25,7 +25,7 @@ public class BoardGame extends Media{ // Variables unique to BoardGame subclass
 		this.gameLength = newGameLength;
 	}
 	
-	protected BoardGame() {
+	public BoardGame() {
 		super(MediaType.BOARD_GAME); // calls Media superclass default constructor
 		this.ageRating = Rating.UNRATED;
 		this.playerCountMin = 0;
@@ -34,6 +34,10 @@ public class BoardGame extends Media{ // Variables unique to BoardGame subclass
 	}
 	
 	// public getters for BoardGame subclass variables
+	public MediaType getMediaType() {
+		return MediaType.BOARD_GAME;
+	}
+	
 	public Rating getRating() {
 		return ageRating;
 	}
