@@ -9,7 +9,8 @@ public class Hold {
     private Date datePlaced;
     private Date holdUntilDate;
 
-    public Hold(int mediaId, int memberId, Date datePlaced,  Date holdUntilDate) {
+    public Hold(int holdId, int mediaId, int memberId, Date datePlaced,  Date holdUntilDate) {
+    	this.holdId = holdId;
         this.mediaId = mediaId;
         this.memberId = memberId;
         this.datePlaced = datePlaced;

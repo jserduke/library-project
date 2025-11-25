@@ -196,6 +196,13 @@ public class ResponseHandler implements Runnable {
 //								frame.reloadLoans(info, loanStart1);
 //							
 								break;
+							case Action.PLACE_HOLD:
+								if (response.getStatus() == Status.SUCCESS) {
+									JOptionPane.showMessageDialog(oldFrame, "Hold placed!");
+								} else if (response.getStatus() == Status.FAILURE) {
+									JOptionPane.showMessageDialog(oldFrame, "Hold failed.");
+								}
+								break;
 							case Action.GET_PROFILE:
 								if (response.getStatus() == Status.SUCCESS) {
 									((MemberPortalFrame) oldFrame).editAccount(requestWriter, this, response.getInfo());

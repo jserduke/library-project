@@ -296,21 +296,6 @@ public class MemberPortalFrame extends JFrame {
         	return;
         }
         
-        /*
-        String typeStr = catalogModel.getValueAt(row, 0).toString();
-        int id = (Integer) catalogModel.getValueAt(row, 1);
-        
-        MediaType type = "Book".equals(typeStr) ? MediaType.BOOK : ("DVD".equals(typeStr)? MediaType.DVD : MediaType.BOARD_GAME);
-        Loan loan = LibraryData.checkout(member.getId(), type, id);
-        if (loan == null) {
-            JOptionPane.showMessageDialog(this, "No copies available to checkout.");
-        } else {
-            JOptionPane.showMessageDialog(this, "Checked out. Due: " + loan.getDueDate());
-        }
-        reloadCatalog();
-        reloadLoans();
-        */
-        
         int mediaId = Integer.parseInt(catalogModel.getValueAt(row, 2).toString());
         long dueMillis = System.currentTimeMillis() + (1000L*60*60*24*14);
         
@@ -330,12 +315,29 @@ public class MemberPortalFrame extends JFrame {
 
     // WILL GET WORKING LATER
     public void holdSelected() {
-    	/*
+    	
         int row = catalogTable.getSelectedRow();
         if (row < 0) { 
         	JOptionPane.showMessageDialog(this, "Select a media item."); 
         	return; 
         }
+        
+        int mediaId = Integer.parseInt(catalogModel.getValueAt(row, 2).toString());
+        long untilMillis = System.currentTimeMillis() + (1000L * 60 * 60 * 24 * 7);
+        
+        ArrayList<String> info = new ArrayList<>();
+        info.add(Integer.toString(mediaId));
+        info.add(Long.toString(untilMillis));
+        Message holdMessage = new Message(0, message.Type.REQUEST, -1, message.Action.PLACE_HOLD, Status.PENDING, info);
+        responseHandler.setRequestIdExpected(holdMessage.getId());
+        responseHandler.setOldFrame(this);
+        
+        try {
+        	requestWriter.writeObject(holdMessage);
+        } catch (IOException ex) {
+        	ex.printStackTrace();
+        }
+        /*
         String typeStr = catalogModel.getValueAt(row, 0).toString();
         int id = (Integer) catalogModel.getValueAt(row, 1);
         MediaType type = "Book".equals(typeStr) ? MediaType.BOOK : ("DVD".equals(typeStr)? MediaType.DVD : MediaType.BOARD_GAME);

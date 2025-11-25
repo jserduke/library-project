@@ -299,7 +299,7 @@ public class LibraryServer {
 								long dueMillis = Long.parseLong(messageFromClient.getInfo().get(1));
 								Date due = new Date(dueMillis);
 								
-								Loan newLoan = loanRepository.checkoutMedia(mediaId, account.getId(), due, (Member)account);
+								Loan newLoan = loanRepository.checkoutMedia(mediaId, account.getId(), due, (Member)account, inventory, holdRepository);
 //								Loan newLoan = loanRepository.checkoutMedia(account.getId(), mediaId, dueMillis);
 								
 								if (newLoan == null) {
@@ -331,7 +331,33 @@ public class LibraryServer {
 								
 								writerToClient.writeObject(messageToClient); 
 								continue;
+							} else if (messageFromClient.getAction() == Action.PLACE_HOLD) {
+								int mediaId = Integer.parseInt(messageFromClient.getInfo().get(0));
+								long untilMillis = Long.parseLong(messageFromClient.getInfo().get(1));
+								
+								Hold h = holdRepository.placeHold(mediaId, account.getId(), new Date(untilMillis), (Member)account);
+								
+								if (h == null) {
+									info.add("Hold failed.");
+									messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.PLACE_HOLD, Status.FAILURE, info);
+								} else {
+									String filename = "holds_" + account.getId() + ".txt";
+									holdRepository.saveHoldToFile(filename);
+									
+									info.add("Hold placed!");
+									messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.PLACE_HOLD, Status.SUCCESS, info);
+								}
+								
+								writerToClient.writeObject(messageToClient); 
+								continue;
+							} else if (messageFromClient.getAction() == Action.GET_HOLDS) {
+								
+								
+							} else if (messageFromClient.getAction() == Action.CANCEL_HOLD) {
+								
+								
 							} else if (messageFromClient.getAction() == Action.GET_PROFILE) {
+							
 								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.GET_PROFILE, Status.SUCCESS, info);
 								info.add(account.getFullName());
 								info.add(account.getBirthday().toString());
