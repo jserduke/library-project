@@ -49,7 +49,8 @@ public class LibraryServer {
 			while (true) {
 				Socket client = server.accept();
 				System.out.println("new client IPv4 address: " + client.getInetAddress().getHostAddress());
-				ClientHandler clientHandler = new ClientHandler(client);
+//				ClientHandler clientHandler = new ClientHandler(client);
+				ClientHandler clientHandler = new ClientHandler(client, librarySystem);
 				(new Thread(clientHandler)).start();
 			}
 		} catch (IOException e) {
@@ -68,8 +69,10 @@ public class LibraryServer {
 	private static class ClientHandler implements Runnable {
 		private final Socket clientSocket;
 		
-		public ClientHandler(Socket clientSocket) {
+//		public ClientHandler(Socket clientSocket) {
+		public ClientHandler(Socket clientSocket, LibrarySystem librarySystem) {
 			this.clientSocket = clientSocket;
+			this.librarySystem = librarySystem;
 		}
 		
 		public void run() {
@@ -80,6 +83,7 @@ public class LibraryServer {
 				readerFromClient = new ObjectInputStream(clientSocket.getInputStream());
 				Message messageFromClient = null, messageToClient = null;
 				
+				/*
 				// BACKEND DATA (should ideally get it to load in from files later)
 				AccountsDirectory accountsDirectory = new AccountsDirectory();
 				accountsDirectory.registerNewAccount(Permission.MEMBER, "member@test.test", "test123", "Tester Testington", new Date(2024 - 1900, 0, 1));
@@ -93,7 +97,11 @@ public class LibraryServer {
 				inventory.addMedia(new DVD("You Never Know", "Innovation Prod.", "Comedy", 2, 2, Rating.G, 140));
 				inventory.addMedia(new BoardGame("Something's Missing", "Games Unlimited", "Party", 2, 2, Rating.G, 2, 4, 120));
 				inventory.addMedia(new BoardGame("Dreamers' Gate", "Games Unlimited", "Tabletop RPG", 3, 3, Rating.R, 1, 4, 600));
+				*/
 				
+				AccountsDirectory accountsDirectory = librarySystem.getAccountsDirectory();
+				Library library = null;
+				Inventory inventory = null;
 				LoanRepository loanRepository = new LoanRepository();
 				HoldsRepository holdRepository = new HoldsRepository();
 				Account account = null;
@@ -106,8 +114,16 @@ public class LibraryServer {
 						// System.out.println("Is logged in? " + isLoggedIn);
 						ArrayList<String> info = new ArrayList<String>();
 						if (messageFromClient.getAction() == Action.GET_DASHBOARD) {
+							for (Library l : librarySystem.getLibraries()) {
+								if (l.getName().equalsIgnoreCase(messageFromClient.getInfo().getFirst())) {
+									library = l;
+									inventory = library.getInventory();
+								}
+							}
+							
 							messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.GET_DASHBOARD, Status.SUCCESS, info);
-							info.add("Our Little Library");
+							info.add(library.getName());
+//							info.add("Our Little Library");
 //							int items = 2;
 //							info.add(Integer.toString(items));
 //							// TODO:
@@ -227,12 +243,14 @@ public class LibraryServer {
 									continue;
 								}
 							} else if (messageFromClient.getAction() == Action.REGISTER) {
-								Account newAccount = accountsDirectory.registerNewAccount(Permission.MEMBER,
+								boolean newAccountIsAdmin = Boolean.parseBoolean(messageFromClient.getInfo().getLast());
+								Account newAccount = accountsDirectory.registerNewAccount(newAccountIsAdmin ? Permission.ADMIN : Permission.MEMBER,
 										messageFromClient.getInfo().getFirst(), messageFromClient.getInfo().get(1),
-										messageFromClient.getInfo().get(2), new Date(messageFromClient.getInfo().getLast()));
+										messageFromClient.getInfo().get(2), new Date(messageFromClient.getInfo().get(3)));
 								if (newAccount != null) {
 									System.out.println(newAccount);
 									System.out.println(newAccount.getBirthday());
+									info.add(newAccountIsAdmin ? "Admin" : "Member");
 									messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.REGISTER, Status.SUCCESS, info);
 								} else {
 									info.add("Account associated with this email address already exists");
