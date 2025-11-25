@@ -2,18 +2,25 @@ package account;
 import java.util.Date;
 
 public class Loan {
+	private int loanId;
 	private int mediaId;
 	private int memberId;
     private Date dateCheckedOut;
     private Date dateDue;
     private Date dateReturned;
 
-    public Loan(int mediaId, int memberId, Date checkoutDate, Date dueDate) {
-        this.mediaId = mediaId;
+    public Loan(int loanId, int mediaId, int memberId, Date checkoutDate, Date dueDate) {
+    	this.loanId = loanId;
+    	this.mediaId = mediaId;
         this.memberId = memberId;
         this.dateCheckedOut = checkoutDate;
         this.dateDue = dueDate;
         this.dateReturned = null;
+        
+    }
+    
+    public int getLoanId() {
+    	return loanId;
     }
 
     public int getMediaId() {
@@ -50,9 +57,9 @@ public class Loan {
     
     public String toString() {
         return "Loan:\n" +
+        		"\nLoan Id: " + loanId +
                 "Media Id: " + mediaId +
-                "\nMember Id: " + memberId +
-                "\nDate Checkedout: " + dateCheckedOut +
+                "\nDate checked out: " + dateCheckedOut +
                 "\n Date due: " + dateDue +
                 "\n Return date: " + dateReturned;
     }

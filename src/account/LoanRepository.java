@@ -1,4 +1,5 @@
 package account;
+
 import java.io.*;
 import java.util.Date;
 import java.util.ArrayList;
@@ -6,8 +7,11 @@ import java.io.File;
 import java.io.FileWriter;
 import java.util.Scanner;
 
+import inventory.*;
+
 
 public class LoanRepository {
+	private int nextLoanId = 1001;
 	private int numLoans;
 	private int loanLimit;
 	private ArrayList<Loan> history;
@@ -47,7 +51,7 @@ public class LoanRepository {
 			return null;
 		}
 		
-		Loan loan = new Loan(mediaId, memberId, new Date(), dueDate);
+		Loan loan = new Loan(nextLoanId++, mediaId, memberId, new Date(), dueDate);
 		history.add(loan);
 		numLoans++;
 		
@@ -60,13 +64,20 @@ public class LoanRepository {
 		return loan;
 	}
 	
-	public boolean returnMedia(int mediaId, int memberId) {
+	public boolean returnMedia(int mediaId, int memberId, Inventory inventory) {
 		for (Loan loan : history) {
 			if (loan.getMediaId() == mediaId && 
 				loan.getMemberId() == memberId && 
 				loan.getReturnedDate() == null) {
 				
 				loan.setReturnDate(new Date());
+				
+				ArrayList<Media> mediaList = inventory.searchByID(mediaId);
+				if (mediaList != null && !mediaList.isEmpty()) {
+					Media m = mediaList.get(0);
+					m.setQuantityAvailable(m.getQuantityAvailable() + 1);
+				}
+				
 				return true;
 			}
 		}
@@ -104,11 +115,20 @@ public class LoanRepository {
 		try {
 			FileWriter writer = new FileWriter(file);
 			for (Loan loan : history) {
-				writer.write(loan.getMediaId() + ", " +
-							 loan.getMemberId() + ", " + 
-							 loan.getCheckoutDate() + ", " +
-							 loan.getDueDate() + ", " +
-							 (loan.getReturnedDate() == null ? -1 : loan.getReturnedDate() + "\n"));
+//				Format was not good				
+//				writer.write(loan.getLoanId() + ", " +
+//							 loan.getMediaId() + ", " +
+//							 loan.getMemberId() + ", " + 
+//							 loan.getCheckoutDate() + ", " +
+//							 loan.getDueDate() + ", " +
+//							 (loan.getReturnedDate() == null ? -1 : loan.getReturnedDate() + "\n"));
+				writer.write("LoadId=" + loan.getLoanId() + ", " +
+							 "MediaId=" + loan.getMediaId() + ", " +
+							 "MemberId=" + loan.getMemberId() + ", " +
+							 "Checkout=" + loan.getCheckoutDate().getTime() + ", " +
+							 "Due=" + loan.getDueDate().getTime() + ", " +
+							 "Returned=" + (loan.getReturnedDate() == null ? -1 : loan.getReturnedDate().getTime()));
+				writer.write("\n");
 			}
 			writer.close();
 			System.out.println("Saved loan history.");
@@ -119,6 +139,8 @@ public class LoanRepository {
 	}
 	
 	public void loadLoansFromFile(String filename) {
+		history.clear();
+		
 		try {
 			File file = new File(filename);
 			if (!file.exists()) {
@@ -127,6 +149,7 @@ public class LoanRepository {
 			}
 			
 			Scanner sc = new Scanner(file);
+			
 			while (sc.hasNextLine()) {
 				String line = sc.nextLine();
 				if (line.trim().isEmpty()) {
@@ -134,37 +157,41 @@ public class LoanRepository {
 				}
 				
 				String[] str = line.split(", ");
-				if (str.length != 5) {
-					continue;
-				}
 				
-				int mediaId = Integer.parseInt(str[0]);
-				int memberId = Integer.parseInt(str[1]);
-				long checkoutMillis = Long.parseLong(str[2]);
-				long dueMillis = Long.parseLong(str[3]);
-				long returnMillis = Long.parseLong(str[4]);
-				
+				int loanId = Integer.parseInt(str[0].split("=")[1]);
+				int mediaId = Integer.parseInt(str[1].split("=")[1]);
+				int memberId = Integer.parseInt(str[2].split("=")[1]);
+				long checkoutMillis = Long.parseLong(str[3].split("=")[1]);
+				long dueMillis = Long.parseLong(str[4].split("=")[1]);
+				long returnMillis = Long.parseLong(str[5].split("=")[1]);
+					
 				boolean alreadyExists = false;
 				for (Loan old : history) {
-					if (old.getMediaId() == mediaId &&
+					if (old.getLoanId() == loanId &&
+						old.getMediaId() == mediaId &&
 						old.getMemberId() == memberId &&
 						old.getCheckoutDate().getTime() == checkoutMillis) {
 						alreadyExists = true;
 						break;
 					}
 				}
-				
+					
 				if (alreadyExists) {
 					continue;
 				}
-				
-				Loan loan = new Loan(mediaId, memberId, new Date(checkoutMillis), new Date(dueMillis));
+					
+				Loan loan = new Loan(loanId, mediaId, memberId, new Date(checkoutMillis), new Date(dueMillis));
+					
 				if (returnMillis != -1) {
 					loan.setReturnDate(new Date(returnMillis));
 				}
-				
+				if (loanId >= nextLoanId) {
+					nextLoanId = loanId + 1;
+				}
+					
 				history.add(loan);
-				numLoans++;
+//					numLoans++;
+				
 			}
 			
 			sc.close();
@@ -173,5 +200,4 @@ public class LoanRepository {
 			System.out.println("Error loading loans: " + e.getMessage());
 		}
 	}
-	
 }
