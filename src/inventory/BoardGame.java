@@ -13,7 +13,7 @@ public class BoardGame extends Media { // Variables unique to BoardGame subclass
 		String newGenre,
 		int newTotalQuantity,
 		int newQuantityAvailable,
-		Rating newAgeRating, // unique to Boardgame subclass, used for subclass constructor call
+		Rating newAgeRating, // unique to Board_Game subclass, used for subclass constructor call
 		int newPlayerCountMin,
 		int newPlayerCountMax,
 		int newGameLength) 

@@ -118,6 +118,11 @@ public class Inventory {
 		}
 	} // end of searchByID() method
 	
+	private void removeMedia() {
+		// TODO Auto-generated method stub
+		return;
+	}
+	
 	public void saveInventoryToFile(String filename) {
 		ifNameEmptyDefaultOutput(filename);
 		File file = new File(filename + ".txt");
@@ -152,15 +157,23 @@ public class Inventory {
 			return;
 		}
 		File file = filePath.toFile();
+		
+		// create temp inventory before loading
+		ArrayList<Media> tempMediaList = new ArrayList<Media>();
 		try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
 			String line;
 			while ((line = reader.readLine()) != null) {
-				System.out.println("Read line: " + line); // For testing purposes
+				line = line.trim();
+				if (line.isEmpty()) {
+					continue; // skip empty lines
+				}
+				Media mediaItem = parseMedia(line);
+				tempMediaList.add(mediaItem);
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		this.mediaItems = tempMediaList;
 	}
 	
 	public Media parseMedia(String line) {
@@ -223,25 +236,80 @@ public class Inventory {
 	}
 	
 	private Media parseBookDetails(
-			String detailPart,
-			String title,
-			String publisher,
-			String genre,
-			int totalQuantity,
-			int quantityAvailable) {
-				return null;
+			String detailPart, String title, String publisher,
+			String genre,int totalQuantity, int quantityAvailable) 
+	{
+		// detailPart example:
+		// "Author: J.R.R. Tolkien;DDNumber:123.456;ISBN:987654"
+		Map<String, String> fields = new HashMap<>();
+		String[] parts = detailPart.split(";");
+		for (String part : parts) {
+			part = part.trim();
+			if (part.isEmpty()) {
+				throw new IllegalArgumentException("Empty detail part in book details: " + detailPart);
+			}
+			String[] keyValue = part.split(":", 2);
+			if (keyValue.length != 2) {
+				throw new IllegalArgumentException("Invalid key-value pair: " + part);
+			}
+			fields.put(keyValue[0].trim(), keyValue[1].trim());
+		}
+		String author = fields.get("Author");
+		double ddNumber = Double.parseDouble(fields.get("DDNumber"));
+		String isbn = fields.get("ISBN");
+		return new Book(title, publisher, genre, totalQuantity, quantityAvailable, author, ddNumber, isbn);
 	}
 	
-	private Media parseBoardGameDetails(String detailPart, String title, String publisher, String genre,
-			int totalQuantity, int quantityAvailable) {
-		// TODO Auto-generated method stub
-		return null;
+	private Media parseBoardGameDetails(
+		String detailPart,String title,String publisher,
+		String genre,int totalQuantity,int quantityAvailable) 
+	{
+		Map<String, String> fields = new HashMap<>();
+		
+		// Split by semicolon
+		// detailPart looks like:
+		// "AgeRating:PG-13;Min Players:2;Max Players:4;Game Length:60"
+		String[] parts = detailPart.split(";");
+		for (String part : parts) {
+			part = part.trim();
+			if (part.isEmpty()) {
+				throw new IllegalArgumentException("Empty detail part in board_game details: " + detailPart);
+			}
+			String[] keyValue = part.split(":", 2);
+			if (keyValue.length != 2) {
+				throw new IllegalArgumentException("Invalid key-value pair: " + part);
+			}
+			fields.put(keyValue[0].trim(), keyValue[1].trim());
+		}
+		String ageRatingStr = fields.get("AgeRating");
+		Rating ageRating = Rating.valueOf(ageRatingStr); // Rating enum
+		int minPlayers = Integer.parseInt(fields.get("Min Players"));
+		int maxPlayers = Integer.parseInt(fields.get("Max Players"));
+		int gameLength = Integer.parseInt(fields.get("Game Length"));
+		return new BoardGame(title,publisher,genre,totalQuantity,quantityAvailable,ageRating,minPlayers,maxPlayers,gameLength);
 	}
 	
-	private Media parseDVDDetails(String detailPart, String title, String publisher, String genre, int totalQuantity,
-			int quantityAvailable) {
-		// TODO Auto-generated method stub
-		return null;
+	private Media parseDVDDetails(
+		String detailPart, String title, String publisher,
+		String genre, int totalQuantity,int quantityAvailable)
+	{
+		Map<String, String> fields = new HashMap<>();
+		String[] parts = detailPart.split(";");
+		for (String part : parts) {
+			part = part.trim();
+			if (part.isEmpty()) {
+				throw new IllegalArgumentException("Empty detail part in DVD details: " + detailPart);
+			}
+			String[] keyValue = part.split(":", 2);
+			if (keyValue.length != 2) {
+				throw new IllegalArgumentException("Invalid key-value pair: " + part);
+			}
+			fields.put(keyValue[0].trim(), keyValue[1].trim());
+		}
+		String ageRatingStr = fields.get("AgeRating");
+		Rating ageRating = Rating.valueOf(ageRatingStr); // rating enum
+		int runTime = Integer.parseInt(fields.get("RunTime"));
+		return new DVD(title, publisher, genre, totalQuantity, quantityAvailable, ageRating, runTime);
 	}
 	
 	private Map<String, String> parseBaseFields(String wholeString) {
@@ -269,8 +337,8 @@ public class Inventory {
 			if (keyValue.length != 2) {
 				throw new IllegalArgumentException("Invalid key-value pair: " + part);
 			}
-			String key = keyValue[0].trim(); // e.g. "ID"
-			String value = keyValue[1].trim(); // e.g. "1"
+			String key = keyValue[0].trim(); // e.g. "Title"
+			String value = keyValue[1].trim(); // e.g. "Catan"
 			fields.put(key, value);
 		}
 		return fields;
