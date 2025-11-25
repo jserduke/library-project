@@ -37,9 +37,8 @@ public class DVD extends Media {
 	public String toString() {
 		return super.toString() +
 		getMediaType() + 
-		" Category Info:{" + 
-		ageRating.name() + ":" + getAgeRating() + 
-		",RunTime:" + getRunTime() + "}\n";
+		":[AgeRating:" + getAgeRating() + 
+		",RunTime:" + getRunTime() + "]\n";
 	}
 	
 	// private setters for DVD subclass variables

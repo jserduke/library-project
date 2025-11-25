@@ -54,11 +54,10 @@ public class BoardGame extends Media{ // Variables unique to BoardGame subclass
 	public String toString() {
 		return super.toString() +
 		getMediaType() + 
-		" Category Info:{" + 
-		ageRating.name() + ":" + getRating() + 
-		",Min Players:" + getPlayerCountMin() + 
-		",Max Players:" + getPlayerCountMax() + 
-		",Game Length:" + getGameLength() + "}\n";
+		":[AgeRating:" + getRating() + 
+		";Min Players:" + getPlayerCountMin() + 
+		";Max Players:" + getPlayerCountMax() + 
+		";Game Length:" + getGameLength() + "]\n";
 	}
 	
 	public void setRating(Rating newRating) {

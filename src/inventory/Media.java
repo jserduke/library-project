@@ -68,11 +68,11 @@ public abstract class Media {
 	// toString returns all applicable Media info, subclasses have extra info
 	public String toString() {
 		return  "Media Info{ID:" + this.id + 
-		",Title:" + this.title + 
-		",Publisher:" + this.publisher + 
-		",Genre:" + this.genre + 
-		",Total Quantity:" + this.totalQuantity + 
-		",Quantity Available:" + this.quantityAvailable + "}\n";
+		";Title:" + this.title + 
+		";Publisher:" + this.publisher + 
+		";Genre:" + this.genre + 
+		";Total Quantity:" + this.totalQuantity + 
+		";Quantity Available:" + this.quantityAvailable + "}";
 	}
 	
 	// Setters are protected for subclass access since variables are private
