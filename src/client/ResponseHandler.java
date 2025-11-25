@@ -1,6 +1,7 @@
 package client;
 import java.io.*;
 import javax.swing.*;
+import java.util.ArrayList;
 
 import gui.*;
 import gui.AdminPortalFrame.ManageInventoryPanel;
@@ -74,6 +75,11 @@ public class ResponseHandler implements Runnable {
 					} else {
 						switch (response.getAction()) {
 							case Action.GET_DASHBOARD:
+//								SwingUtilities.invokeLater(() -> new WelcomeDashboardFrame(requestWriter, this, response.getInfo()).setVisible(true));
+								if (oldFrame instanceof MemberPortalFrame || oldFrame instanceof AdminPortalFrame) {
+									break;
+								}
+								
 								SwingUtilities.invokeLater(() -> new WelcomeDashboardFrame(requestWriter, this, response.getInfo()).setVisible(true));
 								break;
 							case Action.GET_SEARCH:
@@ -100,9 +106,32 @@ public class ResponseHandler implements Runnable {
 									} else if (response.getInfo().getFirst().equals("MEMBER")) {
 										response.getInfo().removeFirst();
 										JOptionPane.showMessageDialog(null, "Member Login Successful! Welcome, " + response.getInfo().getFirst());
-										(new MemberPortalFrame(requestWriter, this, response.getInfo())).setVisible(true);
-										oldOldFrame.dispose();
-										oldFrame.dispose();
+										
+//										(new MemberPortalFrame(requestWriter, this, response.getInfo())).setVisible(true);
+										MemberPortalFrame f = new MemberPortalFrame(requestWriter, this, response.getInfo());
+										f.setVisible(true);
+										setOldFrame(f);
+										f.setVisible(true);
+										
+//										oldOldFrame.dispose();
+//										oldFrame.dispose();
+										if (oldOldFrame != null) {
+											oldOldFrame.dispose();
+										}
+										if (oldFrame != null && oldFrame != f) {
+											oldFrame.dispose();
+										}								
+										
+										ArrayList<String> dummy = new ArrayList<>();
+										Message dashboard = new Message(0, message.Type.REQUEST, -1, message.Action.GET_DASHBOARD, Status.PENDING, dummy);
+										this.setOldFrame(f);
+										this.setRequestIdExpected(dashboard.getId());
+										
+										try {
+											requestWriter.writeObject(dashboard);
+										} catch (IOException ex) {
+											ex.printStackTrace();
+										}
 									}
 								} else if (response.getStatus() == Status.FAILURE) {
 									JOptionPane.showMessageDialog(null, "Login Failed :(");
@@ -113,9 +142,59 @@ public class ResponseHandler implements Runnable {
 							case Action.CHECKOUT:
 								// WHEN RESPONSE RECEIVED, JUST LET USER KNOW THAT CHECKOUT WAS SUCCESSFUL
 								JOptionPane.showMessageDialog(oldFrame, "Your checkout was successfully made!", "Checkout", JOptionPane.INFORMATION_MESSAGE);
+								
+								ArrayList<String> msg1 = new ArrayList<>();
+								//Commenting our for now because this worked with dummy data
+								Message refresh1 = new Message(0, message.Type.REQUEST, -1, message.Action.GET_CHECKOUTS, Status.PENDING, msg1);
+								this.setRequestIdExpected(refresh1.getId());
+								this.setOldFrame(oldFrame);
+//								try {
+//									requestWriter.writeObject(refresh1);
+//								} catch (IOException e) {
+//									e.printStackTrace();
+//								}
+								
+								requestWriter.writeObject(refresh1);
+								
+//								((MemberPortalFrame) oldFrame).reloadCatalog(msg, 2);
+//								int loanStart1 = 2 + Integer.parseInt(msg.get(1)) * 8;
+//								((MemberPortalFrame) oldFrame).reloadLoans(msg, loanStart1);
+								
+								break;
+							case Action.RETURN:
+								if (response.getStatus() == Status.SUCCESS) {
+									JOptionPane.showMessageDialog(oldFrame, "Your return was successfully made!");
+									
+									ArrayList<String> msg = new ArrayList<>();
+									Message refresh = new Message(0, message.Type.REQUEST, -1, message.Action.GET_CHECKOUTS, Status.PENDING, msg);
+									this.setRequestIdExpected(refresh.getId());
+									this.setOldFrame(oldFrame);
+									try {
+										requestWriter.writeObject(refresh);
+									} catch (IOException e) {
+										e.printStackTrace();
+									}
+								} else {
+									String msg = (response.getInfo() != null && !response.getInfo().isEmpty()
+												  ? response.getInfo().getFirst() : "Return failed!");
+									JOptionPane.showMessageDialog(oldDialog, msg);
+								}
 								break;
 							case Action.GET_CHECKOUTS:
 								// guiPreparer.showCheckoutHistory(new JFrame("Checkout History"), response);
+//								Previous code that was working with dummy data
+//								ArrayList<String> info = response.getInfo();
+//								int loansStart = 1;
+//								((MemberPortalFrame) oldFrame).reloadLoans(info, loansStart);
+								
+								ArrayList<String> info = response.getInfo();
+								MemberPortalFrame frame = (MemberPortalFrame) oldFrame;
+								
+								int loanStart1 = 1;;
+								((MemberPortalFrame)oldFrame).reloadLoans(info, loanStart1);
+//								frame.reloadCatalog(info, 2);
+//								frame.reloadLoans(info, loanStart1);
+//							
 								break;
 							case Action.GET_PROFILE:
 								if (response.getStatus() == Status.SUCCESS) {

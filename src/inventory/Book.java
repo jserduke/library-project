@@ -21,7 +21,7 @@ public class Book extends Media {
 		this.isbn = newIsbn;
 	}
 	
-	protected Book() {
+	public Book() {
 		super(MediaType.BOOK); // calls Media superclass default constructor
 		this.author = null;
 		this.ddCallNumber = 0;

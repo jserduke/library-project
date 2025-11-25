@@ -6,6 +6,7 @@ public enum Action {
 	LOGIN,
 	GET_CHECKOUTS,
 	CHECKOUT,
+	RETURN,
 	GET_PROFILE,
 	SET_PROFILE,
 	ADD_BOOK,
