@@ -87,7 +87,7 @@ public class ResponseHandler implements Runnable {
 								break;
 							case Action.REGISTER:
 								if (response.getStatus() == Status.SUCCESS) {
-									JOptionPane.showMessageDialog(oldDialog, "Account created. You can now log in.");
+									JOptionPane.showMessageDialog(oldDialog, response.getInfo().getFirst() + " account created. You can now log in.");
 									oldDialog.dispose();
 								} else if (response.getStatus() == Status.FAILURE) {
 									JOptionPane.showMessageDialog(oldDialog, "Something went wrong :(\n" + response.getInfo().getFirst());

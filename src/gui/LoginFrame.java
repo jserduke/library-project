@@ -14,8 +14,8 @@ public class LoginFrame extends JFrame {
 	private final JTextField txtUser = new JTextField(18);
     private final JPasswordField txtPass = new JPasswordField(18);
 
-    public LoginFrame(ObjectOutputStream requestWriter, ResponseHandler responseHandler, String name) {
-        setTitle(name + " Login");
+    public LoginFrame(ObjectOutputStream requestWriter, ResponseHandler responseHandler, String name, boolean isFromAdmin) {
+        setTitle(name + (isFromAdmin ? " Admin" : " Member") + " Login");
         setSize(460, 260);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -62,7 +62,7 @@ public class LoginFrame extends JFrame {
         btnLogin.addActionListener(e -> doLogin(requestWriter, responseHandler));
         btnRegister.addActionListener(e -> {
         	dispose();
-        	new RegisterFrame(responseHandler.getOldFrame(), requestWriter, responseHandler).setVisible(true);
+        	new RegisterFrame(responseHandler.getOldFrame(), requestWriter, responseHandler, isFromAdmin).setVisible(true);
         });
         
     }
