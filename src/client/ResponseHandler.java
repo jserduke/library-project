@@ -87,7 +87,8 @@ public class ResponseHandler implements Runnable {
 								break;
 							case Action.REGISTER:
 								if (response.getStatus() == Status.SUCCESS) {
-									JOptionPane.showMessageDialog(oldDialog, "Account created. You can now log in.");
+//									JOptionPane.showMessageDialog(oldDialog, "Account created. You can now log in.");
+									JOptionPane.showMessageDialog(oldDialog, response.getInfo().getFirst() + " account created. You can now log in.");
 									oldDialog.dispose();
 								} else if (response.getStatus() == Status.FAILURE) {
 									JOptionPane.showMessageDialog(oldDialog, "Something went wrong :(\n" + response.getInfo().getFirst());
@@ -122,8 +123,8 @@ public class ResponseHandler implements Runnable {
 											oldFrame.dispose();
 										}								
 										
-										ArrayList<String> dummy = new ArrayList<>();
-										Message dashboard = new Message(0, message.Type.REQUEST, -1, message.Action.GET_DASHBOARD, Status.PENDING, dummy);
+										ArrayList<String> dummyList = new ArrayList<>();
+										Message dashboard = new Message(0, message.Type.REQUEST, -1, message.Action.GET_DASHBOARD, Status.PENDING, dummyList);
 										this.setOldFrame(f);
 										this.setRequestIdExpected(dashboard.getId());
 										
