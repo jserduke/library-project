@@ -9,14 +9,16 @@ public abstract class Media {
 	private int totalQuantity;
 	private int quantityAvailable;
 
-	// protected constructors for subclass use to initialize variables unaccessible to subclasses
-	protected Media(MediaType newMediaType, 
-	// int newId, 
-	String newTitle, 
-	String newPublisher, 
-	String newGenre,
-	int newTotalQuantity,
-	int newQuantityAvailable) {
+	// protected constructors for subclass use to initialize variables inaccessible to subclasses
+	// Constructor for autogen ID
+	protected Media(
+		MediaType newMediaType,
+		String newTitle, 
+		String newPublisher, 
+		String newGenre,
+		int newTotalQuantity,
+		int newQuantityAvailable)
+	{
 		this.mediaType = newMediaType;
 		this.id = nextMediaId++;
 		this.title = newTitle;
@@ -26,6 +28,24 @@ public abstract class Media {
 		this.quantityAvailable = newQuantityAvailable;
 	}
 	
+	// constructor for loading from file with ID
+	protected Media(
+		MediaType newMediaType,
+		int newId,
+		String newTitle,
+		String newPublisher,
+		String newGenre,
+		int newTotalQuantity,
+		int newQuantityAvailable) 
+	{
+		this.mediaType = newMediaType;
+		this.id = newId;
+		this.title = newTitle;
+		this.publisher = newPublisher;
+		this.genre = newGenre;
+		this.totalQuantity = newTotalQuantity;
+		this.quantityAvailable = newQuantityAvailable;
+	}
 	protected Media(MediaType newMediaType) { // default constructor
 		this.mediaType = newMediaType;
 		this.id = 0;
@@ -68,11 +88,11 @@ public abstract class Media {
 	// toString returns all applicable Media info, subclasses have extra info
 	public String toString() {
 		return  "Media Info{ID:" + this.id + 
-		",Title:" + this.title + 
-		",Publisher:" + this.publisher + 
-		",Genre:" + this.genre + 
-		",Total Quantity:" + this.totalQuantity + 
-		",Quantity Available:" + this.quantityAvailable + "}\n";
+		";Title:" + this.title + 
+		";Publisher:" + this.publisher + 
+		";Genre:" + this.genre + 
+		";Total Quantity:" + this.totalQuantity + 
+		";Quantity Available:" + this.quantityAvailable + "}";
 	}
 	
 	// Setters are protected for subclass access since variables are private

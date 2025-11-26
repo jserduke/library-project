@@ -1,0 +1,3 @@
+Item #1:Media Info{ID:1;Title:The Lord of the Rings;Publisher:Allen & Unwin;Genre:Fantasy;Total Quantity:5;Quantity Available:3}BOOK:[Author:J.R.R. Tolkien;DDNumber:123.45;ISBN:9876]
+Item #2:Media Info{ID:2;Title:Dawn of the Dead 2004;Publisher:Universal Pictures;Genre:Horror;Total Quantity:2;Quantity Available:1}DVD:[AgeRating:R;RunTime:101]
+Item #3:Media Info{ID:3;Title:Monopoly;Publisher:Hasbro;Genre:Economics;Total Quantity:4;Quantity Available:0}BOARD_GAME:[AgeRating:PG;Min Players:2;Max Players:6;Game Length:90]

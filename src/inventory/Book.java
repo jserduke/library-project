@@ -21,6 +21,23 @@ public class Book extends Media {
 		this.isbn = newIsbn;
 	}
 	
+	public Book(
+		int newId,
+		String newTitle,
+		String newPublisher,
+		String newGenre,
+		int newTotalQuantity,
+		int newQuantityAvailable,
+		String newAuthor,
+		double newDdCallNumber,
+		String newIsbn) 
+	{
+		super(MediaType.BOOK, newId, newTitle, newPublisher, newGenre, newTotalQuantity, newQuantityAvailable);
+		this.author = newAuthor;
+		this.ddCallNumber = newDdCallNumber;
+		this.isbn = newIsbn;
+	}
+	
 	public Book() {
 		super(MediaType.BOOK); // calls Media superclass default constructor
 		this.author = null;
@@ -44,9 +61,9 @@ public class Book extends Media {
 	public String toString() {
 		return super.toString() +
 		getMediaType() + 
-		" Category Info:{Author:" + getAuthor() +
-		",DD Number:" + getDdCallNumber() +
-		",ISBN:" + getIsbn() + "}\n";
+		":[Author:" + getAuthor() +
+		";DDNumber:" + getDdCallNumber() +
+		";ISBN:" + getIsbn() + "]\n";
 	}
 	
 	public void setAuthor(String newAuthor) {
