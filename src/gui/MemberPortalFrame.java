@@ -82,7 +82,7 @@ public class MemberPortalFrame extends JFrame {
         split.setBottomComponent(buildLoansPanel());
         add(split, BorderLayout.CENTER);
 
-        reloadCatalog(info, 2);
+        reloadCatalog(info, 2, true);
         reloadLoans(info, 2 + Integer.parseInt(info.get(1)) * 8);
     }
 
@@ -141,9 +141,51 @@ public class MemberPortalFrame extends JFrame {
         
         Theme.styleTable(catalogTable);
 
-        btnSearch.addActionListener(e -> reloadCatalog(info, 1));
-        txtSearch.addActionListener(e -> reloadCatalog(info, 1));
-        cbType.addActionListener(e -> reloadCatalog(info, 1));
+        btnSearch.addActionListener(e -> {
+        	// reloadCatalog(info, 1);
+        	ArrayList<String> queryInfo = new ArrayList<String>();
+        	queryInfo.add((String) cbType.getSelectedItem());
+        	queryInfo.add(txtSearch.getText().trim().toLowerCase());
+        	Message searchMessage = new Message(0, message.Type.REQUEST, -1, message.Action.GET_SEARCH_MEMBER, Status.PENDING, queryInfo);
+        	responseHandler.setRequestIdExpected(searchMessage.getId());
+        	responseHandler.setOldFrame(this);
+        	try {
+				requestWriter.writeObject(searchMessage);
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+        });
+        txtSearch.addActionListener(e -> {
+        	// reloadCatalog(info, 1, false);
+        	ArrayList<String> queryInfo = new ArrayList<String>();
+        	queryInfo.add((String) cbType.getSelectedItem());
+        	queryInfo.add(txtSearch.getText().trim().toLowerCase());
+        	Message searchMessage = new Message(0, message.Type.REQUEST, -1, message.Action.GET_SEARCH_MEMBER, Status.PENDING, queryInfo);
+        	responseHandler.setRequestIdExpected(searchMessage.getId());
+        	responseHandler.setOldFrame(this);
+        	try {
+				requestWriter.writeObject(searchMessage);
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+        });
+        cbType.addActionListener(e -> {
+        	// reloadCatalog(info, 1, false);
+        	ArrayList<String> queryInfo = new ArrayList<String>();
+        	queryInfo.add((String) cbType.getSelectedItem());
+        	queryInfo.add(txtSearch.getText().trim().toLowerCase());
+        	Message searchMessage = new Message(0, message.Type.REQUEST, -1, message.Action.GET_SEARCH_MEMBER, Status.PENDING, queryInfo);
+        	responseHandler.setRequestIdExpected(searchMessage.getId());
+        	responseHandler.setOldFrame(this);
+        	try {
+				requestWriter.writeObject(searchMessage);
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+        }); // TODO: change
         btnCheckout.addActionListener(e -> checkoutSelected());
         btnHold.addActionListener(e -> holdSelected());
         btnEdit.addActionListener(e -> {
@@ -191,23 +233,38 @@ public class MemberPortalFrame extends JFrame {
     	*/
 
 	}
-    public void reloadCatalog(ArrayList<String> info, int invStart) {
+    public void reloadCatalog(ArrayList<String> info, int invStart, boolean isInit) {
         String q = txtSearch.getText().trim();
         String type = cbType.getSelectedItem().toString();
         catalogModel.setRowCount(0);
         
-    	for (int i = 0; i < Integer.parseInt(info.get(1)); i += 1) {
-    		catalogModel.addRow(new Object[] {
-    				info.get(invStart + i * 8 + 0),
-    				info.get(invStart + i * 8 + 1),
-    				info.get(invStart + i * 8 + 2),
-    				info.get(invStart + i * 8 + 3),
-    				info.get(invStart + i * 8 + 4),
-    				info.get(invStart + i * 8 + 5),
-    				info.get(invStart + i * 8 + 6),
-    				info.get(invStart + i * 8 + 7),
-    		});
-    	}
+        if (isInit) {
+	    	for (int i = 0; i < Integer.parseInt(info.get(1)); i += 1) {
+	    		catalogModel.addRow(new Object[] {
+	    				info.get(invStart + i * 8 + 0),
+	    				info.get(invStart + i * 8 + 1),
+	    				info.get(invStart + i * 8 + 2),
+	    				info.get(invStart + i * 8 + 3),
+	    				info.get(invStart + i * 8 + 4),
+	    				info.get(invStart + i * 8 + 5),
+	    				info.get(invStart + i * 8 + 6),
+	    				info.get(invStart + i * 8 + 7),
+	    		});
+	    	}
+        } else {
+	    	for (int i = 0; i < (info.size() - invStart) / 8; i += 1) {
+	    		catalogModel.addRow(new Object[] {
+	    				info.get(invStart + i * 8 + 0),
+	    				info.get(invStart + i * 8 + 1),
+	    				info.get(invStart + i * 8 + 2),
+	    				info.get(invStart + i * 8 + 3),
+	    				info.get(invStart + i * 8 + 4),
+	    				info.get(invStart + i * 8 + 5),
+	    				info.get(invStart + i * 8 + 6),
+	    				info.get(invStart + i * 8 + 7),
+	    		});
+	    	}
+        }
 
     	/*
         if ("All".equals(type) || "Books".equals(type)) {
