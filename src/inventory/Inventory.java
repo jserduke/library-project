@@ -2,7 +2,6 @@ package inventory;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -46,13 +45,13 @@ public class Inventory {
 	// switch back to private?
 	public void addMedia(Media newMedia) {
 		switch(newMedia.getMediaType()) {
-			case MediaType.BOOK:
+			case BOOK:
 				this.mediaItems.add(newMedia);
 				break;
-			case MediaType.DVD:
+			case DVD:
 				this.mediaItems.add(newMedia);
 				break;
-			case MediaType.BOARD_GAME:
+			case BOARD_GAME:
 				this.mediaItems.add(newMedia);
 				break;
 			default:
@@ -118,14 +117,13 @@ public class Inventory {
 		}
 	} // end of searchByID() method
 	
-	private void removeMedia() {
-		// TODO Auto-generated method stub
-		return;
-	}
-	
 	public void saveInventoryToFile(String filename) {
 		ifNameEmptyDefaultOutput(filename);
-		File file = new File(filename + ".txt");
+		Path filePath = Paths.get("src", "inventory", "fileoutput", filename + ".txt");
+		File file = filePath.toFile();
+		
+		// comment out, this is for debug purposes
+		System.out.println("Saving inventory to: " + filePath.toAbsolutePath() + "\n");
 		try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
 			for (Media item : mediaItems) {
 				writer.write("Item #" + (mediaItems.indexOf(item) + 1) + ":");
@@ -142,10 +140,11 @@ public class Inventory {
 		}
 	}
 	
-	public void ifNameEmptyDefaultOutput(String filename) {
+	public String ifNameEmptyDefaultOutput(String filename) {
 		if (filename == null || filename.isEmpty()) {
 			filename = "inventory_output";
 		}
+		return filename;
 	}
 	
 	// right now, read from file located in src/inventory/fileoutput
@@ -174,6 +173,7 @@ public class Inventory {
 			e.printStackTrace();
 		}
 		this.mediaItems = tempMediaList;
+		this.numMedia = mediaItems.size();
 	}
 	
 	public Media parseMedia(String line) {

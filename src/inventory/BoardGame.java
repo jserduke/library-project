@@ -25,6 +25,26 @@ public class BoardGame extends Media { // Variables unique to BoardGame subclass
 		this.gameLength = newGameLength;
 	}
 	
+	// Constructor for loading from file with ID
+	public BoardGame(
+			int newId,
+			String newTitle,
+			String newPublisher,
+			String newGenre,
+			int newTotalQuantity,
+			int newQuantityAvailable,
+			Rating newAgeRating, // unique to Board_Game subclass, used for subclass constructor call
+			int newPlayerCountMin,
+			int newPlayerCountMax,
+			int newGameLength) 
+		{
+			super(MediaType.BOARD_GAME, newId, newTitle, newPublisher, newGenre, newTotalQuantity, newQuantityAvailable);
+			this.ageRating = newAgeRating; // regular constructor for BoardGame subclass
+			this.playerCountMin = newPlayerCountMin;
+			this.playerCountMax = newPlayerCountMax;
+			this.gameLength = newGameLength;
+		}
+	
 	public BoardGame() {
 		super(MediaType.BOARD_GAME); // calls Media superclass default constructor
 		this.ageRating = Rating.UNRATED;

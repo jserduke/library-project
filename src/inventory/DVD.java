@@ -18,6 +18,22 @@ public class DVD extends Media {
 		this.runTime = newRunTime;
 	}
 	
+	// Contructor for loading from file with ID
+	public DVD (
+			int newId,
+			String newTitle,
+			String newPublisher,
+			String newGenre, 
+			int newTotalQuantity,
+			int quantityAvailable,
+			Rating newAgeRating, // Variables unique to DVD subclass
+			int newRunTime)
+		{
+			super(MediaType.DVD, newId, newTitle, newPublisher, newGenre, newTotalQuantity, quantityAvailable);
+			this.ageRating =  newAgeRating;
+			this.runTime = newRunTime;
+		}
+	
 	public DVD () { // default constructor
 		super(MediaType.DVD);
 		this.ageRating = Rating.UNRATED;
