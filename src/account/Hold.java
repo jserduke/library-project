@@ -2,24 +2,35 @@ package account;
 import java.util.Date;
 
 public class Hold {
+	private int holdId;
 	private int mediaId;
     private int memberId;
+    private int holdLimit;
     private Date datePlaced;
     private Date holdUntilDate;
 
-    public Hold(int mediaId, int memberId, Date datePlaced,  Date holdUntilDate) {
+    public Hold(int holdId, int mediaId, int memberId, Date datePlaced,  Date holdUntilDate) {
+    	this.holdId = holdId;
         this.mediaId = mediaId;
         this.memberId = memberId;
         this.datePlaced = datePlaced;
         this.holdUntilDate = holdUntilDate;
     }
+    
+    public int getHoldId() {
+    	return holdId;
+    }
 
-    public Integer getMediaId() {
+    public int getMediaId() {
         return mediaId;
     }
 
-    public Integer getMemberId() {
+    public int getMemberId() {
         return memberId;
+    }
+    
+    public int getHoldLimit() {
+    	return holdLimit;
     }
     
     public Date getDatePlaced() {

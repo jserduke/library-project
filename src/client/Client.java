@@ -17,15 +17,16 @@ public class Client {
 		// int serverPort = Integer.parseInt(scanner.nextLine());
 		
 		// CHANGE IP ADDRESS HERE IN ACCORDANCE WITH YOUR OWN SERVER-CLIENT CONFIGURATION
-		try (Socket socket = new Socket("localhost", 56789)) {
+		try (Socket socket = new Socket("134.154.37.47", 56789)) {
 			ObjectOutputStream writerToServer = new ObjectOutputStream(socket.getOutputStream());
 			ObjectInputStream readerFromServer = new ObjectInputStream(socket.getInputStream());
-			// JFrame frame = new JFrame("Home Page");
+			//JFrame frame = new JFrame("Home Page");
 			ResponseHandler responseHandler = new ResponseHandler(readerFromServer, writerToServer);
 			// GUIPreparer guiPreparer = new GUIPreparer(writerToServer, responseHandler);
 			// responseHandler.setGuiPreparer(guiPreparer);
 			Thread responseThread = new Thread(responseHandler);
 			responseThread.start();
+//			Message initMessage = new Message(0, Type.REQUEST, -1, message.Action.GET_DASHBOARD, Status.PENDING, null);
 			ArrayList<String> initInfo = new ArrayList<String>();
 			String libraryName = JOptionPane.showInputDialog(null, "Input the name of the library:");
 			initInfo.add(libraryName);
