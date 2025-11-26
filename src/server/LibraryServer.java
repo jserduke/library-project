@@ -114,18 +114,13 @@ public class LibraryServer {
 						System.out.println(messageFromClient);
 						// System.out.println("Is logged in? " + isLoggedIn);
 						ArrayList<String> info = new ArrayList<String>();
-//						if (messageFromClient.getAction() == Action.GET_DASHBOARD) {
-//							for (Library l : librarySystem.getLibraries()) {
-//								if (l.getName().equalsIgnoreCase(messageFromClient.getInfo().getFirst())) {
-//									library = l;
-//									inventory = library.getInventory();
-//								}
-//							}
-						if (messageFromClient.getInfo().size() > 0) {
-							for (Library l : librarySystem.getLibraries()) {
-								if (l.getName().equalsIgnoreCase(messageFromClient.getInfo().getFirst())) {
-									library = l;
-									inventory = library.getInventory();
+						if (messageFromClient.getAction() == Action.GET_DASHBOARD) {
+							if (messageFromClient.getInfo().size() > 0) {
+								for (Library l : librarySystem.getLibraries()) {
+									if (l.getName().equalsIgnoreCase(messageFromClient.getInfo().getFirst())) {
+										library = l;
+										inventory = library.getInventory();
+									}
 								}
 							}
 							messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.GET_DASHBOARD, Status.SUCCESS, info);
