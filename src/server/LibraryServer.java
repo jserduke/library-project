@@ -18,21 +18,35 @@ public class LibraryServer {
 		librarySystem.addLibrary(new Library(0, "Our Little Library", new Inventory(new ArrayList<Media>())));
 		librarySystem.addLibrary(new Library(1, "OBL", new Inventory(new ArrayList<Media>())));
 		// TODO: read inventory from file into each library's Inventory object
-		Inventory firstOneInventory = librarySystem.getlibrary(0).getInventory();
-		firstOneInventory.addMedia(new Book("The Book", "The Publishing House", "Horror", 5, 5, "Mr. Idk", 340.5, "351-64534-343"));
-		firstOneInventory.addMedia(new Book("Book, Too!", "The Publishing House", "Comedy", 3, 3, "Mr. Idk", 121.5, "987-245345"));
-		firstOneInventory.addMedia(new Book("You Never Know", "Different Publisher", "Mystery", 2, 2, "Mrs. _", 145.6, "35-234343"));
-		firstOneInventory.addMedia(new DVD("The Movie", "Paramount", "Drama", 5, 5, Rating.PG_13, 120));
-		firstOneInventory.addMedia(new DVD("Movie but Worse", "Paramount", "Drama", 3, 3, Rating.PG, 180));
-		firstOneInventory.addMedia(new DVD("You Never Know", "Innovation Prod.", "Comedy", 2, 2, Rating.G, 140));
-		firstOneInventory.addMedia(new BoardGame("Something's Missing", "Games Unlimited", "Party", 2, 2, Rating.G, 2, 4, 120));
-		firstOneInventory.addMedia(new BoardGame("Dreamers' Gate", "Games Unlimited", "Tabletop RPG", 3, 3, Rating.R, 1, 4, 600));
-		Inventory secondOneInventory = librarySystem.getlibrary(1).getInventory();
-		secondOneInventory.addMedia(new Book("Help", "Publishers", "Horror", 4, 4, "Milton", 325.7, "351-12334-343"));
-		secondOneInventory.addMedia(new Book("Why", "Incorporated", "Drama", 2, 2, "Hilton", 411.7, "45434-3423434"));
-		secondOneInventory.addMedia(new DVD("Help", "A24", "Horror", 3, 3, Rating.R, 200));
-		secondOneInventory.addMedia(new BoardGame("Trains", "Games Unlimited", "Dice Game", 2, 2, Rating.NC_17, 3, 6, 240));
-		secondOneInventory.addMedia(new BoardGame("Gains", "Games Unlimited", "Party Game", 3, 3, Rating.PG, 4, 6, 30));
+		Inventory ollInventory = librarySystem.getlibrary(0).getInventory();
+		ollInventory.loadInventoryFromFile("ollinv");
+		// System.out.println(ollInventory);
+		// System.out.println(Media.getNextMediaId());
+		/*
+		ollInventory.addMedia(new Book("The Book", "The Publishing House", "Horror", 5, 5, "Mr. Idk", 340.5, "351-64534-343"));
+		ollInventory.addMedia(new Book("Book, Too!", "The Publishing House", "Comedy", 3, 3, "Mr. Idk", 121.5, "987-245345"));
+		ollInventory.addMedia(new Book("You Never Know", "Different Publisher", "Mystery", 2, 2, "Mrs. _", 145.6, "35-234343"));
+		ollInventory.addMedia(new DVD("The Movie", "Paramount", "Drama", 5, 5, Rating.PG_13, 120));
+		ollInventory.addMedia(new DVD("Movie but Worse", "Paramount", "Drama", 3, 3, Rating.PG, 180));
+		ollInventory.addMedia(new DVD("You Never Know", "Innovation Prod.", "Comedy", 2, 2, Rating.G, 140));
+		ollInventory.addMedia(new BoardGame("Something's Missing", "Games Unlimited", "Party", 2, 2, Rating.G, 2, 4, 120));
+		ollInventory.addMedia(new BoardGame("Dreamers' Gate", "Games Unlimited", "Tabletop RPG", 3, 3, Rating.R, 1, 4, 600));
+		ollInventory.saveInventoryToFile("ollinv");
+		*/
+		Inventory oblInventory = librarySystem.getlibrary(1).getInventory();
+		oblInventory.loadInventoryFromFile("oblinv");
+		// System.out.println(oblInventory);
+		// System.out.println(Media.getNextMediaId());
+		/*
+		oblInventory.addMedia(new Book("Help", "Publishers", "Horror", 4, 4, "Milton", 325.7, "351-12334-343"));
+		oblInventory.addMedia(new Book("Why", "Incorporated", "Drama", 2, 2, "Hilton", 411.7, "45434-3423434"));
+		oblInventory.addMedia(new DVD("Help", "A24", "Horror", 3, 3, Rating.R, 200));
+		oblInventory.addMedia(new BoardGame("Trains", "Games Unlimited", "Dice Game", 2, 2, Rating.NC_17, 3, 6, 240));
+		oblInventory.addMedia(new BoardGame("Gains", "Games Unlimited", "Party Game", 3, 3, Rating.PG, 4, 6, 30));
+		oblInventory.saveInventoryToFile("oblinv");
+		*/
+		// System.out.println(Media.getNextMediaId());
+		// System.exit(0);
 
 		// TODO: read inventory from file into each library's Inventory object
 		AccountsDirectory librarySystemAccounts = librarySystem.getAccountsDirectory();
@@ -85,23 +99,6 @@ public class LibraryServer {
 				writerToClient = new ObjectOutputStream(clientSocket.getOutputStream());
 				readerFromClient = new ObjectInputStream(clientSocket.getInputStream());
 				Message messageFromClient = null, messageToClient = null;
-				
-				/*
-				// BACKEND DATA (should ideally get it to load in from files later)
-				/*
-				AccountsDirectory accountsDirectory = new AccountsDirectory();
-				accountsDirectory.registerNewAccount(Permission.MEMBER, "member@test.test", "test123", "Tester Testington", new Date(2024 - 1900, 0, 1));
-				accountsDirectory.registerNewAccount(Permission.ADMIN, "admin@test.test", "admin123", "Iam Admin", new Date(2000 - 1900, 5, 20));
-				Inventory inventory = new Inventory(new ArrayList<Media>());
-				inventory.addMedia(new Book("The Book", "The Publishing House", "Horror", 5, 5, "Mr. Idk", 340.5, "351-64534-343"));
-				inventory.addMedia(new Book("Book, Too!", "The Publishing House", "Comedy", 3, 3, "Mr. Idk", 121.5, "987-245345"));
-				inventory.addMedia(new Book("You Never Know", "Different Publisher", "Mystery", 2, 2, "Mrs. _", 145.6, "35-234343"));
-				inventory.addMedia(new DVD("The Movie", "Paramount", "Drama", 5, 5, Rating.PG_13, 120));
-				inventory.addMedia(new DVD("Movie but Worse", "Paramount", "Drama", 3, 3, Rating.PG, 180));
-				inventory.addMedia(new DVD("You Never Know", "Innovation Prod.", "Comedy", 2, 2, Rating.G, 140));
-				inventory.addMedia(new BoardGame("Something's Missing", "Games Unlimited", "Party", 2, 2, Rating.G, 2, 4, 120));
-				inventory.addMedia(new BoardGame("Dreamers' Gate", "Games Unlimited", "Tabletop RPG", 3, 3, Rating.R, 1, 4, 600));
-				*/
 				
 				AccountsDirectory accountsDirectory = librarySystem.getAccountsDirectory();
 				Library library = null;
@@ -500,6 +497,7 @@ public class LibraryServer {
 								addInventoryToInfoAdmin(inventory, info);
 								writerToClient.writeObject(messageToClient);
 							} else if (messageFromClient.getAction() == Action.LOGOUT) {
+								inventory.saveInventoryToFile(library.getId() == 0 ? "ollinv" : "oblinv");
 								account = null;
 								info.add("Our Little Library");
 								for (Media media : inventory.getMediaItems()) {
