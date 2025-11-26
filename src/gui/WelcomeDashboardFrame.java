@@ -141,7 +141,7 @@ public class WelcomeDashboardFrame extends JFrame {
         	ArrayList<String> queryInfo = new ArrayList<String>();
         	queryInfo.add((String) cbType.getSelectedItem());
         	queryInfo.add(txtSearch.getText().trim().toLowerCase());
-        	Message searchMessage = new Message(0, message.Type.REQUEST, -1, message.Action.GET_SEARCH, Status.PENDING, queryInfo);
+        	Message searchMessage = new Message(message.Type.REQUEST, -1, message.Action.GET_SEARCH, Status.PENDING, queryInfo);
         	responseHandler.setRequestIdExpected(searchMessage.getId());
         	responseHandler.setOldFrame(this);
         	try {
@@ -156,7 +156,7 @@ public class WelcomeDashboardFrame extends JFrame {
         	ArrayList<String> queryInfo = new ArrayList<String>();
         	queryInfo.add((String) cbType.getSelectedItem());
         	queryInfo.add(txtSearch.getText().trim().toLowerCase());
-        	Message searchMessage = new Message(0, message.Type.REQUEST, -1, message.Action.GET_SEARCH, Status.PENDING, queryInfo);
+        	Message searchMessage = new Message(message.Type.REQUEST, -1, message.Action.GET_SEARCH, Status.PENDING, queryInfo);
         	responseHandler.setRequestIdExpected(searchMessage.getId());
         	responseHandler.setOldFrame(this);
         	try {

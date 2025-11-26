@@ -17,7 +17,7 @@ public class Client {
 		// int serverPort = Integer.parseInt(scanner.nextLine());
 		
 		// CHANGE IP ADDRESS HERE IN ACCORDANCE WITH YOUR OWN SERVER-CLIENT CONFIGURATION
-		try (Socket socket = new Socket("134.154.37.47", 56789)) {
+		try (Socket socket = new Socket("192.168.86.35", 56789)) {
 			ObjectOutputStream writerToServer = new ObjectOutputStream(socket.getOutputStream());
 			ObjectInputStream readerFromServer = new ObjectInputStream(socket.getInputStream());
 			//JFrame frame = new JFrame("Home Page");
@@ -26,11 +26,11 @@ public class Client {
 			// responseHandler.setGuiPreparer(guiPreparer);
 			Thread responseThread = new Thread(responseHandler);
 			responseThread.start();
-//			Message initMessage = new Message(0, Type.REQUEST, -1, message.Action.GET_DASHBOARD, Status.PENDING, null);
+//			Message initMessage = new Message(Type.REQUEST, -1, message.Action.GET_DASHBOARD, Status.PENDING, null);
 			ArrayList<String> initInfo = new ArrayList<String>();
 			String libraryName = JOptionPane.showInputDialog(null, "Input the name of the library\n(\"Our Little Library\" or \"OBL\"):");
 			initInfo.add(libraryName);
-			Message initMessage = new Message(0, Type.REQUEST, -1, message.Action.GET_DASHBOARD, Status.PENDING, initInfo);
+			Message initMessage = new Message(Type.REQUEST, -1, message.Action.GET_DASHBOARD, Status.PENDING, initInfo);
 			responseHandler.setRequestIdExpected(initMessage.getId());
 			writerToServer.writeObject(initMessage);
 			// guiPreparer.createHomePageNotLoggedIn(frame);
@@ -49,7 +49,7 @@ public class Client {
 				choice = scanner.nextInt();
 				switch (choice) {
 					case 0:
-						messageToServer = new Message(0, Type.REQUEST, -1, Action.LOGIN, Status.PENDING, "Please let me in");
+						messageToServer = new Message(Type.REQUEST, -1, Action.LOGIN, Status.PENDING, "Please let me in");
 						writerToServer.writeObject(messageToServer);
 						// (new Thread(new ResponseHandler(readerFromServer, messageToServer.getId()))).start();
 						if (responseThread == null || !responseThread.isAlive()) {
@@ -62,7 +62,7 @@ public class Client {
 						}
 						break;
 					case 1:
-						messageToServer = new Message(0, Type.REQUEST, -1, Action.GET_CHECKOUTS, Status.PENDING, "Give me records");
+						messageToServer = new Message(Type.REQUEST, -1, Action.GET_CHECKOUTS, Status.PENDING, "Give me records");
 						writerToServer.writeObject(messageToServer);
 						// (new Thread(new ResponseHandler(readerFromServer, messageToServer.getId()))).start();
 						if (responseThread == null || !responseThread.isAlive()) {
@@ -75,7 +75,7 @@ public class Client {
 						}
 						break;
 					case 2:
-						messageToServer = new Message(0, Type.REQUEST, -1, Action.CHECKOUT, Status.PENDING, "Checkout please!");
+						messageToServer = new Message(Type.REQUEST, -1, Action.CHECKOUT, Status.PENDING, "Checkout please!");
 						writerToServer.writeObject(messageToServer);
 						// (new Thread(new ResponseHandler(readerFromServer, messageToServer.getId()))).start();
 						if (responseThread == null || !responseThread.isAlive()) {
@@ -88,7 +88,7 @@ public class Client {
 						}
 						break;
 					case 3:
-						messageToServer = new Message(0, Type.REQUEST, -1, Action.LOGOUT, Status.PENDING, "All done");
+						messageToServer = new Message(Type.REQUEST, -1, Action.LOGOUT, Status.PENDING, "All done");
 						writerToServer.writeObject(messageToServer);
 						// (new Thread(new ResponseHandler(readerFromServer, messageToServer.getId()))).start();
 						if (responseThread == null || !responseThread.isAlive()) {
