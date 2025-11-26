@@ -38,7 +38,7 @@ public class LoanRepository {
 		return history;
 	}
 	
-	public Loan checkoutMedia(int mediaId, int memberId, Date dueDate, Member member) {
+	public Loan checkoutMedia(int mediaId, int memberId, Date dueDate, Member member, Inventory inventory, HoldsRepository holdsRepo) {
 		int activeLoans = 0;
 		for (Loan loan : history) {
 			if (loan.getMemberId() == memberId && loan.getReturnedDate() == null) {
@@ -53,6 +53,26 @@ public class LoanRepository {
 		
 		Loan loan = new Loan(nextLoanId++, mediaId, memberId, new Date(), dueDate);
 		history.add(loan);
+		
+//		Possible code to update inventory after checkout
+		ArrayList<Media> list = inventory.searchByID(mediaId);
+		if (list == null || list.isEmpty()) {
+			return null;
+		}
+		
+		Media m = list.get(0);
+		
+		if (m.getQuantityAvailable() <= 0) {
+			Date holdUntil = new Date(System.currentTimeMillis() + 7L*24*60*60*1000); 	//holds for 7 days
+			holdsRepo.placeHold(mediaId, memberId, holdUntil, member);
+			System.out.println("No copies available: Autoload placed!");
+			return null;
+		}
+		
+		m.setQuantityAvailable(m.getQuantityAvailable() - 1);
+		
+//		Loan loan = new Loan(nextLoanId++, mediaId, memberId, new Date(), dueDate);
+//		history.add(loan);
 		numLoans++;
 		
 		if (member != null) {
@@ -115,13 +135,6 @@ public class LoanRepository {
 		try {
 			FileWriter writer = new FileWriter(file);
 			for (Loan loan : history) {
-//				Format was not good				
-//				writer.write(loan.getLoanId() + ", " +
-//							 loan.getMediaId() + ", " +
-//							 loan.getMemberId() + ", " + 
-//							 loan.getCheckoutDate() + ", " +
-//							 loan.getDueDate() + ", " +
-//							 (loan.getReturnedDate() == null ? -1 : loan.getReturnedDate() + "\n"));
 				writer.write("LoadId=" + loan.getLoanId() + ", " +
 							 "MediaId=" + loan.getMediaId() + ", " +
 							 "MemberId=" + loan.getMemberId() + ", " +
