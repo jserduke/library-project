@@ -28,7 +28,7 @@ public class Client {
 			responseThread.start();
 //			Message initMessage = new Message(0, Type.REQUEST, -1, message.Action.GET_DASHBOARD, Status.PENDING, null);
 			ArrayList<String> initInfo = new ArrayList<String>();
-			String libraryName = JOptionPane.showInputDialog(null, "Input the name of the library:");
+			String libraryName = JOptionPane.showInputDialog(null, "Input the name of the library\n(\"Our Little Library\" or \"OBL\"):");
 			initInfo.add(libraryName);
 			Message initMessage = new Message(0, Type.REQUEST, -1, message.Action.GET_DASHBOARD, Status.PENDING, initInfo);
 			responseHandler.setRequestIdExpected(initMessage.getId());
