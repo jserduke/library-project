@@ -51,8 +51,11 @@ public class LoanRepository {
 			return null;
 		}
 		
+		Loan loan = new Loan(nextLoanId++, mediaId, memberId, new Date(), dueDate);
+		history.add(loan);
+		
 //		Possible code to update inventory after checkout
-		ArrayList<Media> list = inventory.searchByID(memberId);
+		ArrayList<Media> list = inventory.searchByID(mediaId);
 		if (list == null || list.isEmpty()) {
 			return null;
 		}
@@ -68,8 +71,8 @@ public class LoanRepository {
 		
 		m.setQuantityAvailable(m.getQuantityAvailable() - 1);
 		
-		Loan loan = new Loan(nextLoanId++, mediaId, memberId, new Date(), dueDate);
-		history.add(loan);
+//		Loan loan = new Loan(nextLoanId++, mediaId, memberId, new Date(), dueDate);
+//		history.add(loan);
 		numLoans++;
 		
 		if (member != null) {

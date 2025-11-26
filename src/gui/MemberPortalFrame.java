@@ -322,7 +322,7 @@ public class MemberPortalFrame extends JFrame {
         	return; 
         }
         
-        int mediaId = Integer.parseInt(catalogModel.getValueAt(row, 2).toString());
+        int mediaId = Integer.parseInt(catalogModel.getValueAt(row, 1).toString());
         long untilMillis = System.currentTimeMillis() + (1000L * 60 * 60 * 24 * 7);
         
         ArrayList<String> info = new ArrayList<>();
