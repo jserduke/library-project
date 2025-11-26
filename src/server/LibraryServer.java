@@ -15,8 +15,8 @@ public class LibraryServer {
 		ServerSocket server = null;
 		
 		LibrarySystem librarySystem = new LibrarySystem("Double Library System");
-		librarySystem.addLibrary(new Library(0, "The First One", new Inventory(new ArrayList<Media>())));
-		librarySystem.addLibrary(new Library(1, "The Other One", new Inventory(new ArrayList<Media>())));
+		librarySystem.addLibrary(new Library(0, "Our Little Library", new Inventory(new ArrayList<Media>())));
+		librarySystem.addLibrary(new Library(1, "OBL", new Inventory(new ArrayList<Media>())));
 		// TODO: read inventory from file into each library's Inventory object
 		Inventory firstOneInventory = librarySystem.getlibrary(0).getInventory();
 		firstOneInventory.addMedia(new Book("The Book", "The Publishing House", "Horror", 5, 5, "Mr. Idk", 340.5, "351-64534-343"));
@@ -37,7 +37,9 @@ public class LibraryServer {
 		// TODO: read inventory from file into each library's Inventory object
 		AccountsDirectory librarySystemAccounts = librarySystem.getAccountsDirectory();
 		librarySystemAccounts.registerNewAccount(Permission.MEMBER, "member@test.test", "test123", "Tester Testington", new Date(2024 - 1900, 0, 1));
+		librarySystemAccounts.registerNewAccount(Permission.MEMBER, "member", "member", "Member", new Date(2015 - 1900, 0, 1));
 		librarySystemAccounts.registerNewAccount(Permission.ADMIN, "admin@test.test", "admin123", "Iam Admin", new Date(2000 - 1900, 5, 20));
+		librarySystemAccounts.registerNewAccount(Permission.ADMIN, "admin", "admin", "Yosoy Admin", new Date(2000 - 1900, 5, 20));
 		
 		try {
 			server = new ServerSocket(56789);
