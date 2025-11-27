@@ -13,9 +13,10 @@ import library.*;
 public class LibraryServer {
 	public static void main(String[] args) {
 		ServerSocket server = null;
+		
 		LibrarySystem librarySystem = new LibrarySystem("Double Library System");
-		librarySystem.addLibrary(new Library(0, "The First One", new Inventory(new ArrayList<Media>())));
-		librarySystem.addLibrary(new Library(1, "The Other One", new Inventory(new ArrayList<Media>())));
+		librarySystem.addLibrary(new Library(0, "Our Little Library", new Inventory(new ArrayList<Media>())));
+		librarySystem.addLibrary(new Library(1, "OBL", new Inventory(new ArrayList<Media>())));
 		// TODO: read inventory from file into each library's Inventory object
 		Inventory firstOneInventory = librarySystem.getlibrary(0).getInventory();
 		firstOneInventory.addMedia(new Book("The Book", "The Publishing House", "Horror", 5, 5, "Mr. Idk", 340.5, "351-64534-343"));
@@ -32,11 +33,14 @@ public class LibraryServer {
 		secondOneInventory.addMedia(new DVD("Help", "A24", "Horror", 3, 3, Rating.R, 200));
 		secondOneInventory.addMedia(new BoardGame("Trains", "Games Unlimited", "Dice Game", 2, 2, Rating.NC_17, 3, 6, 240));
 		secondOneInventory.addMedia(new BoardGame("Gains", "Games Unlimited", "Party Game", 3, 3, Rating.PG, 4, 6, 30));
-		
+
 		// TODO: read inventory from file into each library's Inventory object
 		AccountsDirectory librarySystemAccounts = librarySystem.getAccountsDirectory();
 		librarySystemAccounts.registerNewAccount(Permission.MEMBER, "member@test.test", "test123", "Tester Testington", new Date(2024 - 1900, 0, 1));
+		librarySystemAccounts.registerNewAccount(Permission.MEMBER, "member", "member", "Member", new Date(2015 - 1900, 0, 1));
 		librarySystemAccounts.registerNewAccount(Permission.ADMIN, "admin@test.test", "admin123", "Iam Admin", new Date(2000 - 1900, 5, 20));
+		librarySystemAccounts.registerNewAccount(Permission.ADMIN, "admin", "admin", "Yosoy Admin", new Date(2000 - 1900, 5, 20));
+		
 		try {
 			server = new ServerSocket(56789);
 			server.setReuseAddress(true);
@@ -47,6 +51,7 @@ public class LibraryServer {
 			while (true) {
 				Socket client = server.accept();
 				System.out.println("new client IPv4 address: " + client.getInetAddress().getHostAddress());
+//				ClientHandler clientHandler = new ClientHandler(client);
 				ClientHandler clientHandler = new ClientHandler(client, librarySystem);
 				(new Thread(clientHandler)).start();
 			}
@@ -67,6 +72,7 @@ public class LibraryServer {
 		private final Socket clientSocket;
 		private LibrarySystem librarySystem;
 		
+//		public ClientHandler(Socket clientSocket) {
 		public ClientHandler(Socket clientSocket, LibrarySystem librarySystem) {
 			this.clientSocket = clientSocket;
 			this.librarySystem = librarySystem;
@@ -79,6 +85,8 @@ public class LibraryServer {
 				writerToClient = new ObjectOutputStream(clientSocket.getOutputStream());
 				readerFromClient = new ObjectInputStream(clientSocket.getInputStream());
 				Message messageFromClient = null, messageToClient = null;
+				
+				/*
 				// BACKEND DATA (should ideally get it to load in from files later)
 				/*
 				AccountsDirectory accountsDirectory = new AccountsDirectory();
@@ -94,6 +102,7 @@ public class LibraryServer {
 				inventory.addMedia(new BoardGame("Something's Missing", "Games Unlimited", "Party", 2, 2, Rating.G, 2, 4, 120));
 				inventory.addMedia(new BoardGame("Dreamers' Gate", "Games Unlimited", "Tabletop RPG", 3, 3, Rating.R, 1, 4, 600));
 				*/
+				
 				AccountsDirectory accountsDirectory = librarySystem.getAccountsDirectory();
 				Library library = null;
 				Inventory inventory = null;
@@ -119,6 +128,7 @@ public class LibraryServer {
 							}
 							messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.GET_DASHBOARD, Status.SUCCESS, info);
 							info.add(library.getName());
+//							info.add("Our Little Library");
 //							int items = 2;
 //							info.add(Integer.toString(items));
 //							// TODO:
@@ -138,10 +148,10 @@ public class LibraryServer {
 							}
 							
 							writerToClient.writeObject(messageToClient);
-						} else if (messageFromClient.getAction() == Action.GET_SEARCH) {
-							messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.GET_SEARCH, Status.SUCCESS, info);
+						} else if (messageFromClient.getAction() == Action.GET_SEARCH || messageFromClient.getAction() == Action.GET_SEARCH_MEMBER) {
+							messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), messageFromClient.getAction(), Status.SUCCESS, info);
 							String requestMediaType = messageFromClient.getInfo().getFirst();
-							boolean shouldIncludeType = requestMediaType.equals("All");
+							boolean shouldIncludeType = requestMediaType.equals("All") || messageFromClient.getAction() == Action.GET_SEARCH_MEMBER;
 							String requestMediaTitle = messageFromClient.getInfo().getLast();
 							ArrayList<Media> relevantInventory = requestMediaTitle.equals("") ? inventory.getMediaItems() : inventory.searchByTitle(requestMediaTitle);
 							for (Media media : relevantInventory) {
@@ -171,8 +181,6 @@ public class LibraryServer {
 									
 									// info = new ArrayList<>();
 									
-//									Permission permission = account.getPermission();
-//									info.add(permission == Permission.ADMIN ? "ADMIN" : "MEMBER");
 									info.add(account instanceof Admin ? "ADMIN" : "MEMBER");
 									info.add(account.getFullName());
 //									addFullInventoryDummyData(info);
@@ -180,7 +188,7 @@ public class LibraryServer {
 									if (info.getFirst().equals("MEMBER")) {
 										info.add(Integer.toString(inventory.getNumMedia()));
 										// inventory info
-										// info.add(Integer.toString(inventory.getMediaItems().size())); // number of inventory items returned
+//										info.add(Integer.toString(inventory.getMediaItems().size())); // number of inventory items returned
 //										addFullInventoryDummyData(info);
 										
 										// loan info
@@ -339,7 +347,7 @@ public class LibraryServer {
 								long dueMillis = Long.parseLong(messageFromClient.getInfo().get(1));
 								Date due = new Date(dueMillis);
 								
-								Loan newLoan = loanRepository.checkoutMedia(mediaId, account.getId(), due, (Member)account);
+								Loan newLoan = loanRepository.checkoutMedia(mediaId, account.getId(), due, (Member)account, inventory, holdRepository);
 //								Loan newLoan = loanRepository.checkoutMedia(account.getId(), mediaId, dueMillis);
 								
 								if (newLoan == null) {
@@ -371,7 +379,33 @@ public class LibraryServer {
 								
 								writerToClient.writeObject(messageToClient); 
 								continue;
+							} else if (messageFromClient.getAction() == Action.PLACE_HOLD) {
+								int mediaId = Integer.parseInt(messageFromClient.getInfo().get(0));
+								long untilMillis = Long.parseLong(messageFromClient.getInfo().get(1));
+								
+								Hold h = holdRepository.placeHold(mediaId, account.getId(), new Date(untilMillis), (Member)account);
+								
+								if (h == null) {
+									info.add("Hold failed.");
+									messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.PLACE_HOLD, Status.FAILURE, info);
+								} else {
+									String filename = "holds_" + account.getId() + ".txt";
+									holdRepository.saveHoldToFile(filename);
+									
+									info.add("Hold placed!");
+									messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.PLACE_HOLD, Status.SUCCESS, info);
+								}
+								
+								writerToClient.writeObject(messageToClient); 
+								continue;
+							} else if (messageFromClient.getAction() == Action.GET_HOLDS) {
+								
+								
+							} else if (messageFromClient.getAction() == Action.CANCEL_HOLD) {
+								
+								
 							} else if (messageFromClient.getAction() == Action.GET_PROFILE) {
+							
 								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.GET_PROFILE, Status.SUCCESS, info);
 								info.add(account.getFullName());
 								info.add(account.getBirthday().toString());

@@ -7,6 +7,7 @@ import gui.*;
 import gui.AdminPortalFrame.ManageInventoryPanel;
 import message.Action;
 import message.*;
+import library.*;
 
 public class ResponseHandler implements Runnable {
 		private final ObjectInputStream responseReader;
@@ -87,6 +88,7 @@ public class ResponseHandler implements Runnable {
 								break;
 							case Action.REGISTER:
 								if (response.getStatus() == Status.SUCCESS) {
+//									JOptionPane.showMessageDialog(oldDialog, "Account created. You can now log in.");
 									JOptionPane.showMessageDialog(oldDialog, response.getInfo().getFirst() + " account created. You can now log in.");
 									oldDialog.dispose();
 								} else if (response.getStatus() == Status.FAILURE) {
@@ -122,13 +124,13 @@ public class ResponseHandler implements Runnable {
 											oldFrame.dispose();
 										}								
 										
-										ArrayList<String> dummy = new ArrayList<>();
-										Message dashboard = new Message(0, message.Type.REQUEST, -1, message.Action.GET_DASHBOARD, Status.PENDING, dummy);
+										ArrayList<String> dummyList = new ArrayList<>();
+										Message info = new Message(0, message.Type.REQUEST, -1, message.Action.GET_DASHBOARD, Status.PENDING, dummyList);
 										this.setOldFrame(f);
-										this.setRequestIdExpected(dashboard.getId());
+										this.setRequestIdExpected(info.getId());
 										
 										try {
-											requestWriter.writeObject(dashboard);
+											requestWriter.writeObject(info);
 										} catch (IOException ex) {
 											ex.printStackTrace();
 										}
@@ -196,6 +198,13 @@ public class ResponseHandler implements Runnable {
 //								frame.reloadLoans(info, loanStart1);
 //							
 								break;
+							case Action.PLACE_HOLD:
+								if (response.getStatus() == Status.SUCCESS) {
+									JOptionPane.showMessageDialog(oldFrame, "Hold placed!");
+								} else if (response.getStatus() == Status.FAILURE) {
+									JOptionPane.showMessageDialog(oldFrame, "Hold failed.");
+								}
+								break;
 							case Action.GET_PROFILE:
 								if (response.getStatus() == Status.SUCCESS) {
 									((MemberPortalFrame) oldFrame).editAccount(requestWriter, this, response.getInfo());
@@ -209,6 +218,9 @@ public class ResponseHandler implements Runnable {
 								} else if (response.getStatus() == Status.FAILURE) {
 									JOptionPane.showMessageDialog(oldFrame, "There was a problem with editing your profile.");
 								}
+								break;
+							case Action.GET_SEARCH_MEMBER:
+								((MemberPortalFrame) oldFrame).reloadCatalog(response.getInfo(), 0, false);
 								break;
 							case Action.ADD_BOOK:
 								if (response.getStatus() == Status.SUCCESS) {

@@ -1,4 +1,5 @@
 package account;
+
 import java.io.*;
 import java.util.Date;
 import java.util.ArrayList;
@@ -7,8 +8,9 @@ import java.io.FileWriter;
 import java.util.Scanner;
 
 public class HoldsRepository {
-	private ArrayList<Hold> holds;
 	private int numHolds;
+	private int nextHoldId = 2001;
+	private ArrayList<Hold> holds;
 	
 	public HoldsRepository() {
 		this.holds = new ArrayList<>();
@@ -19,17 +21,29 @@ public class HoldsRepository {
 		return holds;
 	}
 	
-	public Hold placeHold(Integer mediaId, Integer memberId, Date until) {
-		for (Hold h : holds) {
-			if (h.getMediaId() == mediaId && h.getMemberId() == memberId) {
-				return null;
+	public int getNumHolds() {
+		return numHolds;
+	}
+	
+	public Hold placeHold(int mediaId, int memberId, Date until, Member member) {
+		int activeHolds = 0;
+		for (Hold hold : holds) {
+			if (hold.getMediaId() == mediaId && hold.getMemberId() == memberId) {
+				activeHolds++;
 			}
 		}
 		
-		Hold newHold = new Hold(mediaId, memberId, new Date(), until);
-		holds.add(newHold);
+		Hold hold = new Hold(nextHoldId++, mediaId, memberId, new Date(), until);
+		holds.add(hold);
 		numHolds++;
-		return newHold;
+		
+		if (member != null) {
+			member.getHolds().add(hold);
+		}
+		System.out.println("Hold successful for member " + memberId +
+				". \nTotal holds: " + (activeHolds + 1) + " holds.");
+		
+		return hold;
 	}
 	
 	public Boolean cancelHold(Integer mediaId, Integer memberId) {
@@ -64,31 +78,24 @@ public class HoldsRepository {
 	public void saveHoldToFile(String filename) {
 		File file = new File(filename);
 		
-		try {
-			if (file.createNewFile()) {
-				System.out.println(filename + " created!");
-			}
-			
-			else {
-				System.out.println(filename + " already exists. Overwriting...");
-			}
-			
-			FileWriter writer = new FileWriter(file);
-			
+		try {			
+			FileWriter writer = new FileWriter(file);		
 			for (Hold h : holds) {
-				writer.write(h.getMediaId() + ", " +
-							 h.getMemberId() + ", " +
-							 h.getHoldUntilDate().getTime() + "\n");
+				writer.write("HoldId=" + h.getHoldId() + ", " +
+							 "MediaId=" + h.getMediaId()+ ", " +
+							 "MediaId=" + h.getMemberId() + ", " +
+							 "HoldUntil=" + h.getHoldUntilDate().getTime());
+				writer.write("\n");
 			}
 			
 			writer.close();
-			System.out.println("Holds have to " + filename);
+			System.out.println("Saved hold history.");
 		} catch (IOException e) {
-			System.out.println("Error writing to " + filename + ": " + e.getMessage());
+			System.out.println("Error saving hold: " + e.getMessage());
 		}
 	}
 	
-	public void loanHoldsFromFile(String filename) {
+	public void loadHoldsFromFile(String filename) {
 		try {
 			File file = new File(filename);
 			
@@ -106,14 +113,15 @@ public class HoldsRepository {
 				}
 				
 				String[] str = line.split(", ");
-				if (str.length != 4) {
+				if (str.length != 5) {
 					continue;
 				}
 				
-				int mediaId = Integer.parseInt(str[0]);
-				int memberId = Integer.parseInt(str[1]);
-				long placedMillis = Long.parseLong(str[2]);
-				long untilMillis = Long.parseLong(str[3]);
+				int holdId = Integer.parseInt(str[0]);
+				int mediaId = Integer.parseInt(str[1]);
+				int memberId = Integer.parseInt(str[2]);
+				long placedMillis = Long.parseLong(str[3]);
+				long untilMillis = Long.parseLong(str[4]);
 				
 				boolean alreadyExists = false;
 				for (Hold old : holds) {
@@ -128,8 +136,9 @@ public class HoldsRepository {
 				if (alreadyExists) {
 					continue;
 				}
-				
-				Hold hold = new Hold(mediaId, memberId, new Date(placedMillis), new Date(untilMillis));
+
+//				Commented out for now since this function isn't fully ready/tested
+				Hold hold = new Hold(holdId, mediaId, memberId, new Date(placedMillis), new Date(untilMillis));
 				
 				holds.add(hold);
 				numHolds++;
