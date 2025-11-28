@@ -13,21 +13,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Inventory {
-	private int numMedia;
 	private ArrayList<Media> mediaItems; // array of Media superclass, accepts subclass objects
 	
-	public Inventory(int newNumMedia, ArrayList<Media> newMediaItems) {
-		this.numMedia = newNumMedia;
-		this.mediaItems = newMediaItems;
-	}
-	
+
 	public Inventory(ArrayList<Media> newMediaItems) {
 		this.mediaItems = newMediaItems;
-		this.numMedia = newMediaItems.size();
 	}
 	
 	public int getNumMedia() {
-		return this.numMedia;
+		return this.mediaItems.size();
 	}
 	
 	public ArrayList<Media> getMediaItems() {
@@ -55,10 +49,9 @@ public class Inventory {
 				this.mediaItems.add(newMedia);
 				break;
 			default:
-				System.out.println("Error: Invalid Media Type - " + newMedia.getMediaType());
+				throw new IllegalArgumentException("Error: Invalid Media Type - " + newMedia.getMediaType());
 				return;
 		}
-		numMedia++;
 		System.out.println("Media Item Added: " + newMedia.toString() + " at position " + (numMedia-1) + "\n");
 		return;
 	} // end of addMedia() method
@@ -118,12 +111,12 @@ public class Inventory {
 	} // end of searchByID() method
 	
 	public void saveInventoryToFile(String filename) {
-		ifNameEmptyDefaultOutput(filename);
-		Path filePath = Paths.get("src", "inventory", "fileoutput", filename + ".txt");
+		filename = ifNameEmptyDefaultOutput(filename);
+		Path filePath = Paths.get("resources", "output", filename + ".txt");
 		File file = filePath.toFile();
 		
 		// comment out, this is for debug purposes
-		System.out.println("Saving inventory to: " + filePath.toAbsolutePath() + "\n");
+		// System.out.println("Saving inventory to: " + filePath.toAbsolutePath() + "\n");
 		try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
 			for (Media item : mediaItems) {
 				writer.write("Item #" + (mediaItems.indexOf(item) + 1) + ":");
@@ -147,9 +140,9 @@ public class Inventory {
 		return filename;
 	}
 	
-	// right now, read from file located in src/inventory/fileoutput
+	// right now, read from file located in resources/input/
 	public void loadInventoryFromFile(String filename) {
-		Path filePath = Paths.get("src", "inventory", "fileoutput", filename + ".txt");
+		Path filePath = Paths.get("resources", "input", filename + ".txt");
 		System.out.println("Looking at: " + filePath.toAbsolutePath()+ "\n");
 		if (!Files.isRegularFile(filePath)) {
 			System.out.println("Error: Inventory file not found:" + filePath.toAbsolutePath() + "\n");
@@ -173,7 +166,6 @@ public class Inventory {
 			e.printStackTrace();
 		}
 		this.mediaItems = tempMediaList;
-		this.numMedia = mediaItems.size();
 	}
 	
 	public Media parseMedia(String line) {
