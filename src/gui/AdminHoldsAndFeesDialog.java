@@ -13,7 +13,7 @@ public class AdminHoldsAndFeesDialog extends JDialog {
 
         JTabbedPane tabs = new JTabbedPane();
         tabs.addTab("Overdues", new OverduesPanel());
-        tabs.addTab("Holds", new HoldsPanel(null));
+        tabs.addTab("Holds", new HoldsPanel((Integer)null));
         tabs.addTab("Late Fees", new LateFeesPanel(null));
 
         setLayout(new BorderLayout());

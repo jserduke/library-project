@@ -1,5 +1,7 @@
 package account;
 
+//import gui.Hold.HoldStatus;
+
 import java.io.*;
 import java.util.Date;
 import java.util.ArrayList;
@@ -33,7 +35,7 @@ public class HoldsRepository {
 			}
 		}
 		
-		Hold hold = new Hold(nextHoldId++, mediaId, memberId, new Date(), until);
+		Hold hold = new Hold(nextHoldId++, mediaId, memberId, new Date(), until, HoldStatus.ACTIVE);
 		holds.add(hold);
 		numHolds++;
 		
@@ -83,7 +85,7 @@ public class HoldsRepository {
 			for (Hold h : holds) {
 				writer.write("HoldId=" + h.getHoldId() + ", " +
 							 "MediaId=" + h.getMediaId()+ ", " +
-							 "MediaId=" + h.getMemberId() + ", " +
+							 "MemberId=" + h.getMemberId() + ", " +
 							 "HoldUntil=" + h.getHoldUntilDate().getTime());
 				writer.write("\n");
 			}
@@ -136,9 +138,11 @@ public class HoldsRepository {
 				if (alreadyExists) {
 					continue;
 				}
+				
+				HoldStatus status = (untilMillis < System.currentTimeMillis()) ? HoldStatus.EXPIRED : HoldStatus.ACTIVE;
 
 //				Commented out for now since this function isn't fully ready/tested
-				Hold hold = new Hold(holdId, mediaId, memberId, new Date(placedMillis), new Date(untilMillis));
+				Hold hold = new Hold(holdId, mediaId, memberId, new Date(placedMillis), new Date(untilMillis), status);
 				
 				holds.add(hold);
 				numHolds++;

@@ -62,15 +62,15 @@ public class LoanRepository {
 		
 		Media m = list.get(0);
 		
+		System.out.println("inventory qty before checkout: " + m.getQuantityAvailable());
 		if (m.getQuantityAvailable() <= 0) {
-			Date holdUntil = new Date(System.currentTimeMillis() + 7L*24*60*60*1000); 	//holds for 7 days
-			holdsRepo.placeHold(mediaId, memberId, holdUntil, member);
-			System.out.println("No copies available: Autoload placed!");
+			System.out.println("Item not available!");
 			return null;
 		}
 		
 		m.setQuantityAvailable(m.getQuantityAvailable() - 1);
 		
+		System.out.println("inventory qty after checkout: " + m.getQuantityAvailable());
 //		Loan loan = new Loan(nextLoanId++, mediaId, memberId, new Date(), dueDate);
 //		history.add(loan);
 		numLoans++;

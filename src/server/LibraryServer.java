@@ -176,8 +176,11 @@ public class LibraryServer {
 									writerToClient.writeObject(messageToClient);
 									continue;
 								} else {
-									String filename = "loans_" + account.getId() + ".txt";
-									loanRepository.loadLoansFromFile(filename);
+									String loanFile = "loans_" + account.getId() + ".txt";
+									loanRepository.loadLoansFromFile(loanFile);
+									
+									String holdsFile = "holds_" + account.getId() + ".txt";
+									holdRepository.saveHoldToFile(holdsFile);
 									
 									// info = new ArrayList<>();
 									
@@ -284,7 +287,7 @@ public class LibraryServer {
 									}
 								}
 								
-								info.clear();
+//								info.clear();
 								info.add(Integer.toString(activeLoans.size()));
 								
 								for (Loan l : activeLoans) {
@@ -315,7 +318,7 @@ public class LibraryServer {
 									info.add(l.getCheckoutDate().toString());
 									info.add(l.getDueDate().toString());
 									info.add("");
-									info.add("");
+//									info.add("");
 								}
 								
 //								Commenting this out because this works with dummy data
@@ -399,8 +402,47 @@ public class LibraryServer {
 								writerToClient.writeObject(messageToClient); 
 								continue;
 							} else if (messageFromClient.getAction() == Action.GET_HOLDS) {
+								ArrayList<String> info1 = new ArrayList<>();
 								
+								//Remove expired holds
+								int removed = holdRepository.cancelExpiredHolds();
+								if (removed > 0) {
+									String filename = "holds_" + account.getId() + ".txt";
+									holdRepository.saveHoldToFile(filename);
+								}
 								
+								ArrayList<Hold> activeHolds = new ArrayList<>();
+								
+								if (account instanceof Admin) {
+									activeHolds.addAll(holdRepository.getHolds());
+								} else {
+									for (Hold h : holdRepository.getHolds()) {
+										if (h.getMemberId() == account.getId()) {
+											activeHolds.add(h);
+										}
+									}
+								}
+								
+								info1.add(Integer.toString(activeHolds.size()));
+								
+								for (Hold h : activeHolds) {
+									info1.add(Integer.toString(h.getHoldId()));
+									info1.add(Integer.toString(h.getMediaId()));
+									
+									String title = "(unknown)";
+									Media media = findMediaInInventory(inventory, h.getMediaId());
+//									ArrayList<Media> mediaList = inventory.searchByID(h.getMediaId());
+									if (media != null) {
+										title = media.getTitle();
+									}
+									
+									info1.add(title);
+									info1.add(Long.toString(h.getHoldUntilDate().getTime()));
+									info1.add(h.getStatus().name());							
+								}
+								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.GET_HOLDS, Status.SUCCESS, info1);
+								writerToClient.writeObject(messageToClient); 
+							
 							} else if (messageFromClient.getAction() == Action.CANCEL_HOLD) {
 								
 								
@@ -576,9 +618,11 @@ public class LibraryServer {
 	private static Media findMediaInInventory(Inventory inventory, int mediaId) {
 		for (Media m : inventory.getMediaItems()) {
 			if (m.getId() == mediaId) {
+				
 				return m;
 			}
 		}
+		
 		return null;
 	}
 	

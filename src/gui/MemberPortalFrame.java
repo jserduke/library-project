@@ -12,11 +12,13 @@ import client.ResponseHandler;
 import message.*;
 
 public class MemberPortalFrame extends JFrame {
+	private HoldsPanel holdsPanel;
     private static final long serialVersionUID = 1L;
 	// private final User user;
     // private final Member member;
+    private final int memberId;
     private final ObjectOutputStream requestWriter;
-	private final ResponseHandler responseHandler;
+	private final ResponseHandler responseHandler; 
 
     private JTextField txtSearch = new JTextField(18);
     private JComboBox<String> cbType = new JComboBox<>(new String[]{"All", "Books", "DVDs", "Board Games"});
@@ -30,7 +32,7 @@ public class MemberPortalFrame extends JFrame {
     private JTable catalogTable = new JTable(catalogModel);
 
     private DefaultTableModel loansModel = new DefaultTableModel(new Object[]{
-            "Loan ID","Type","Media ID","Title","Checkout","Due","Grace (days)","Returned"
+            "Loan ID","Type","Media ID","Title","Checkout","Due","Returned"
     }, 0) { 
     	public boolean isCellEditable(int r,int c){
     		return false;
@@ -43,6 +45,7 @@ public class MemberPortalFrame extends JFrame {
         // this.member = resolveMember(user);
     	this.requestWriter = requestWriter;
     	this.responseHandler = responseHandler;
+    	this.memberId = Integer.parseInt(info.get(1));
     	
         setTitle("Member Portal — " + info.getFirst()); // TODO: replace with username from message
         setSize(1100, 660);
@@ -84,6 +87,10 @@ public class MemberPortalFrame extends JFrame {
 
         reloadCatalog(info, 2, true);
         reloadLoans(info, 2 + Integer.parseInt(info.get(1)) * 8);
+    }
+    
+    public ObjectOutputStream getRequestWriter() {
+    	return requestWriter;
     }
 
     /*
@@ -231,7 +238,20 @@ public class MemberPortalFrame extends JFrame {
     	MemberAccountDialog dialog = new MemberAccountDialog(this, member);
     	dialog.setVisible(true);
     	*/
-
+//    	MemberAccountDialog dialog = new MemberAccountDialog(this, memberId, requestWriter, responseHandler);
+//    	dialog.setVisible(true);
+    	
+//    	ArrayList<String> info = new ArrayList<>();
+    	Message msg = new Message(0, message.Type.REQUEST , -1, message.Action.GET_HOLDS, Status.PENDING, null);
+    	responseHandler.setRequestIdExpected(msg.getId());
+    	responseHandler.setOldFrame(this);
+    	
+    	try {
+    		requestWriter.writeObject(msg);
+    	} catch(Exception e) {
+    		e.printStackTrace();
+    	}
+    	
 	}
     public void reloadCatalog(ArrayList<String> info, int invStart, boolean isInit) {
         String q = txtSearch.getText().trim();
@@ -296,17 +316,28 @@ public class MemberPortalFrame extends JFrame {
 
     public void reloadLoans(ArrayList<String> info, int loansStart) {
         loansModel.setRowCount(0);
+        int fieldsPerLoan = 7;
+        int total = (info.size() - loansStart) / fieldsPerLoan;
 //        for (int i = 0; i < (info.size() - loansStart) / 8; i += 1) {
-        for (int i = 0; i < (info.size() - loansStart) / 8; i++) {
+        for (int i = 0; i < total; i++) {
+        	int base = loansStart + i * fieldsPerLoan;
+        	
 	        loansModel.addRow(new Object[] {
-	        	info.get(loansStart + i * 8 + 0),
-	        	info.get(loansStart + i * 8 + 1),
-	        	info.get(loansStart + i * 8 + 2),
-	        	info.get(loansStart + i * 8 + 3),
-	        	info.get(loansStart + i * 8 + 4),
-	        	info.get(loansStart + i * 8 + 5),
-	        	info.get(loansStart + i * 8 + 6),
-	        	info.get(loansStart + i * 8 + 7),
+		        info.get(base + 0),
+		        info.get(base + 1),
+		        info.get(base + 2),
+		        info.get(base + 3),
+		        info.get(base + 4),
+		        info.get(base + 5),
+		        info.get(base + 6),
+//	        	info.get(loansStart + i * 7 + 0),
+//	        	info.get(loansStart + i * 7 + 1),
+//	        	info.get(loansStart + i * 7 + 2),
+//	        	info.get(loansStart + i * 7 + 3),
+//	        	info.get(loansStart + i * 7 + 4),
+//	        	info.get(loansStart + i * 7 + 5),
+//	        	info.get(loansStart + i * 7 + 6),
+//	        	info.get(loansStart + i * 8 + 7),
 	        });
         }
         /*
@@ -319,6 +350,12 @@ public class MemberPortalFrame extends JFrame {
             });
         }
         */
+    }
+    
+    public void reloadHolds(ArrayList<String> info, int holdsStart) {
+    	if (holdsPanel != null) {
+    		holdsPanel.reload(info);
+    	}
     }
 
     // DON'T THINK WE NEED?
