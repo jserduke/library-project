@@ -1,6 +1,9 @@
-package inventoryJUnitTest;
+package test.inventoryJUnitTest;
 
 import inventory.*;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import org.junit.jupiter.api.*;
 
 @DisplayName("Abstract Media Class Tests")
@@ -121,13 +124,13 @@ class mediaTest {
 		@DisplayName("getGenre DVD Test")
 		@Test
 		void getGenreTestDVD() {
-			assertEquals("Horror", dvd.getTitle());
+			assertEquals("Horror", dvd.getGenre());
 		}
 		
 		@DisplayName("getGenre BoardGame Test")
 		@Test
 		void getGenreBoardGame() {
-			assertEquals("Strategy", boardGame.getTitle());
+			assertEquals("Strategy", boardGame.getGenre());
 		}
 	}
 	
@@ -138,19 +141,19 @@ class mediaTest {
 		@DisplayName("getTotalQuantity Book Test")
 		@Test
 		void getTotalQuantityTestBook() {
-			assertEquals(5, book.get());
+			assertEquals(5, book.getTotalQuantity());
 		}
 		
 		@DisplayName("getTotalQuantity DVD Test")
 		@Test
 		void getTotalQuantityTestDVD() {
-			assertEquals(10, dvd.get());
+			assertEquals(10, dvd.getTotalQuantity());
 		}
 		
 		@DisplayName("getTotalQuantity BoardGame Test")
 		@Test
 		void getTotalQuantityTestBoardGame() {
-			assertEquals(3, boardGame.get());
+			assertEquals(3, boardGame.getTotalQuantity());
 		}
 	}
 	
@@ -161,19 +164,19 @@ class mediaTest {
 		@DisplayName("getQuantityAvailable Book Test")
 		@Test
 		void getQuantityAvailableTestBook() {
-			assertEquals(3, book.get());
+			assertEquals(3, book.getQuantityAvailable());
 		}
 		
 		@DisplayName("getQuantityAvailable DVD Test")
 		@Test
 		void getQuantityAvailableTestDVD() {
-			assertEquals(5, dvd.get());
+			assertEquals(5, dvd.getQuantityAvailable());
 		}
 		
 		@DisplayName("getQuantityAvailable BoardGame Test")
 		@Test
 		void getQuantityAvailableTestBoardGame() {
-			assertEquals(2, boardGame.get());
+			assertEquals(2, boardGame.getQuantityAvailable());
 		}
 	}
 	
@@ -184,7 +187,7 @@ class mediaTest {
 		@DisplayName("toString Book Test")
 		@Test
 		void toStringTestBook() {
-			String expectedBookString = "Media Info{ID:1;Title:World War Z;Publisher:BookPublisher;Genre:Sci-Fi;Total Quantity:5,Quantity Available:3}BOOK:[Author:Max Brooks;DDNumber:12345.67;ISBN:978-1234567890]\n";
+			String expectedBookString = "Media Info{ID:1;Title:World War Z;Publisher:BookPublisher;Genre:Sci-Fi;Total Quantity:5;Quantity Available:3}BOOK:[Author:Max Brooks;DDNumber:12345.67;ISBN:978-1234567890]\n";
 			assertEquals(expectedBookString, book.toString());
 		}
 		
@@ -341,7 +344,7 @@ class mediaTest {
 		@DisplayName("setQuantityAvailable Book Test")
 		@Test
 		void setQuantityAvailableTestBook() {
-			book.setQuantityAvailable(1));
+			book.setQuantityAvailable(1);
 			assertEquals(1, book.getQuantityAvailable());
 		}
 		
