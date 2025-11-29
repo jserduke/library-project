@@ -1,7 +1,6 @@
 package account;
-import java.util.Date;
 
-//import gui.Hold.HoldStatus;
+import java.util.Date;
 
 public class Hold {
 	private int holdId;
@@ -10,15 +9,15 @@ public class Hold {
     private int holdLimit;
     private Date datePlaced;
     private Date holdUntilDate;
-    private HoldStatus status;
+    private HoldStatus holdStatus;
 
-    public Hold(int holdId, int mediaId, int memberId, Date datePlaced,  Date holdUntilDate, HoldStatus status) {
+    public Hold(int holdId, int mediaId, int memberId, Date datePlaced,  Date holdUntilDate, HoldStatus holdStatus) {
     	this.holdId = holdId;
         this.mediaId = mediaId;
         this.memberId = memberId;
         this.datePlaced = datePlaced;
         this.holdUntilDate = holdUntilDate;
-        this.status = status;
+        this.holdStatus = holdStatus;
     }
     
     public int getHoldId() {
@@ -46,11 +45,11 @@ public class Hold {
     }
     
     public HoldStatus getStatus() {
-        return status;
+        return holdStatus;
     }
 
-    public void setStatus(HoldStatus status) {
-        this.status = status;
+    public void setStatus(HoldStatus holdStatus) {
+        this.holdStatus = holdStatus;
     }
   
     public String toString() {

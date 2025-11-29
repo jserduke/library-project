@@ -358,31 +358,6 @@ public class MemberPortalFrame extends JFrame {
     	}
     }
 
-    // DON'T THINK WE NEED?
-    /*
-    private String getTitle(MediaType type, int id) {
-        switch (type) {
-            case BOOK:
-                for (Book b : LibraryData.BOOKS) 
-                	if (b.getId()==id) 
-                		return b.getTitle();
-                break;
-            case DVD:
-                for (Dvd d : LibraryData.DVDS) 
-                	if (d.getId()==id) 
-                		return d.getTitle();
-                break;
-            case BOARD_GAME:
-                for (BoardGame g : LibraryData.BOARD_GAMES) 
-                	if (g.getId()==id) 
-                		return g.getTitle();
-                break;
-        }
-        return "";
-    }
-    */
-
-    // WILL GET WORKING LATER
     public void checkoutSelected() {
     	int row = catalogTable.getSelectedRow();
         if (row < 0) { 
@@ -407,7 +382,6 @@ public class MemberPortalFrame extends JFrame {
         }
     }
 
-    // WILL GET WORKING LATER
     public void holdSelected() {
     	
         int row = catalogTable.getSelectedRow();
@@ -431,22 +405,8 @@ public class MemberPortalFrame extends JFrame {
         } catch (IOException ex) {
         	ex.printStackTrace();
         }
-        /*
-        String typeStr = catalogModel.getValueAt(row, 0).toString();
-        int id = (Integer) catalogModel.getValueAt(row, 1);
-        MediaType type = "Book".equals(typeStr) ? MediaType.BOOK : ("DVD".equals(typeStr)? MediaType.DVD : MediaType.BOARD_GAME);
-
-        JTextField date = new JTextField(LocalDate.now().plusDays(7).toString());
-        int res = JOptionPane.showConfirmDialog(this, new Object[]{"Hold until (YYYY-MM-DD):", date}, "Place Hold", JOptionPane.OK_CANCEL_OPTION);
-        if (res == JOptionPane.OK_OPTION) {
-            LocalDate holdUntil = LocalDate.parse(date.getText().trim());
-            LibraryData.placeHold(member.getId(), type, id, holdUntil);
-            JOptionPane.showMessageDialog(this, "Hold placed until: " + holdUntil);
-        }
-        */
     }
 
-    // WILL GET WORKING LATER
     public void returnSelectedLoan() {
     	
         int row = loansTable.getSelectedRow();
@@ -455,7 +415,6 @@ public class MemberPortalFrame extends JFrame {
         	return; 
         }
         
-//        String loanId = loansModel.getValueAt(row, 0).toString();
         int mediaId = Integer.parseInt(loansModel.getValueAt(row, 2).toString());
         
         ArrayList<String> info = new ArrayList<>();
@@ -471,17 +430,8 @@ public class MemberPortalFrame extends JFrame {
         } catch(IOException e) {
         	e.printStackTrace();
         }
-        /*
-        int loanId = (Integer) loansModel.getValueAt(row, 0);
-        if (LibraryData.returnLoan(loanId)) {
-            JOptionPane.showMessageDialog(this, "Returned.");
-            reloadCatalog();
-            reloadLoans();
-        }
-        */
     }
 
-    // WILL GET WORKING HOPEFULLY TONIGHT
     public void editAccount(ObjectOutputStream requestWriter, ResponseHandler responseHandler, ArrayList<String> info) {
     	String[] names = info.getFirst().split(" ");
         JTextField first = new JTextField(names[0]);
@@ -521,11 +471,4 @@ public class MemberPortalFrame extends JFrame {
             }
         }
     }
-
-    // DON'T THINK WE NEED
-    /*
-	public User getUser() {
-		return user;
-	}
-	*/
 }

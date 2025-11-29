@@ -8,7 +8,8 @@ import gui.*;
 import gui.AdminPortalFrame.ManageInventoryPanel;
 import message.Action;
 import message.*;
-import library.*;
+import gui.LateFeesPanel;
+import gui.HoldsPanel;
 
 public class ResponseHandler implements Runnable {
 		private final ObjectInputStream responseReader;
@@ -20,6 +21,7 @@ public class ResponseHandler implements Runnable {
 		private JDialog oldDialog;
 		private JPanel oldPanel;
 		private HoldsPanel activeHoldsPanel;
+		private LateFeesPanel activeLateFeesPanel;
 		private int requestIdExpected;
 		
 		public ResponseHandler(ObjectInputStream responseReader, ObjectOutputStream requestWriter) {
@@ -76,19 +78,28 @@ public class ResponseHandler implements Runnable {
 		}
 		
 		public void setActiveHoldsPanel(HoldsPanel hp) {
-			this.setActiveHoldsPanel(hp);	
+			this.activeHoldsPanel = hp;	
+		}
+		
+		public void setActiveLateFeesPanel(LateFeesPanel panel) {
+			this.activeLateFeesPanel = panel;	
 		}
 		
 		public void run() {
 			try {
 				while (true) {
+					
 					Message response = (Message) responseReader.readObject();
 					System.out.println(response);
+					System.out.println("EXPECTING requestId = " + response.getId());
 					// IF RESPONSE CAME IN OUT OF ORDER, IGNORE IT
-					if (response.getRequestId() != requestIdExpected) {
+					if (response.getAction() != Action.CANCEL_HOLD && response.getRequestId() != requestIdExpected) {
 						System.out.println("unexpected object was read (expected: " + requestIdExpected + " | actual: " + response.getRequestId() + ")");
+						continue;
 						// response = (Message) responseReader.readObject();
 					} else {
+						System.out.println("RECEIVED requestId = " + response.getRequestId());
+
 						switch (response.getAction()) {
 							case Action.GET_DASHBOARD:
 //								SwingUtilities.invokeLater(() -> new WelcomeDashboardFrame(requestWriter, this, response.getInfo()).setVisible(true));
@@ -228,16 +239,73 @@ public class ResponseHandler implements Runnable {
 								if (response.getStatus() == Status.SUCCESS) {
 									ArrayList<String> info = response.getInfo();
 									
-									MemberPortalFrame frame = (MemberPortalFrame) oldFrame;
-									
-//									int holdStart = 1;;
-//									frame.reloadHolds(info, holdStart);
-									
-									MemberAccountDialog dialog = new MemberAccountDialog(frame, frame.getRequestWriter(), this, info);
-									dialog.setVisible(true);
-									
+									if (activeHoldsPanel != null) {
+										activeHoldsPanel.reload(info);
+									} else {
+										if (oldFrame instanceof MemberPortalFrame) {
+											MemberPortalFrame frame = (MemberPortalFrame) oldFrame;
+											
+											MemberAccountDialog dialog = new MemberAccountDialog(frame, frame.getRequestWriter(), this, info);
+											this.oldDialog = dialog;
+											this.oldFrame = null;
+											this.requestIdExpected = -1;
+											dialog.setVisible(true);
+										}
+									}
 								} else if (response.getStatus() == Status.FAILURE) {
 									JOptionPane.showMessageDialog(oldFrame, "Retrieving holds failed!");
+								}
+								break;
+							case Action.CANCEL_HOLD:
+								if (response.getStatus() == Status.SUCCESS) {		
+									Window parent = (oldDialog != null ? oldDialog : oldFrame);
+									
+									JOptionPane.showMessageDialog(parent, "Hold cancelled!", "Success", JOptionPane.INFORMATION_MESSAGE);
+
+										Message refresh = new Message(0, Type.REQUEST, -1, Action.GET_HOLDS, Status.PENDING, new ArrayList<>());
+										
+										setRequestIdExpected(refresh.getId());
+										try {
+											requestWriter.writeObject(refresh);
+										} catch (IOException ex) {
+											ex.printStackTrace();
+										}
+
+//									Message refresh = new Message(0, Type.REQUEST, -1, Action.GET_HOLDS, Status.PENDING, new ArrayList<>());
+//									
+//									setRequestIdExpected(refresh.getId());
+//									requestWriter.writeObject(refresh);
+									System.out.println("SENDING GET_HOLDS (after cancel)");
+								} else if (response.getStatus() == Status.FAILURE) {
+									Window parent = (oldDialog != null ? oldDialog : oldFrame);
+									JOptionPane.showMessageDialog(parent, "Failed to cancel hold.");
+								}
+								
+								break;
+							case Action.GET_FEES:
+								if (response.getStatus() == Status.SUCCESS) {
+									if (activeLateFeesPanel != null) {
+										activeLateFeesPanel.reload(response.getInfo());
+									} else {
+										JOptionPane.showMessageDialog(oldFrame, "Fees retrieved, but no LateFeesPanel is active.");
+									}
+								} else {
+									JOptionPane.showMessageDialog(oldFrame, "Retrieving late fees failed");
+								}
+								break;
+							case Action.PAY_FEES:
+								if (response.getStatus() == Status.SUCCESS) {
+									Window parent = (oldDialog != null ? oldDialog : oldFrame);
+									JOptionPane.showMessageDialog(parent, "Fee marked as paid.");
+									
+									ArrayList<String> list = new ArrayList<>();
+									Message refresh = new Message(0, Type.REQUEST, -1, Action.GET_FEES, Status.PENDING, list);
+									
+									setRequestIdExpected(refresh.getId());
+									requestWriter.writeObject(refresh);
+								} else {
+									Window parent = (oldDialog != null ? oldDialog : oldFrame);
+									JOptionPane.showMessageDialog(parent, "Failed to mark fee as paid.");
 								}
 								break;
 							case Action.GET_PROFILE:
@@ -349,6 +417,16 @@ public class ResponseHandler implements Runnable {
 				e.printStackTrace();
 			}
 		}
+		
+		public void setOldWindow(Window w) {
+			if (w instanceof JFrame frame) {
+				this.oldFrame = frame;
+			} else if (w instanceof JDialog dialog) {
+				this.oldDialog = dialog;
+			}
+		}	
+		
+		
 		
 //		public void showHoldsDiaglog(ArrayList<String> info) {
 //			int index = 0;

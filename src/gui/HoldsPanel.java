@@ -1,35 +1,38 @@
 package gui;
 
 import client.ResponseHandler;
-import gui.LateFee.Status;
 import message.*;
 import message.Type;
+import message.Action;
 
 import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+
+import account.HoldStatus;
+
 import java.awt.*;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Date;
-//import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 
 public class HoldsPanel extends JPanel {
+    private static final long serialVersionUID = 1L;
+    
 	private final ResponseHandler responseHandler;
 	private final ObjectOutputStream requestWriter;
-    private static final long serialVersionUID = 1L;
+	private ArrayList<String> info;
 	private Integer memberIdFilter; // null -> show all
 	private JFrame getParentFrame;
 //    private final int memberId; // null -> show all
+	
     private final DefaultTableModel model = new DefaultTableModel(
             new Object[]{"#", "Hold ID","Media ID","Title","Hold Until","Status"}, 0){
         @Override public boolean isCellEditable(int r,int c){ return false; }
     };
+    
     private final JTable table = new JTable(model);
     private final JCheckBox cbActiveOnly = new JCheckBox("Active only", true);
-	private ArrayList<String> info;
 
     public HoldsPanel(ArrayList<String> info,
     				  ObjectOutputStream requestWriter, 
@@ -37,25 +40,61 @@ public class HoldsPanel extends JPanel {
     	super(new BorderLayout());
     	this.info = info;
 		this.responseHandler = responseHandler;
-//    	this.memberId = memberId;
     	this.requestWriter = requestWriter;
     	
-//    	add(buildTopBar(), BorderLayout.NORTH);
+    	responseHandler.setActiveHoldsPanel(this);
+    	
+    	add(buildTopBar(), BorderLayout.NORTH);
     	add(new JScrollPane(table), BorderLayout.CENTER);
-//    	add(buildButtons(), BorderLayout.SOUTH);
+    	add(buildButtons(), BorderLayout.SOUTH);
+    	
 //    	setLayout(new BorderLayout());
 //    	add(new JScrollPane(table), BorderLayout.CENTER);
-    	JPanel bottom = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-    	JButton refresh = new JButton("Refresh");
-    	bottom.add(refresh);
-    	add(bottom, BorderLayout.SOUTH);
-    	refresh.addActionListener(e -> reload(this.info));
+//    	JPanel bottom = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+//    	JButton refresh = new JButton("Refresh");
+//    	JButton cancel = new JButton("Cancel hold");
+//    	
+//    	bottom.add(refresh);
+//    	add(bottom, BorderLayout.SOUTH);
+//    	refresh.addActionListener(e -> reload(this.info));
+//    	cancel.addActionListener(e -> reload(this.info));
     	reload(info);
     }
     
-    private JFrame getParentFrame() {
-    	Window w = SwingUtilities.getWindowAncestor(this);
-    	return (w instanceof JFrame) ? (JFrame) w: null;
+    //Constructor for ADMIN
+    public HoldsPanel(ObjectOutputStream requestWriter, ResponseHandler responseHandler) {
+    	super(new BorderLayout());
+    	this.info = info;
+		this.responseHandler = responseHandler;
+    	this.requestWriter = requestWriter;
+    	
+    	responseHandler.setActiveHoldsPanel(this);
+    	
+    	add(buildTopBar(), BorderLayout.NORTH);
+    	add(new JScrollPane(table), BorderLayout.CENTER);
+    	add(buildButtons(), BorderLayout.SOUTH);
+    	
+    	Message msg = new Message(0, Type.REQUEST, -1, Action.GET_HOLDS, Status.PENDING, new ArrayList<>());
+  
+    	responseHandler.setRequestIdExpected(msg.getId());
+    	responseHandler.setOldWindow(SwingUtilities.getWindowAncestor(this));
+    	
+    	try {
+    		requestWriter.writeObject(msg);
+    	} catch (IOException e) {
+    		e.printStackTrace();
+    	}
+    	
+    }
+    
+    public HoldsPanel(Integer adminMode) {
+    	super(new BorderLayout());
+    	this.info = new ArrayList<>();
+    	this.requestWriter = null;
+    	this.responseHandler = null;
+    	
+    	add(new JScrollPane(table), BorderLayout.CENTER);
+    	reload(info);
     }
     
     public HoldsPanel(int memberIdFilter){
@@ -83,6 +122,7 @@ public class HoldsPanel extends JPanel {
 
     private JComponent buildButtons(){
         JPanel p = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        
         JButton refresh = new JButton("Refresh");
         JButton cancel = new JButton("Cancel Hold");
         
@@ -93,6 +133,21 @@ public class HoldsPanel extends JPanel {
         p.add(refresh); 
         p.add(cancel);
         return p;
+    }
+    
+    private JComponent buildAdminButtons() {
+    	JPanel p = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+    	JButton refresh = new JButton("Refresh");
+    	
+    	JButton cancel = new JButton("Cancel Hold");
+        
+//      p.add(refresh); p.add(cancel);
+    	refresh.addActionListener(e -> reload(info));
+    	cancel.addActionListener(e -> requestCancel());
+      
+    	p.add(refresh); 
+    	p.add(cancel);
+    	return p;
     }
 
 //    private String findMemberName(int id){
@@ -152,14 +207,24 @@ public class HoldsPanel extends JPanel {
 //        }
 //    }
     
+    private JFrame getParentFrame() {
+    	Window w = SwingUtilities.getWindowAncestor(this);
+    	return (w instanceof JFrame) ? (JFrame) w: null;
+    }
+    
+    private Window parentWindow() {
+    	return SwingUtilities.getWindowAncestor(this);
+    }
+    
     private void requestRefresh() {
     	if (requestWriter == null) {
     		return;
     	}
     	
-    	Message msg = new Message(0, Type.REQUEST, -1, message.Action.GET_HOLDS, message.Status.PENDING, new ArrayList<>());
+    	Message msg = new Message(0, Type.REQUEST, -1, Action.GET_HOLDS, Status.PENDING, new ArrayList<>());
+    	responseHandler.setActiveHoldsPanel(this);
     	responseHandler.setRequestIdExpected(msg.getId());
-    	responseHandler.setOldFrame(getParentFrame());
+    	responseHandler.setOldWindow(parentWindow());
     	
     	try {
     		requestWriter.writeObject(msg);
@@ -179,14 +244,21 @@ public class HoldsPanel extends JPanel {
     		return;
     	}
     	
+    	String status = model.getValueAt(row, 5).toString();
+    	if (!"ACTIVE".equalsIgnoreCase(status)) {
+    		JOptionPane.showMessageDialog(this, "Only ACTIVE holds can be cancelled.");
+    		return;
+    	}
+    	
     	int holdId = (int) model.getValueAt(row, 1);
     	
     	ArrayList<String> info = new ArrayList<>();
     	info.add(Integer.toString(holdId));
-    	Message msg = new Message(0, Type.REQUEST, -1, message.Action.CANCEL_HOLD, message.Status.PENDING, info);
+    	Message msg = new Message(0, Type.REQUEST, -1, Action.CANCEL_HOLD, Status.PENDING, info);
     	
+    	responseHandler.setActiveHoldsPanel(this);
     	responseHandler.setRequestIdExpected(msg.getId());
-    	responseHandler.setOldFrame(getParentFrame());
+    	responseHandler.setOldWindow(parentWindow());
     	
     	try {
     		requestWriter.writeObject(msg);
@@ -215,6 +287,8 @@ public class HoldsPanel extends JPanel {
     		String title = info.get(index++);
     		long untilMillis = Long.parseLong(info.get(index++));
     		String status = info.get(index++);    		    		
+    		
+    		if (cbActiveOnly.isSelected() && !"ACTIVE".equalsIgnoreCase(status));
     		
     		model.addRow(new Object[] {
     				rowNum++,

@@ -37,15 +37,26 @@ public class MemberAccountDialog extends JDialog {
         super(owner, "My Holds & Fees", true);
         setSize(900, 560);
         setLocationRelativeTo(owner);
-
-//        holdsPanel = new HoldsPanel(memberId, requestWriter, responseHandler);
+        setLayout(new BorderLayout());
         
         JTabbedPane tabs = new JTabbedPane();
-        tabs.addTab("My Holds", new HoldsPanel(info, requestWriter, responseHandler));
-//        tabs.addTab("My Late Fees", new LateFeesPanel(new LateFessPanel());
+        HoldsPanel holdsPanel = new HoldsPanel(info, requestWriter, responseHandler);
+        
+       responseHandler.setActiveHoldsPanel(holdsPanel);
+       responseHandler.setOldDialog(this);
+        
+        tabs.addTab("My Holds", holdsPanel);
+        tabs.addTab("My Late Fees", new LateFeesPanel(requestWriter, responseHandler));
 
 //      setLayout(new BorderLayout());
         add(tabs, BorderLayout.CENTER);
+        
+        addWindowListener(new java.awt.event.WindowAdapter() {
+        	@Override
+        	public void windowClosed(java.awt.event.WindowEvent e) {
+        		responseHandler.setOldDialog(null);
+        	}
+        });
 //        add(tabs);
         
 //        responseHandler.setActiveHoldsPanel(holdsPanel);
@@ -61,5 +72,7 @@ public class MemberAccountDialog extends JDialog {
 //        } catch (IOException e) {
 //        	e.printStackTrace();
 //        }
+//    responseHandler.setRequestIdExpected(-1);
+//    responseHandler.setOldWindow(this);
     }
 }
