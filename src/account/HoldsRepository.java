@@ -46,7 +46,7 @@ public class HoldsRepository {
 		return hold;
 	}
 	
-	public Boolean cancelHold(Integer mediaId, Integer memberId) {
+	public boolean cancelHold(int mediaId, int memberId) {
 		for (int i = 0; i < holds.size(); i++) {
 			Hold hold = holds.get(i);
 			if (hold.getMediaId() == mediaId && hold.getMediaId() == memberId) {
