@@ -27,7 +27,7 @@ public class HoldsRepository {
 		return numHolds;
 	}
 	
-	public Hold placeHold(int mediaId, int memberId, Date until, Member member) {
+	public Hold placeHold(int mediaId, int memberId, Date until, Member member, Inventory inventory) {
 		int activeHolds = 0;
 		for (Hold hold : holds) {
 			if (hold.getMediaId() == mediaId && hold.getMemberId() == memberId) {
@@ -42,6 +42,19 @@ public class HoldsRepository {
 		if (member != null) {
 			member.getHolds().add(hold);
 		}
+		
+		if (inventory != null) {
+			for (Media m : inventory.getMediaItems()) {
+				if (m.getId() == hold.getMediaId()) {
+					m.setQuantityAvailable(m.getQuantityAvailable() - 1);
+					break;
+				}
+			}
+		}
+		
+		String filename = "holds_" + memberId + ".txt";
+		saveHoldToFile(filename);
+		
 		System.out.println("Hold successful for member " + memberId +
 				". \nTotal holds: " + (activeHolds + 1) + " holds.");
 		

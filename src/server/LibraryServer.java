@@ -364,7 +364,7 @@ public class LibraryServer {
 								int mediaId = Integer.parseInt(messageFromClient.getInfo().get(0));
 								long untilMillis = Long.parseLong(messageFromClient.getInfo().get(1));
 								
-								Hold h = holdRepository.placeHold(mediaId, account.getId(), new Date(untilMillis), (Member)account);
+								Hold h = holdRepository.placeHold(mediaId, account.getId(), new Date(untilMillis), (Member)account, inventory);
 								
 								if (h == null) {
 									info.add("Hold failed.");
