@@ -51,9 +51,6 @@ public class LoanRepository {
 			return null;
 		}
 		
-		Loan loan = new Loan(nextLoanId++, mediaId, memberId, new Date(), dueDate);
-		history.add(loan);
-		
 //		Possible code to update inventory after checkout
 		ArrayList<Media> list = inventory.searchByID(mediaId);
 		if (list == null || list.isEmpty()) {
@@ -67,6 +64,9 @@ public class LoanRepository {
 			System.out.println("Item not available!");
 			return null;
 		}
+		
+		Loan loan = new Loan(nextLoanId++, mediaId, memberId, new Date(), dueDate);
+		history.add(loan);
 		
 		m.setQuantityAvailable(m.getQuantityAvailable() - 1);
 		

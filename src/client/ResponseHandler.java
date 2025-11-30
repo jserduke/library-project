@@ -173,7 +173,11 @@ public class ResponseHandler implements Runnable {
 								break;
 							case Action.CHECKOUT:
 								// WHEN RESPONSE RECEIVED, JUST LET USER KNOW THAT CHECKOUT WAS SUCCESSFUL
-								JOptionPane.showMessageDialog(oldFrame, "Your checkout was successfully made!", "Checkout", JOptionPane.INFORMATION_MESSAGE);
+								if (response.getStatus() == Status.SUCCESS) {
+									JOptionPane.showMessageDialog(oldFrame, "Your checkout was successfully made!", "Checkout", JOptionPane.INFORMATION_MESSAGE);
+								} else if (response.getStatus() == Status.FAILURE) {
+									JOptionPane.showMessageDialog(oldFrame, "Your checkout failed", "Checkout", JOptionPane.ERROR_MESSAGE);
+								}
 								
 								ArrayList<String> msg1 = new ArrayList<>();
 								//Commenting our for now because this worked with dummy data
