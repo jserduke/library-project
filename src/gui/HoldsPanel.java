@@ -244,8 +244,9 @@ public class HoldsPanel extends JPanel {
     		return;
     	}
     	
-    	String status = model.getValueAt(row, 5).toString();
-    	if (!"ACTIVE".equalsIgnoreCase(status)) {
+    	String statusStr = model.getValueAt(row, 5).toString();
+    	HoldStatus status = HoldStatus.valueOf(statusStr.toUpperCase());
+    	if (status != HoldStatus.ACTIVE) {
     		JOptionPane.showMessageDialog(this, "Only ACTIVE holds can be cancelled.");
     		return;
     	}

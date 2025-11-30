@@ -444,8 +444,26 @@ public class LibraryServer {
 								writerToClient.writeObject(messageToClient); 
 							
 							} else if (messageFromClient.getAction() == Action.CANCEL_HOLD) {
+								ArrayList<String> infoIn = messageFromClient.getInfo();
+								int holdId = Integer.parseInt(infoIn.get(0));
 								
+								boolean success = holdRepository.cancelHold(holdId, inventory, account.getId());
 								
+								ArrayList<String> infoOut = new ArrayList<>();
+								Status status;
+								
+								if (success) {
+									infoOut.add("Hold cancelled.");
+									status = Status.SUCCESS;
+									System.out.println("SERVER: Hold " + holdId + " succesfully cancelled.");
+								} else {
+									infoOut.add("Hold not found!");
+									status = Status.FAILURE;
+									System.out.println("SERVER: Hold " + holdId + " was not found!");
+								}
+								
+								Message msg = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.CANCEL_HOLD, status, infoOut);
+								writerToClient.writeObject(msg);
 							} else if (messageFromClient.getAction() == Action.GET_PROFILE) {
 							
 								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.GET_PROFILE, Status.SUCCESS, info);

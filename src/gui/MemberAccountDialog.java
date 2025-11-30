@@ -53,8 +53,9 @@ public class MemberAccountDialog extends JDialog {
         
         addWindowListener(new java.awt.event.WindowAdapter() {
         	@Override
-        	public void windowClosed(java.awt.event.WindowEvent e) {
+        	public void windowClosing(java.awt.event.WindowEvent e) {
         		responseHandler.setOldDialog(null);
+        		responseHandler.setActiveHoldsPanel(null);
         	}
         });
 //        add(tabs);

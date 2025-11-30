@@ -3,6 +3,7 @@ package gui;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
+import account.FeeStatus;
 import client.ResponseHandler;
 import message.*;
 import message.Type;
@@ -38,7 +39,7 @@ public class LateFeesPanel extends JPanel {
 //        add(buildTopBar(), BorderLayout.NORTH);
         add(new JScrollPane(table), BorderLayout.CENTER);
         add(buildBottomBar(), BorderLayout.SOUTH);
-        requestRefresh();
+//        requestRefresh();
     }
 
 //    private JComponent buildTopBar(){
@@ -151,8 +152,9 @@ public class LateFeesPanel extends JPanel {
         	return;
         }
         
-        String status = model.getValueAt(row, 5).toString();
-        if (!"UNPAID".equalsIgnoreCase(status)) {
+        String statusStr = model.getValueAt(row, 5).toString();
+        FeeStatus status = FeeStatus.valueOf(statusStr.toUpperCase());
+        if (status != FeeStatus.UNPAID) {
         	JOptionPane.showMessageDialog(this, "Only UNPAID fees can be marked as paid.");
         	return;
         }
