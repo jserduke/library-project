@@ -269,25 +269,17 @@ public class LibraryServer {
 							}
 							writerToClient.writeObject(messageToClient);
 						} else {
-							if (messageFromClient.getAction() == Action.GET_CHECKOUTS) {
-//								Commenting out for now in case code doesn't work and need to go back to something that does work
-//								info.add("Harry Potter");
-//								info.add("Mouse Paint");
-//								info.add("If You Give a Mouse a Cookie");
-//								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.GET_CHECKOUTS, Status.SUCCESS, info);
-//								writerToClient.writeObject(messageToClient);
-								
+							if (messageFromClient.getAction() == Action.GET_CHECKOUTS) {								
 								ArrayList<Loan> all = loanRepository.getHistory();
 								int memberId = account.getId();
 								
 								ArrayList<Loan> activeLoans = new ArrayList<>();
 								for (Loan l : all) {
-									if (l.getMemberId() == memberId && l.getReturnedDate() == null) {
+									if (l.getMemberId() == memberId) {
 										activeLoans.add(l);
 									}
 								}
 								
-//								info.clear();
 								info.add(Integer.toString(activeLoans.size()));
 								
 								for (Loan l : activeLoans) {
@@ -317,33 +309,20 @@ public class LibraryServer {
 									
 									info.add(l.getCheckoutDate().toString());
 									info.add(l.getDueDate().toString());
-									info.add("");
+									
+									if (l.getReturnedDate() == null) {
+										info.add("");
+									} else {
+										info.add(l.getReturnedDate().toString());
+									}
+//									info.add("");
 //									info.add("");
 								}
-								
-//								Commenting this out because this works with dummy data
-//								for (Loan l : activeLoans) {
-//									//When Inventory is integrated, necessary code goes in here
-//									String title = lookupDummyTitle(l.getMediaId());
-//									info.add(Integer.toString(l.getLoanId()));
-//									info.add("BOOK");
-//									info.add(Integer.toString(l.getMediaId()));
-//									info.add(title);
-//									info.add(l.getCheckoutDate().toString());
-//									info.add(l.getDueDate().toString());
-//									info.add("");		//grace period??
-//									info.add(l.getReturnedDate() == null ? "" : l.getReturnedDate().toString());
-//								}
 								
 								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.GET_CHECKOUTS, Status.SUCCESS, info);							
 								writerToClient.writeObject(messageToClient);
 								
-							} else if (messageFromClient.getAction() == Action.CHECKOUT) {
-//								Commenting out for now in case code doesn't work and need to go back to something that does work								
-//								info.add("Networking 101 successfully checked out!");
-//								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.CHECKOUT, Status.SUCCESS, info);
-//								writerToClient.writeObject(messageToClient);
-								
+							} else if (messageFromClient.getAction() == Action.CHECKOUT) {								
 								ArrayList<String> str = new ArrayList<>();
 								
 								int mediaId = Integer.parseInt(messageFromClient.getInfo().get(0));
@@ -351,7 +330,6 @@ public class LibraryServer {
 								Date due = new Date(dueMillis);
 								
 								Loan newLoan = loanRepository.checkoutMedia(mediaId, account.getId(), due, (Member)account, inventory, holdRepository);
-//								Loan newLoan = loanRepository.checkoutMedia(account.getId(), mediaId, dueMillis);
 								
 								if (newLoan == null) {
 									str.add("Checkout failed!");
@@ -386,7 +364,7 @@ public class LibraryServer {
 								int mediaId = Integer.parseInt(messageFromClient.getInfo().get(0));
 								long untilMillis = Long.parseLong(messageFromClient.getInfo().get(1));
 								
-								Hold h = holdRepository.placeHold(mediaId, account.getId(), new Date(untilMillis), (Member)account);
+								Hold h = holdRepository.placeHold(mediaId, account.getId(), new Date(untilMillis), (Member)account, inventory);
 								
 								if (h == null) {
 									info.add("Hold failed.");
@@ -444,8 +422,26 @@ public class LibraryServer {
 								writerToClient.writeObject(messageToClient); 
 							
 							} else if (messageFromClient.getAction() == Action.CANCEL_HOLD) {
+								ArrayList<String> infoIn = messageFromClient.getInfo();
+								int holdId = Integer.parseInt(infoIn.get(0));
 								
+								boolean success = holdRepository.cancelHold(holdId, inventory, account.getId());
 								
+								ArrayList<String> infoOut = new ArrayList<>();
+								Status status;
+								
+								if (success) {
+									infoOut.add("Hold cancelled.");
+									status = Status.SUCCESS;
+									System.out.println("SERVER: Hold " + holdId + " succesfully cancelled.");
+								} else {
+									infoOut.add("Hold not found!");
+									status = Status.FAILURE;
+									System.out.println("SERVER: Hold " + holdId + " was not found!");
+								}
+								
+								Message msg = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.CANCEL_HOLD, status, infoOut);
+								writerToClient.writeObject(msg);
 							} else if (messageFromClient.getAction() == Action.GET_PROFILE) {
 							
 								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.GET_PROFILE, Status.SUCCESS, info);

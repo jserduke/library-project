@@ -5,7 +5,6 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.time.LocalDate;
 import java.util.ArrayList;
 
 import client.ResponseHandler;
@@ -14,8 +13,7 @@ import message.*;
 public class MemberPortalFrame extends JFrame {
 	private HoldsPanel holdsPanel;
     private static final long serialVersionUID = 1L;
-	// private final User user;
-    // private final Member member;
+
     private final int memberId;
     private final ObjectOutputStream requestWriter;
 	private final ResponseHandler responseHandler; 
@@ -93,23 +91,6 @@ public class MemberPortalFrame extends JFrame {
     	return requestWriter;
     }
 
-    /*
-    private Member resolveMember(User u) {
-        if (u.getMemberId() != null) {
-            for (Member m : LibraryData.MEMBERS) 
-            	if (m.getId() == u.getMemberId()) 
-            		return m;
-        }
-        Member m = LibraryData.findMemberByEmail(u.getUsername());
-        if (m != null) 
-        	return m;
-        Member nm = new Member(LibraryData.nextMemberId(), u.getUsername(), "", LocalDate.of(2000,1,1), "", u.getUsername());
-        LibraryData.MEMBERS.add(nm);
-        u.setMemberId(nm.getId());
-        return nm;
-    }
-    */
-
     private JPanel buildCatalogPanel(ObjectOutputStream requestWriter, ResponseHandler responseHandler, ArrayList<String> info) {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(Theme.SURFACE);
@@ -179,7 +160,6 @@ public class MemberPortalFrame extends JFrame {
 			}
         });
         cbType.addActionListener(e -> {
-        	// reloadCatalog(info, 1, false);
         	ArrayList<String> queryInfo = new ArrayList<String>();
         	queryInfo.add((String) cbType.getSelectedItem());
         	queryInfo.add(txtSearch.getText().trim().toLowerCase());
@@ -234,14 +214,6 @@ public class MemberPortalFrame extends JFrame {
     }
 	
     public void openHoldsAndFees() {
-    	/*
-    	MemberAccountDialog dialog = new MemberAccountDialog(this, member);
-    	dialog.setVisible(true);
-    	*/
-//    	MemberAccountDialog dialog = new MemberAccountDialog(this, memberId, requestWriter, responseHandler);
-//    	dialog.setVisible(true);
-    	
-//    	ArrayList<String> info = new ArrayList<>();
     	Message msg = new Message(0, message.Type.REQUEST , -1, message.Action.GET_HOLDS, Status.PENDING, null);
     	responseHandler.setRequestIdExpected(msg.getId());
     	responseHandler.setOldFrame(this);
@@ -285,40 +257,13 @@ public class MemberPortalFrame extends JFrame {
 	    		});
 	    	}
         }
-
-    	/*
-        if ("All".equals(type) || "Books".equals(type)) {
-            for (Book b : (q.isEmpty()? LibraryData.BOOKS : LibraryData.searchBooks(q))) {
-                catalogModel.addRow(new Object[]{
-                    "Book", b.getId(), b.getTitle(), b.getAuthor(), b.getPublisher(), b.getGenre(),
-                    b.getTotalQuantity(), LibraryData.availableCountForBook(b.getId())
-                });
-            }
-        }
-        if ("All".equals(type) || "DVDs".equals(type)) {
-            for (Dvd d : (q.isEmpty()? LibraryData.DVDS : LibraryData.searchDvds(q))) {
-                catalogModel.addRow(new Object[]{
-                    "DVD", d.getId(), d.getTitle(), d.getRating(), d.getRuntimeMinutes()+" min", "",
-                    d.getTotalQuantity(), LibraryData.availableCountForDvd(d.getId())
-                });
-            }
-        }
-        if ("All".equals(type) || "Board Games".equals(type)) {
-            for (BoardGame g : (q.isEmpty()? LibraryData.BOARD_GAMES : LibraryData.searchBoardGames(q))) {
-                catalogModel.addRow(new Object[]{
-                    "Board Game", g.getId(), g.getTitle(), g.getRating(), g.getPlayerCount(), g.getGameLengthMinutes()+" min",
-                    g.getTotalQuantity(), LibraryData.availableCountForBoardGame(g.getId())
-                });
-            }
-        }
-        */
     }
 
     public void reloadLoans(ArrayList<String> info, int loansStart) {
         loansModel.setRowCount(0);
         int fieldsPerLoan = 7;
         int total = (info.size() - loansStart) / fieldsPerLoan;
-//        for (int i = 0; i < (info.size() - loansStart) / 8; i += 1) {
+
         for (int i = 0; i < total; i++) {
         	int base = loansStart + i * fieldsPerLoan;
         	
@@ -330,26 +275,8 @@ public class MemberPortalFrame extends JFrame {
 		        info.get(base + 4),
 		        info.get(base + 5),
 		        info.get(base + 6),
-//	        	info.get(loansStart + i * 7 + 0),
-//	        	info.get(loansStart + i * 7 + 1),
-//	        	info.get(loansStart + i * 7 + 2),
-//	        	info.get(loansStart + i * 7 + 3),
-//	        	info.get(loansStart + i * 7 + 4),
-//	        	info.get(loansStart + i * 7 + 5),
-//	        	info.get(loansStart + i * 7 + 6),
-//	        	info.get(loansStart + i * 8 + 7),
 	        });
         }
-        /*
-        for (Loan l : LibraryData.loansForMember(member.getId())) {
-            String title = getTitle(l.getMediaType(), l.getMediaId());
-            loansModel.addRow(new Object[]{
-                l.getId(), l.getMediaType().name(), l.getMediaId(), title,
-                l.getCheckoutDate(), l.getDueDate(), l.getGracePeriodDays(),
-                (l.getReturnDate()==null? "" : l.getReturnDate().toString())
-            });
-        }
-        */
     }
     
     public void reloadHolds(ArrayList<String> info, int holdsStart) {
@@ -458,14 +385,6 @@ public class MemberPortalFrame extends JFrame {
         			// TODO Auto-generated catch block
         			er.printStackTrace();
         		}
-            	/*
-                member.setFirstName(first.getText().trim());
-                member.setLastName(last.getText().trim());
-                member.setBirthday(LocalDate.parse(dob.getText().trim()));
-                member.setPhone(phone.getText().trim());
-                member.setEmail(email.getText().trim());
-                */
-                // JOptionPane.showMessageDialog(this, "Account updated.");
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(this, "Invalid data: " + ex.getMessage());
             }

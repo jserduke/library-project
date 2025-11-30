@@ -1,5 +1,7 @@
 package account;
 
+import inventory.*;
+
 import java.io.*;
 import java.util.Date;
 import java.util.ArrayList;
@@ -25,7 +27,7 @@ public class HoldsRepository {
 		return numHolds;
 	}
 	
-	public Hold placeHold(int mediaId, int memberId, Date until, Member member) {
+	public Hold placeHold(int mediaId, int memberId, Date until, Member member, Inventory inventory) {
 		int activeHolds = 0;
 		for (Hold hold : holds) {
 			if (hold.getMediaId() == mediaId && hold.getMemberId() == memberId) {
@@ -40,21 +42,50 @@ public class HoldsRepository {
 		if (member != null) {
 			member.getHolds().add(hold);
 		}
+		
+		if (inventory != null) {
+			for (Media m : inventory.getMediaItems()) {
+				if (m.getId() == hold.getMediaId()) {
+					m.setQuantityAvailable(m.getQuantityAvailable() - 1);
+					break;
+				}
+			}
+		}
+		
+		String filename = "holds_" + memberId + ".txt";
+		saveHoldToFile(filename);
+		
 		System.out.println("Hold successful for member " + memberId +
 				". \nTotal holds: " + (activeHolds + 1) + " holds.");
 		
 		return hold;
 	}
 	
-	public Boolean cancelHold(Integer mediaId, Integer memberId) {
-		for (int i = 0; i < holds.size(); i++) {
-			Hold hold = holds.get(i);
-			if (hold.getMediaId() == mediaId && hold.getMediaId() == memberId) {
-				holds.remove(i);
-				numHolds--;
+	public Boolean cancelHold(int holdId, Inventory inventory, int memberId) {
+		for (Hold h : holds) {
+			if (h.getHoldId() == holdId) {
+				if (h.getStatus() == HoldStatus.CANCELLED) {
+					return false;
+				}
+				
+				h.setStatus(HoldStatus.CANCELLED);
+				
+				if (inventory != null) {
+					for (Media m : inventory.getMediaItems()) {
+						if (m.getId() == h.getMediaId()) {
+							m.setQuantityAvailable(m.getQuantityAvailable() + 1);
+							break;
+						}
+					}
+				}
+				
+				String filename = "holds_" + memberId + ".txt";
+				saveHoldToFile(filename);
+				
 				return true;
 			}
 		}
+
 		return false;
 	}
 	
