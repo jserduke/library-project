@@ -5,18 +5,18 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.time.LocalDate;
 import java.util.ArrayList;
 
 import client.ResponseHandler;
 import message.*;
 
 public class MemberPortalFrame extends JFrame {
+	private HoldsPanel holdsPanel;
     private static final long serialVersionUID = 1L;
-	// private final User user;
-    // private final Member member;
+
+    private final int memberId;
     private final ObjectOutputStream requestWriter;
-	private final ResponseHandler responseHandler;
+	private final ResponseHandler responseHandler; 
 
     private JTextField txtSearch = new JTextField(18);
     private JComboBox<String> cbType = new JComboBox<>(new String[]{"All", "Books", "DVDs", "Board Games"});
@@ -30,7 +30,7 @@ public class MemberPortalFrame extends JFrame {
     private JTable catalogTable = new JTable(catalogModel);
 
     private DefaultTableModel loansModel = new DefaultTableModel(new Object[]{
-            "Loan ID","Type","Media ID","Title","Checkout","Due","Grace (days)","Returned"
+            "Loan ID","Type","Media ID","Title","Checkout","Due","Returned"
     }, 0) { 
     	public boolean isCellEditable(int r,int c){
     		return false;
@@ -43,6 +43,7 @@ public class MemberPortalFrame extends JFrame {
         // this.member = resolveMember(user);
     	this.requestWriter = requestWriter;
     	this.responseHandler = responseHandler;
+    	this.memberId = Integer.parseInt(info.get(1));
     	
         setTitle("Member Portal — " + info.getFirst()); // TODO: replace with username from message
         setSize(1100, 660);
@@ -85,23 +86,10 @@ public class MemberPortalFrame extends JFrame {
         reloadCatalog(info, 2, true);
         reloadLoans(info, 2 + Integer.parseInt(info.get(1)) * 8);
     }
-
-    /*
-    private Member resolveMember(User u) {
-        if (u.getMemberId() != null) {
-            for (Member m : LibraryData.MEMBERS) 
-            	if (m.getId() == u.getMemberId()) 
-            		return m;
-        }
-        Member m = LibraryData.findMemberByEmail(u.getUsername());
-        if (m != null) 
-        	return m;
-        Member nm = new Member(LibraryData.nextMemberId(), u.getUsername(), "", LocalDate.of(2000,1,1), "", u.getUsername());
-        LibraryData.MEMBERS.add(nm);
-        u.setMemberId(nm.getId());
-        return nm;
+    
+    public ObjectOutputStream getRequestWriter() {
+    	return requestWriter;
     }
-    */
 
     private JPanel buildCatalogPanel(ObjectOutputStream requestWriter, ResponseHandler responseHandler, ArrayList<String> info) {
         JPanel panel = new JPanel(new BorderLayout());
@@ -172,7 +160,6 @@ public class MemberPortalFrame extends JFrame {
 			}
         });
         cbType.addActionListener(e -> {
-        	// reloadCatalog(info, 1, false);
         	ArrayList<String> queryInfo = new ArrayList<String>();
         	queryInfo.add((String) cbType.getSelectedItem());
         	queryInfo.add(txtSearch.getText().trim().toLowerCase());
@@ -227,11 +214,16 @@ public class MemberPortalFrame extends JFrame {
     }
 	
     public void openHoldsAndFees() {
-    	/*
-    	MemberAccountDialog dialog = new MemberAccountDialog(this, member);
-    	dialog.setVisible(true);
-    	*/
-
+    	Message msg = new Message(0, message.Type.REQUEST , -1, message.Action.GET_HOLDS, Status.PENDING, null);
+    	responseHandler.setRequestIdExpected(msg.getId());
+    	responseHandler.setOldFrame(this);
+    	
+    	try {
+    		requestWriter.writeObject(msg);
+    	} catch(Exception e) {
+    		e.printStackTrace();
+    	}
+    	
 	}
     public void reloadCatalog(ArrayList<String> info, int invStart, boolean isInit) {
         String q = txtSearch.getText().trim();
@@ -265,87 +257,34 @@ public class MemberPortalFrame extends JFrame {
 	    		});
 	    	}
         }
-
-    	/*
-        if ("All".equals(type) || "Books".equals(type)) {
-            for (Book b : (q.isEmpty()? LibraryData.BOOKS : LibraryData.searchBooks(q))) {
-                catalogModel.addRow(new Object[]{
-                    "Book", b.getId(), b.getTitle(), b.getAuthor(), b.getPublisher(), b.getGenre(),
-                    b.getTotalQuantity(), LibraryData.availableCountForBook(b.getId())
-                });
-            }
-        }
-        if ("All".equals(type) || "DVDs".equals(type)) {
-            for (Dvd d : (q.isEmpty()? LibraryData.DVDS : LibraryData.searchDvds(q))) {
-                catalogModel.addRow(new Object[]{
-                    "DVD", d.getId(), d.getTitle(), d.getRating(), d.getRuntimeMinutes()+" min", "",
-                    d.getTotalQuantity(), LibraryData.availableCountForDvd(d.getId())
-                });
-            }
-        }
-        if ("All".equals(type) || "Board Games".equals(type)) {
-            for (BoardGame g : (q.isEmpty()? LibraryData.BOARD_GAMES : LibraryData.searchBoardGames(q))) {
-                catalogModel.addRow(new Object[]{
-                    "Board Game", g.getId(), g.getTitle(), g.getRating(), g.getPlayerCount(), g.getGameLengthMinutes()+" min",
-                    g.getTotalQuantity(), LibraryData.availableCountForBoardGame(g.getId())
-                });
-            }
-        }
-        */
     }
 
     public void reloadLoans(ArrayList<String> info, int loansStart) {
         loansModel.setRowCount(0);
-//        for (int i = 0; i < (info.size() - loansStart) / 8; i += 1) {
-        for (int i = 0; i < (info.size() - loansStart) / 8; i++) {
+        int fieldsPerLoan = 7;
+        int total = (info.size() - loansStart) / fieldsPerLoan;
+
+        for (int i = 0; i < total; i++) {
+        	int base = loansStart + i * fieldsPerLoan;
+        	
 	        loansModel.addRow(new Object[] {
-	        	info.get(loansStart + i * 8 + 0),
-	        	info.get(loansStart + i * 8 + 1),
-	        	info.get(loansStart + i * 8 + 2),
-	        	info.get(loansStart + i * 8 + 3),
-	        	info.get(loansStart + i * 8 + 4),
-	        	info.get(loansStart + i * 8 + 5),
-	        	info.get(loansStart + i * 8 + 6),
-	        	info.get(loansStart + i * 8 + 7),
+		        info.get(base + 0),
+		        info.get(base + 1),
+		        info.get(base + 2),
+		        info.get(base + 3),
+		        info.get(base + 4),
+		        info.get(base + 5),
+		        info.get(base + 6),
 	        });
         }
-        /*
-        for (Loan l : LibraryData.loansForMember(member.getId())) {
-            String title = getTitle(l.getMediaType(), l.getMediaId());
-            loansModel.addRow(new Object[]{
-                l.getId(), l.getMediaType().name(), l.getMediaId(), title,
-                l.getCheckoutDate(), l.getDueDate(), l.getGracePeriodDays(),
-                (l.getReturnDate()==null? "" : l.getReturnDate().toString())
-            });
-        }
-        */
+    }
+    
+    public void reloadHolds(ArrayList<String> info, int holdsStart) {
+    	if (holdsPanel != null) {
+    		holdsPanel.reload(info);
+    	}
     }
 
-    // DON'T THINK WE NEED?
-    /*
-    private String getTitle(MediaType type, int id) {
-        switch (type) {
-            case BOOK:
-                for (Book b : LibraryData.BOOKS) 
-                	if (b.getId()==id) 
-                		return b.getTitle();
-                break;
-            case DVD:
-                for (Dvd d : LibraryData.DVDS) 
-                	if (d.getId()==id) 
-                		return d.getTitle();
-                break;
-            case BOARD_GAME:
-                for (BoardGame g : LibraryData.BOARD_GAMES) 
-                	if (g.getId()==id) 
-                		return g.getTitle();
-                break;
-        }
-        return "";
-    }
-    */
-
-    // WILL GET WORKING LATER
     public void checkoutSelected() {
     	int row = catalogTable.getSelectedRow();
         if (row < 0) { 
@@ -370,7 +309,6 @@ public class MemberPortalFrame extends JFrame {
         }
     }
 
-    // WILL GET WORKING LATER
     public void holdSelected() {
     	
         int row = catalogTable.getSelectedRow();
@@ -394,22 +332,8 @@ public class MemberPortalFrame extends JFrame {
         } catch (IOException ex) {
         	ex.printStackTrace();
         }
-        /*
-        String typeStr = catalogModel.getValueAt(row, 0).toString();
-        int id = (Integer) catalogModel.getValueAt(row, 1);
-        MediaType type = "Book".equals(typeStr) ? MediaType.BOOK : ("DVD".equals(typeStr)? MediaType.DVD : MediaType.BOARD_GAME);
-
-        JTextField date = new JTextField(LocalDate.now().plusDays(7).toString());
-        int res = JOptionPane.showConfirmDialog(this, new Object[]{"Hold until (YYYY-MM-DD):", date}, "Place Hold", JOptionPane.OK_CANCEL_OPTION);
-        if (res == JOptionPane.OK_OPTION) {
-            LocalDate holdUntil = LocalDate.parse(date.getText().trim());
-            LibraryData.placeHold(member.getId(), type, id, holdUntil);
-            JOptionPane.showMessageDialog(this, "Hold placed until: " + holdUntil);
-        }
-        */
     }
 
-    // WILL GET WORKING LATER
     public void returnSelectedLoan() {
     	
         int row = loansTable.getSelectedRow();
@@ -418,7 +342,6 @@ public class MemberPortalFrame extends JFrame {
         	return; 
         }
         
-//        String loanId = loansModel.getValueAt(row, 0).toString();
         int mediaId = Integer.parseInt(loansModel.getValueAt(row, 2).toString());
         
         ArrayList<String> info = new ArrayList<>();
@@ -434,17 +357,8 @@ public class MemberPortalFrame extends JFrame {
         } catch(IOException e) {
         	e.printStackTrace();
         }
-        /*
-        int loanId = (Integer) loansModel.getValueAt(row, 0);
-        if (LibraryData.returnLoan(loanId)) {
-            JOptionPane.showMessageDialog(this, "Returned.");
-            reloadCatalog();
-            reloadLoans();
-        }
-        */
     }
 
-    // WILL GET WORKING HOPEFULLY TONIGHT
     public void editAccount(ObjectOutputStream requestWriter, ResponseHandler responseHandler, ArrayList<String> info) {
     	String[] names = info.getFirst().split(" ");
         JTextField first = new JTextField(names[0]);
@@ -471,24 +385,9 @@ public class MemberPortalFrame extends JFrame {
         			// TODO Auto-generated catch block
         			er.printStackTrace();
         		}
-            	/*
-                member.setFirstName(first.getText().trim());
-                member.setLastName(last.getText().trim());
-                member.setBirthday(LocalDate.parse(dob.getText().trim()));
-                member.setPhone(phone.getText().trim());
-                member.setEmail(email.getText().trim());
-                */
-                // JOptionPane.showMessageDialog(this, "Account updated.");
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(this, "Invalid data: " + ex.getMessage());
             }
         }
     }
-
-    // DON'T THINK WE NEED
-    /*
-	public User getUser() {
-		return user;
-	}
-	*/
 }

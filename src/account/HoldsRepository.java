@@ -1,5 +1,7 @@
 package account;
 
+import inventory.*;
+
 import java.io.*;
 import java.util.Date;
 import java.util.ArrayList;
@@ -25,7 +27,7 @@ public class HoldsRepository {
 		return numHolds;
 	}
 	
-	public Hold placeHold(int mediaId, int memberId, Date until, Member member) {
+	public Hold placeHold(int mediaId, int memberId, Date until, Member member, Inventory inventory) {
 		int activeHolds = 0;
 		for (Hold hold : holds) {
 			if (hold.getMediaId() == mediaId && hold.getMemberId() == memberId) {
@@ -33,28 +35,57 @@ public class HoldsRepository {
 			}
 		}
 		
-		Hold hold = new Hold(nextHoldId++, mediaId, memberId, new Date(), until);
+		Hold hold = new Hold(nextHoldId++, mediaId, memberId, new Date(), until, HoldStatus.ACTIVE);
 		holds.add(hold);
 		numHolds++;
 		
 		if (member != null) {
 			member.getHolds().add(hold);
 		}
+		
+		if (inventory != null) {
+			for (Media m : inventory.getMediaItems()) {
+				if (m.getId() == hold.getMediaId()) {
+					m.setQuantityAvailable(m.getQuantityAvailable() - 1);
+					break;
+				}
+			}
+		}
+		
+		String filename = "holds_" + memberId + ".txt";
+		saveHoldToFile(filename);
+		
 		System.out.println("Hold successful for member " + memberId +
 				". \nTotal holds: " + (activeHolds + 1) + " holds.");
 		
 		return hold;
 	}
 	
-	public boolean cancelHold(int mediaId, int memberId) {
-		for (int i = 0; i < holds.size(); i++) {
-			Hold hold = holds.get(i);
-			if (hold.getMediaId() == mediaId && hold.getMediaId() == memberId) {
-				holds.remove(i);
-				numHolds--;
+	public boolean cancelHold(int holdId, Inventory inventory, int memberId) {
+		for (Hold h : holds) {
+			if (h.getHoldId() == holdId) {
+				if (h.getStatus() == HoldStatus.CANCELLED) {
+					return false;
+				}
+				
+				h.setStatus(HoldStatus.CANCELLED);
+				
+				if (inventory != null) {
+					for (Media m : inventory.getMediaItems()) {
+						if (m.getId() == h.getMediaId()) {
+							m.setQuantityAvailable(m.getQuantityAvailable() + 1);
+							break;
+						}
+					}
+				}
+				
+				String filename = "holds_" + memberId + ".txt";
+				saveHoldToFile(filename);
+				
 				return true;
 			}
 		}
+
 		return false;
 	}
 	
@@ -83,9 +114,9 @@ public class HoldsRepository {
 			for (Hold h : holds) {
 				writer.write("HoldId=" + h.getHoldId() + ", " +
 							 "MediaId=" + h.getMediaId()+ ", " +
-							 "MediaId=" + h.getMemberId() + ", " +
+							 "MemberId=" + h.getMemberId() + ", " +
 							 "HoldUntil=" + h.getHoldUntilDate().getTime());
-				writer.write("\n");
+				writer.write(", HoldStatus=" + h.getStatus()+ "\n");
 			}
 			
 			writer.close();
@@ -136,9 +167,11 @@ public class HoldsRepository {
 				if (alreadyExists) {
 					continue;
 				}
+				
+				HoldStatus holdStatus = (untilMillis < System.currentTimeMillis()) ? HoldStatus.EXPIRED : HoldStatus.ACTIVE;
 
 //				Commented out for now since this function isn't fully ready/tested
-				Hold hold = new Hold(holdId, mediaId, memberId, new Date(placedMillis), new Date(untilMillis));
+				Hold hold = new Hold(holdId, mediaId, memberId, new Date(placedMillis), new Date(untilMillis), holdStatus);
 				
 				holds.add(hold);
 				numHolds++;

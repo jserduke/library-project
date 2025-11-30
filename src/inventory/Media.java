@@ -1,8 +1,8 @@
 package inventory;
-public abstract class Media {
+public abstract class Media { // all fields inherited by Book/DVD/Board Game subclasses
 	protected static int nextMediaId = 0;
 	private final MediaType mediaType;
-	private int id; // all fields inherited by Book/DVD/Board Game
+	private int id;
 	private String title;
 	private String publisher;
 	private String genre;

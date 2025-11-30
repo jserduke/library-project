@@ -1,0 +1,3 @@
+Item #1:Media Info{ID:1;Title:BookTitle;Publisher:BookPublisher;Genre:BookGenre;Total Quantity:1;Quantity Available:1}BOOK:[Author:BookAuthor;DDNumber:123.0;ISBN:1234]
+Item #2:Media Info{ID:2;Title:DvdTitle;Publisher:DvdPublisher;Genre:DvdGenre;Total Quantity:1;Quantity Available:1}DVD:[AgeRating:PG_13;RunTime:60]
+Item #3:Media Info{ID:3;Title:BoardGameTitle;Publisher:BoardGamePublisher;Genre:BoardGameGenre;Total Quantity:1;Quantity Available:1}BOARD_GAME:[AgeRating:G;Min Players:2;Max Players:4;Game Length:30]

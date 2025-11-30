@@ -45,7 +45,7 @@ public class AdminPortalFrame extends JFrame {
 
 
         btnHoldsFees.addActionListener(e -> {
-            AdminHoldsAndFeesDialog dialog = new AdminHoldsAndFeesDialog(this);
+            AdminHoldsAndFeesDialog dialog = new AdminHoldsAndFeesDialog(this, requestWriter, responseHandler);
             dialog.setVisible(true);
         });
         
