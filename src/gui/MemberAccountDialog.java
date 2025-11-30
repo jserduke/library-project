@@ -29,9 +29,12 @@ public class MemberAccountDialog extends JDialog {
         tabs.addTab("My Late Fees", new LateFeesPanel(requestWriter, responseHandler));
         add(tabs, BorderLayout.CENTER);
         
+        // this.setDefaultCloseOperation();
+        
         addWindowListener(new java.awt.event.WindowAdapter() {
         	@Override
         	public void windowClosing(java.awt.event.WindowEvent e) {
+        		System.out.println("MemberAccountDialog window closed");
         		responseHandler.setOldDialog(null);
         		responseHandler.setActiveHoldsPanel(null);
         	}
