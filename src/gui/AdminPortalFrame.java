@@ -51,7 +51,7 @@ public class AdminPortalFrame extends JFrame {
         
         btnLogout.addActionListener(e -> {
         	responseHandler.setOldFrame(this);
-        	Message logoutMessage = new Message(0, message.Type.REQUEST, -1, message.Action.LOGOUT, Status.PENDING, null);
+        	Message logoutMessage = new Message(message.Type.REQUEST, -1, message.Action.LOGOUT, Status.PENDING, null);
         	responseHandler.setRequestIdExpected(logoutMessage.getId());
         	responseHandler.setOldFrame(this);
         	try {
@@ -286,7 +286,7 @@ public class AdminPortalFrame extends JFrame {
             
             if (res == JOptionPane.OK_OPTION) {
             	ArrayList<String> newBookInfo = new ArrayList<String>();
-            	Message addBookMessage = new Message(0, message.Type.REQUEST, -1, message.Action.ADD_BOOK, Status.PENDING, newBookInfo);
+            	Message addBookMessage = new Message(message.Type.REQUEST, -1, message.Action.ADD_BOOK, Status.PENDING, newBookInfo);
             	newBookInfo.add(isbn.getText().trim());
             	newBookInfo.add(title.getText().trim());
             	newBookInfo.add(author.getText().trim());
@@ -332,7 +332,7 @@ public class AdminPortalFrame extends JFrame {
             }, "Edit Book", JOptionPane.OK_CANCEL_OPTION);
             if (res == JOptionPane.OK_OPTION) {
             	ArrayList<String> editBookInfo = new ArrayList<String>();
-            	Message editBookMessage = new Message(0, message.Type.REQUEST, -1, message.Action.EDIT_BOOK, Status.PENDING, editBookInfo);
+            	Message editBookMessage = new Message(message.Type.REQUEST, -1, message.Action.EDIT_BOOK, Status.PENDING, editBookInfo);
             	editBookInfo.add("" + idVal);
             	editBookInfo.add(isbn.getText().trim());
             	editBookInfo.add(title.getText().trim());
@@ -360,7 +360,7 @@ public class AdminPortalFrame extends JFrame {
             }
             String id = (String) booksModel.getValueAt(row, 0);
         	ArrayList<String> deleteBookInfo = new ArrayList<String>();
-        	Message deleteBookMessage = new Message(0, message.Type.REQUEST, -1, message.Action.DELETE_BOOK, Status.PENDING, deleteBookInfo);
+        	Message deleteBookMessage = new Message(message.Type.REQUEST, -1, message.Action.DELETE_BOOK, Status.PENDING, deleteBookInfo);
         	deleteBookInfo.add(id);
             responseHandler.setRequestIdExpected(deleteBookMessage.getId());
             responseHandler.setOldPanel(this);
@@ -384,7 +384,7 @@ public class AdminPortalFrame extends JFrame {
             }, "Add DVD", JOptionPane.OK_CANCEL_OPTION);
             if (res == JOptionPane.OK_OPTION) {
             	ArrayList<String> newDvdInfo = new ArrayList<String>();
-            	Message addDvdMessage = new Message(0, message.Type.REQUEST, -1, message.Action.ADD_DVD, Status.PENDING, newDvdInfo);
+            	Message addDvdMessage = new Message(message.Type.REQUEST, -1, message.Action.ADD_DVD, Status.PENDING, newDvdInfo);
             	newDvdInfo.add(title.getText().trim());
             	newDvdInfo.add(publisher.getText().trim());
             	newDvdInfo.add(genre.getText().trim());
@@ -424,7 +424,7 @@ public class AdminPortalFrame extends JFrame {
             }, "Edit DVD", JOptionPane.OK_CANCEL_OPTION);
             if (res == JOptionPane.OK_OPTION) {
             	ArrayList<String> editDvdInfo = new ArrayList<String>();
-            	Message editDvdMessage = new Message(0, message.Type.REQUEST, -1, message.Action.EDIT_DVD, Status.PENDING, editDvdInfo);
+            	Message editDvdMessage = new Message(message.Type.REQUEST, -1, message.Action.EDIT_DVD, Status.PENDING, editDvdInfo);
             	editDvdInfo.add("" + idVal);
             	editDvdInfo.add(title.getText().trim());
             	editDvdInfo.add(rating.getText().trim());
@@ -448,7 +448,7 @@ public class AdminPortalFrame extends JFrame {
             }
             String id = (String) dvdsModel.getValueAt(row, 0);
         	ArrayList<String> deleteDvdInfo = new ArrayList<String>();
-        	Message deleteDvdMessage = new Message(0, message.Type.REQUEST, -1, message.Action.DELETE_DVD, Status.PENDING, deleteDvdInfo);
+        	Message deleteDvdMessage = new Message(message.Type.REQUEST, -1, message.Action.DELETE_DVD, Status.PENDING, deleteDvdInfo);
         	deleteDvdInfo.add(id);
             responseHandler.setRequestIdExpected(deleteDvdMessage.getId());
             responseHandler.setOldPanel(this);
@@ -476,7 +476,7 @@ public class AdminPortalFrame extends JFrame {
             
             if (res == JOptionPane.OK_OPTION) {
             	ArrayList<String> newGameInfo = new ArrayList<String>();
-            	Message addGameMessage = new Message(0, message.Type.REQUEST, -1, message.Action.ADD_GAME, Status.PENDING, newGameInfo);
+            	Message addGameMessage = new Message(message.Type.REQUEST, -1, message.Action.ADD_GAME, Status.PENDING, newGameInfo);
             	newGameInfo.add(title.getText().trim());
             	newGameInfo.add(genre.getText().trim());
             	newGameInfo.add(publisher.getText().trim());
@@ -523,7 +523,7 @@ public class AdminPortalFrame extends JFrame {
             
             if (res == JOptionPane.OK_OPTION) {
             	ArrayList<String> editGameInfo = new ArrayList<String>();
-            	Message editGameMessage = new Message(0, message.Type.REQUEST, -1, message.Action.EDIT_GAME, Status.PENDING, editGameInfo);
+            	Message editGameMessage = new Message(message.Type.REQUEST, -1, message.Action.EDIT_GAME, Status.PENDING, editGameInfo);
             	editGameInfo.add("" + id);
             	editGameInfo.add(title.getText().trim());
             	editGameInfo.add(rating.getText().trim());
@@ -549,7 +549,7 @@ public class AdminPortalFrame extends JFrame {
             }
             String id = (String) gamesModel.getValueAt(row, 0);
         	ArrayList<String> deleteGameInfo = new ArrayList<String>();
-        	Message deleteGameMessage = new Message(0, message.Type.REQUEST, -1, message.Action.DELETE_GAME, Status.PENDING, deleteGameInfo);
+        	Message deleteGameMessage = new Message(message.Type.REQUEST, -1, message.Action.DELETE_GAME, Status.PENDING, deleteGameInfo);
         	deleteGameInfo.add(id);
             responseHandler.setRequestIdExpected(deleteGameMessage.getId());
             responseHandler.setOldPanel(this);

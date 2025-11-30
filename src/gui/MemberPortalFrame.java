@@ -64,7 +64,7 @@ public class MemberPortalFrame extends JFrame {
         add(top, BorderLayout.NORTH);
         btnLogout.addActionListener(e -> {
         	responseHandler.setOldFrame(this);
-        	Message logoutMessage = new Message(0, message.Type.REQUEST, -1, message.Action.LOGOUT, Status.PENDING, null);
+        	Message logoutMessage = new Message(message.Type.REQUEST, -1, message.Action.LOGOUT, Status.PENDING, null);
         	responseHandler.setRequestIdExpected(logoutMessage.getId());
         	responseHandler.setOldFrame(this);
         	try {
@@ -146,7 +146,7 @@ public class MemberPortalFrame extends JFrame {
         	ArrayList<String> queryInfo = new ArrayList<String>();
         	queryInfo.add((String) cbType.getSelectedItem());
         	queryInfo.add(txtSearch.getText().trim().toLowerCase());
-        	Message searchMessage = new Message(0, message.Type.REQUEST, -1, message.Action.GET_SEARCH_MEMBER, Status.PENDING, queryInfo);
+        	Message searchMessage = new Message(message.Type.REQUEST, -1, message.Action.GET_SEARCH_MEMBER, Status.PENDING, queryInfo);
         	responseHandler.setRequestIdExpected(searchMessage.getId());
         	responseHandler.setOldFrame(this);
         	try {
@@ -161,7 +161,7 @@ public class MemberPortalFrame extends JFrame {
         	ArrayList<String> queryInfo = new ArrayList<String>();
         	queryInfo.add((String) cbType.getSelectedItem());
         	queryInfo.add(txtSearch.getText().trim().toLowerCase());
-        	Message searchMessage = new Message(0, message.Type.REQUEST, -1, message.Action.GET_SEARCH_MEMBER, Status.PENDING, queryInfo);
+        	Message searchMessage = new Message(message.Type.REQUEST, -1, message.Action.GET_SEARCH_MEMBER, Status.PENDING, queryInfo);
         	responseHandler.setRequestIdExpected(searchMessage.getId());
         	responseHandler.setOldFrame(this);
         	try {
@@ -176,7 +176,7 @@ public class MemberPortalFrame extends JFrame {
         	ArrayList<String> queryInfo = new ArrayList<String>();
         	queryInfo.add((String) cbType.getSelectedItem());
         	queryInfo.add(txtSearch.getText().trim().toLowerCase());
-        	Message searchMessage = new Message(0, message.Type.REQUEST, -1, message.Action.GET_SEARCH_MEMBER, Status.PENDING, queryInfo);
+        	Message searchMessage = new Message(message.Type.REQUEST, -1, message.Action.GET_SEARCH_MEMBER, Status.PENDING, queryInfo);
         	responseHandler.setRequestIdExpected(searchMessage.getId());
         	responseHandler.setOldFrame(this);
         	try {
@@ -189,7 +189,7 @@ public class MemberPortalFrame extends JFrame {
         btnCheckout.addActionListener(e -> checkoutSelected());
         btnHold.addActionListener(e -> holdSelected());
         btnEdit.addActionListener(e -> {
-            Message getProfileMessage = new Message(0, message.Type.REQUEST, -1, message.Action.GET_PROFILE, Status.PENDING, null);
+            Message getProfileMessage = new Message(message.Type.REQUEST, -1, message.Action.GET_PROFILE, Status.PENDING, null);
             responseHandler.setRequestIdExpected(getProfileMessage.getId());
             responseHandler.setOldFrame(this);
             try {
@@ -359,7 +359,7 @@ public class MemberPortalFrame extends JFrame {
         ArrayList<String> info = new ArrayList<String>();
         info.add(Integer.toString(mediaId));
         info.add(Long.toString(dueMillis));
-        Message checkoutMessage = new Message(0, message.Type.REQUEST, -1, message.Action.CHECKOUT, Status.PENDING, info);
+        Message checkoutMessage = new Message(message.Type.REQUEST, -1, message.Action.CHECKOUT, Status.PENDING, info);
         responseHandler.setRequestIdExpected(checkoutMessage.getId());
         responseHandler.setOldFrame(this);
         
@@ -385,7 +385,7 @@ public class MemberPortalFrame extends JFrame {
         ArrayList<String> info = new ArrayList<>();
         info.add(Integer.toString(mediaId));
         info.add(Long.toString(untilMillis));
-        Message holdMessage = new Message(0, message.Type.REQUEST, -1, message.Action.PLACE_HOLD, Status.PENDING, info);
+        Message holdMessage = new Message(message.Type.REQUEST, -1, message.Action.PLACE_HOLD, Status.PENDING, info);
         responseHandler.setRequestIdExpected(holdMessage.getId());
         responseHandler.setOldFrame(this);
         
@@ -424,7 +424,7 @@ public class MemberPortalFrame extends JFrame {
         ArrayList<String> info = new ArrayList<>();
         info.add(Integer.toString(mediaId));
         
-        Message msg = new Message(0, message.Type.REQUEST, -1, message.Action.RETURN, Status.PENDING, info);
+        Message msg = new Message(message.Type.REQUEST, -1, message.Action.RETURN, Status.PENDING, info);
         
         responseHandler.setRequestIdExpected(msg.getId());
         responseHandler.setOldFrame(this);
@@ -459,7 +459,7 @@ public class MemberPortalFrame extends JFrame {
         if (res == JOptionPane.OK_OPTION) {
             try {
             	ArrayList<String> newInfo = new ArrayList<String>();
-            	Message setProfileMessage = new Message(0, message.Type.REQUEST, -1, message.Action.SET_PROFILE, Status.PENDING, newInfo);
+            	Message setProfileMessage = new Message(message.Type.REQUEST, -1, message.Action.SET_PROFILE, Status.PENDING, newInfo);
             	newInfo.add(first.getText().trim() + " " + last.getText().trim());
             	newInfo.add(dob.getText());
             	newInfo.add(email.getText());

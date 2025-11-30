@@ -7,17 +7,15 @@ public class Message implements Serializable {
 	private static int count  = 0;
 	private int id;
 	private Date datetime;
-	private int libraryId;
 	private Type type;
 	private int requestId;
 	private Action action;
 	private Status status;
 	private ArrayList<String> info;
 	
-	public Message(int libraryId, Type type, int requestId, Action action, Status status, ArrayList<String> info) {
+	public Message(Type type, int requestId, Action action, Status status, ArrayList<String> info) {
 		id = count++;
 		datetime = new Date();
-		this.libraryId = libraryId;
 		this.type = type;
 		this.requestId = requestId;
 		this.action = action;
@@ -34,9 +32,6 @@ public class Message implements Serializable {
 	}
 	public Date getDatetime() {
 		return datetime;
-	}
-	public int getLibraryId() {
-		return libraryId;
 	}
 	public Type getType() {
 		return type;
@@ -55,7 +50,7 @@ public class Message implements Serializable {
 	}
 	
 	public String toString() {
-		return "id: " + id + " (datetime: " + datetime + ")\nlibrary id: " + libraryId + " | type: " + type
-			 + " | request id: " + requestId + " | status: " + status + " | action: " + action + "\ninfo: " + info;
+		return "id: " + id + " (datetime: " + datetime + ")\ntype: " + type + " | request id: " + requestId
+				+ " | status: " + status + " | action: " + action + "\ninfo: " + info;
 	}
 }

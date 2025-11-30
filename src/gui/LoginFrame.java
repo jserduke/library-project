@@ -71,7 +71,7 @@ public class LoginFrame extends JFrame {
         String u = txtUser.getText().trim();
         String p = new String(txtPass.getPassword());
         ArrayList<String> info = new ArrayList<String>();
-        Message loginMessage = new Message(0, message.Type.REQUEST, -1, message.Action.LOGIN, Status.PENDING, info);
+        Message loginMessage = new Message(message.Type.REQUEST, -1, message.Action.LOGIN, Status.PENDING, info);
         info.add(u);
         info.add(p);
         responseHandler.setOldOldFrame();

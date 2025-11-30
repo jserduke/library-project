@@ -8,6 +8,14 @@ public abstract class Media {
 	private String genre;
 	private int totalQuantity;
 	private int quantityAvailable;
+	
+	public static int getNextMediaId() {
+		return Media.nextMediaId;
+	}
+	
+	static public void setNextMediaId(int nextMediaId) {
+		Media.nextMediaId = nextMediaId;
+	}
 
 	// protected constructors for subclass use to initialize variables inaccessible to subclasses
 	// Constructor for autogen ID

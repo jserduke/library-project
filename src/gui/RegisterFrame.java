@@ -86,7 +86,7 @@ public class RegisterFrame extends JDialog {
             }
             
             ArrayList<String> info = new ArrayList<String>();
-            Message registrationMessage = new Message(0, message.Type.REQUEST, -1, message.Action.REGISTER, Status.PENDING, info);
+            Message registrationMessage = new Message(message.Type.REQUEST, -1, message.Action.REGISTER, Status.PENDING, info);
             info.add(email);
             info.add(pass);
             info.add(first + " " + last);
