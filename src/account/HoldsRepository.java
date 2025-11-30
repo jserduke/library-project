@@ -72,14 +72,7 @@ public class HoldsRepository {
 				return true;
 			}
 		}
-//		for (int i = 0; i < holds.size(); i++) {
-//			Hold hold = holds.get(i);
-//			if (hold.getMediaId() == mediaId && hold.getMediaId() == memberId) {
-//				holds.remove(i);
-//				numHolds--;
-//				return true;
-//			}
-//		}
+
 		return false;
 	}
 	
