@@ -74,7 +74,7 @@ public class LoginFrame extends JFrame {
         Message loginMessage = new Message(0, message.Type.REQUEST, -1, message.Action.LOGIN, Status.PENDING, info);
         info.add(u);
         info.add(p);
-//        responseHandler.setOldOldFrame();
+        responseHandler.setOldOldFrame();
         responseHandler.setOldFrame(this);
         responseHandler.setRequestIdExpected(loginMessage.getId());
         try {
