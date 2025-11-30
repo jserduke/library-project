@@ -152,6 +152,7 @@ public class Inventory {
 		// create temp inventory before loading
 		ArrayList<Media> tempMediaList = new ArrayList<Media>();
 		try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+			int biggestId = -1;
 			String line;
 			while ((line = reader.readLine()) != null) {
 				line = line.trim();
@@ -159,8 +160,13 @@ public class Inventory {
 					continue; // skip empty lines
 				}
 				Media mediaItem = parseMedia(line);
+				if (mediaItem.getId() > biggestId) {
+					biggestId = mediaItem.getId();
+				}
 				tempMediaList.add(mediaItem);
 			}
+			// works if we do all file loading together at the beginning
+			Media.setNextMediaId(biggestId >= Media.getNextMediaId() ? biggestId + 1 : Media.getNextMediaId());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

@@ -155,7 +155,7 @@ public class ResponseHandler implements Runnable {
 										}								
 										
 										ArrayList<String> dummyList = new ArrayList<>();
-										Message info = new Message(0, message.Type.REQUEST, -1, message.Action.GET_DASHBOARD, Status.PENDING, dummyList);
+										Message info = new Message(message.Type.REQUEST, -1, message.Action.GET_DASHBOARD, Status.PENDING, dummyList);
 										this.setOldFrame(f);
 										this.setRequestIdExpected(info.getId());
 										
@@ -181,7 +181,7 @@ public class ResponseHandler implements Runnable {
 								
 								ArrayList<String> msg1 = new ArrayList<>();
 								//Commenting our for now because this worked with dummy data
-								Message refresh1 = new Message(0, message.Type.REQUEST, -1, message.Action.GET_CHECKOUTS, Status.PENDING, msg1);
+								Message refresh1 = new Message(message.Type.REQUEST, -1, message.Action.GET_CHECKOUTS, Status.PENDING, msg1);
 								this.setRequestIdExpected(refresh1.getId());
 								this.setOldFrame(oldFrame);
 //								try {
@@ -202,7 +202,7 @@ public class ResponseHandler implements Runnable {
 									JOptionPane.showMessageDialog(oldFrame, "Your return was successfully made!");
 									
 									ArrayList<String> msg = new ArrayList<>();
-									Message refresh = new Message(0, message.Type.REQUEST, -1, message.Action.GET_CHECKOUTS, Status.PENDING, msg);
+									Message refresh = new Message(message.Type.REQUEST, -1, message.Action.GET_CHECKOUTS, Status.PENDING, msg);
 									this.setRequestIdExpected(refresh.getId());
 									this.setOldFrame(oldFrame);
 									try {
