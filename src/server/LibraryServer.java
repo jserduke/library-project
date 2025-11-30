@@ -445,7 +445,7 @@ public class LibraryServer {
 									info1.add(Long.toString(h.getHoldUntilDate().getTime()));
 									info1.add(h.getStatus().name());							
 								}
-								messageToClient = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.GET_HOLDS, Status.SUCCESS, info1);
+								messageToClient = new Message(Type.RESPONSE, messageFromClient.getId(), Action.GET_HOLDS, Status.SUCCESS, info1);
 								writerToClient.writeObject(messageToClient); 
 							
 							} else if (messageFromClient.getAction() == Action.CANCEL_HOLD) {
@@ -467,7 +467,7 @@ public class LibraryServer {
 									System.out.println("SERVER: Hold " + holdId + " was not found!");
 								}
 								
-								Message msg = new Message(0, Type.RESPONSE, messageFromClient.getId(), Action.CANCEL_HOLD, status, infoOut);
+								Message msg = new Message(Type.RESPONSE, messageFromClient.getId(), Action.CANCEL_HOLD, status, infoOut);
 								writerToClient.writeObject(msg);
 							} else if (messageFromClient.getAction() == Action.GET_PROFILE) {
 							

@@ -111,7 +111,7 @@ public class Inventory {
 	
 	public void saveInventoryToFile(String filename) {
 		filename = ifNameEmptyDefaultOutput(filename);
-		Path filePath = Paths.get("resources", "output", filename + ".txt");
+		Path filePath = Paths.get("resources", filename + ".txt");
 		File file = filePath.toFile();
 		
 		// comment out, this is for debug purposes
@@ -141,7 +141,7 @@ public class Inventory {
 	
 	// right now, read from file located in resources/input/
 	public void loadInventoryFromFile(String filename) {
-		Path filePath = Paths.get("resources", "input", filename + ".txt");
+		Path filePath = Paths.get("resources", filename + ".txt");
 		System.out.println("Looking at: " + filePath.toAbsolutePath()+ "\n");
 		if (!Files.isRegularFile(filePath)) {
 			System.out.println("Error: Inventory file not found:" + filePath.toAbsolutePath() + "\n");
