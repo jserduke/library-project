@@ -219,10 +219,6 @@ public class ResponseHandler implements Runnable {
 									if (oldFrame instanceof MemberPortalFrame portal) {
 										portal.reloadLoans(info, 1);
 									}
-//									MemberPortalFrame frame = (MemberPortalFrame) oldFrame;
-									
-//									int loanStart1 = 1;;
-//									((MemberPortalFrame)oldFrame).reloadLoans(info, loanStart1);
 								} else if (response.getStatus() == Status.FAILURE) {
 									JOptionPane.showMessageDialog(oldFrame, "Retrieving checkouts failed!");
 								}
@@ -271,10 +267,6 @@ public class ResponseHandler implements Runnable {
 											ex.printStackTrace();
 										}
 
-//									Message refresh = new Message(0, Type.REQUEST, -1, Action.GET_HOLDS, Status.PENDING, new ArrayList<>());
-//									
-//									setRequestIdExpected(refresh.getId());
-//									requestWriter.writeObject(refresh);
 									System.out.println("SENDING GET_HOLDS (after cancel)");
 								} else if (response.getStatus() == Status.FAILURE) {
 									Window parent = (oldDialog != null ? oldDialog : oldFrame);
