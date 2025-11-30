@@ -36,15 +36,18 @@ public class OverduesPanel extends JPanel {
     }
 
     private String findMemberName(int id){
+    	/*
         for (Member m : LibraryData.MEMBERS){
             if (m.getId()==id){
                 return m.getFirstName() + " " + m.getLastName() + " (#"+id+")";
             }
         }
+        */
         return "Member #"+id;
     }
 
-    private String itemTitle(MediaType t, int id){
+    private String itemTitle(String t, int id){
+    	/*
         switch (t){
             case BOOK:
                 for (Book b : LibraryData.BOOKS) 
@@ -62,12 +65,14 @@ public class OverduesPanel extends JPanel {
                 		return g.getTitle();
                 break;
         }
+        */
         return t+" #"+id;
     }
 
     public void reload(){
         model.setRowCount(0);
         LocalDate today = LocalDate.now();
+        /*
         for (Loan l : LibraryData.LOANS){
             if (LoanUtil.isOverdue(l, today)){
                 model.addRow(new Object[]{
@@ -77,10 +82,11 @@ public class OverduesPanel extends JPanel {
                         l.getMediaType().name(),
                         l.getDueDate(),
                         LoanUtil.daysLate(l, today),
-                        centsToMoney(LateFeeService.projectedFeeCents(l, today))
+                        "$0.00" // PLACEHOLDER VALUE
                 });
             }
         }
+        */
         if (model.getRowCount()==0){
             model.addRow(new Object[]{"", "(none)", "", "", "", "", ""});
         }
