@@ -287,9 +287,12 @@ public class HoldsPanel extends JPanel {
     		int mediaId = Integer.parseInt(info.get(index++));
     		String title = info.get(index++);
     		long untilMillis = Long.parseLong(info.get(index++));
-    		String status = info.get(index++);    		    		
+    		String statusStr = info.get(index++);    		    		
     		
-    		if (cbActiveOnly.isSelected() && !"ACTIVE".equalsIgnoreCase(status));
+    		HoldStatus status = HoldStatus.valueOf(statusStr.toUpperCase());
+    		if (cbActiveOnly.isSelected() && status != HoldStatus.ACTIVE) {
+    			continue;
+    		}
     		
     		model.addRow(new Object[] {
     				rowNum++,
