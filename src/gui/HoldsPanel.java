@@ -102,29 +102,29 @@ public class HoldsPanel extends JPanel {
     private JComponent buildButtons(){
         JPanel p = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         
-        JButton refresh = new JButton("Refresh");
+        // JButton refresh = new JButton("Refresh");
         JButton cancel = new JButton("Cancel Hold");
         
 //        p.add(refresh); p.add(cancel);
-        refresh.addActionListener(e -> requestRefresh());
+        // refresh.addActionListener(e -> requestRefresh());
         cancel.addActionListener(e -> requestCancel());
         
-        p.add(refresh); 
+        // p.add(refresh); 
         p.add(cancel);
         return p;
     }
     
     private JComponent buildAdminButtons() {
     	JPanel p = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-    	JButton refresh = new JButton("Refresh");
+    	// JButton refresh = new JButton("Refresh");
     	
     	JButton cancel = new JButton("Cancel Hold");
         
 //      p.add(refresh); p.add(cancel);
-    	refresh.addActionListener(e -> reload(info));
+    	// refresh.addActionListener(e -> reload(info));
     	cancel.addActionListener(e -> requestCancel());
       
-    	p.add(refresh); 
+    	// p.add(refresh); 
     	p.add(cancel);
     	return p;
     }
