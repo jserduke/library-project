@@ -74,6 +74,7 @@ public class ResponseHandler implements Runnable {
 		
 		// LATEST REQUEST THAT RESPONSE SHOULD BE IN SERVICE OF FULFILLING
 		public void setRequestIdExpected(int requestIdExpected) {
+			// System.out.println()
 			this.requestIdExpected = requestIdExpected;
 		}
 		
@@ -240,9 +241,12 @@ public class ResponseHandler implements Runnable {
 									ArrayList<String> info = response.getInfo();
 									
 									if (activeHoldsPanel != null) {
+										System.out.println("option 1");
 										activeHoldsPanel.reload(info);
 									} else {
+										System.out.println("option 2");
 										if (oldFrame instanceof MemberPortalFrame) {
+											System.out.println("option 2.1");
 											MemberPortalFrame frame = (MemberPortalFrame) oldFrame;
 											
 											MemberAccountDialog dialog = new MemberAccountDialog(frame, frame.getRequestWriter(), this, info);

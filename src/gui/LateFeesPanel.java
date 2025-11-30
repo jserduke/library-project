@@ -38,7 +38,7 @@ public class LateFeesPanel extends JPanel {
 //        add(buildTopBar(), BorderLayout.NORTH);
         add(new JScrollPane(table), BorderLayout.CENTER);
         add(buildBottomBar(), BorderLayout.SOUTH);
-        requestRefresh();
+        // requestRefresh();
     }
 
 //    private JComponent buildTopBar(){

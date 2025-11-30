@@ -51,10 +51,14 @@ public class MemberAccountDialog extends JDialog {
 //      setLayout(new BorderLayout());
         add(tabs, BorderLayout.CENTER);
         
+        // this.setDefaultCloseOperation();
+        
         addWindowListener(new java.awt.event.WindowAdapter() {
         	@Override
-        	public void windowClosed(java.awt.event.WindowEvent e) {
+        	public void windowClosing(java.awt.event.WindowEvent e) {
+        		System.out.println("MemberAccountDialog window closed");
         		responseHandler.setOldDialog(null);
+        		responseHandler.setActiveHoldsPanel(null);
         	}
         });
 //        add(tabs);
