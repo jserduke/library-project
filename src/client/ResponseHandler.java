@@ -268,7 +268,7 @@ public class ResponseHandler implements Runnable {
 									
 									JOptionPane.showMessageDialog(parent, "Hold cancelled!", "Success", JOptionPane.INFORMATION_MESSAGE);
 
-										Message refresh = new Message(0, Type.REQUEST, -1, Action.GET_HOLDS, Status.PENDING, new ArrayList<>());
+										Message refresh = new Message(Type.REQUEST, -1, Action.GET_HOLDS, Status.PENDING, new ArrayList<>());
 										
 										setRequestIdExpected(refresh.getId());
 										try {
@@ -301,7 +301,7 @@ public class ResponseHandler implements Runnable {
 									JOptionPane.showMessageDialog(parent, "Fee marked as paid.");
 									
 									ArrayList<String> list = new ArrayList<>();
-									Message refresh = new Message(0, Type.REQUEST, -1, Action.GET_FEES, Status.PENDING, list);
+									Message refresh = new Message(Type.REQUEST, -1, Action.GET_FEES, Status.PENDING, list);
 									
 									setRequestIdExpected(refresh.getId());
 									requestWriter.writeObject(refresh);

@@ -23,9 +23,9 @@ public class MessageTest {
         info.add("userId=10");
         info.add("extra=data");
 
-        Message msg = new Message(libraryId, type, requestId, action, status, info);
+        Message msg = new Message(type, requestId, action, status, info);
 
-        assertEquals(libraryId, msg.getLibraryId());
+        // assertEquals(libraryId, msg.getLibraryId());
         assertEquals(type, msg.getType());
         assertEquals(requestId, msg.getRequestId());
         assertEquals(action, msg.getAction());
@@ -40,7 +40,6 @@ public class MessageTest {
         info.add("hello");
 
         Message msg = new Message(
-                1,
                 Type.REQUEST,
                 99,
                 Action.GET_SEARCH,

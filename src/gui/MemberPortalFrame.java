@@ -214,7 +214,7 @@ public class MemberPortalFrame extends JFrame {
     }
 	
     public void openHoldsAndFees() {
-    	Message msg = new Message(0, message.Type.REQUEST , -1, message.Action.GET_HOLDS, Status.PENDING, null);
+    	Message msg = new Message(message.Type.REQUEST , -1, message.Action.GET_HOLDS, Status.PENDING, null);
     	responseHandler.setRequestIdExpected(msg.getId());
     	responseHandler.setOldFrame(this);
     	

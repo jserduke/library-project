@@ -88,7 +88,7 @@ public class LateFeesPanel extends JPanel {
     		return;
     	}
     	
-    	Message msg = new Message(0, Type.REQUEST, -1, Action.GET_FEES, Status.PENDING, new ArrayList<>());
+    	Message msg = new Message(Type.REQUEST, -1, Action.GET_FEES, Status.PENDING, new ArrayList<>());
     	
     	responseHandler.setActiveLateFeesPanel(this);
     	responseHandler.setRequestIdExpected(msg.getId());
@@ -164,7 +164,7 @@ public class LateFeesPanel extends JPanel {
         ArrayList<String> list = new ArrayList<>();
         list.add(Integer.toString(loadId));
         
-        Message msg = new Message(0, Type.REQUEST, -1, Action.PAY_FEES, Status.PENDING, list);
+        Message msg = new Message(Type.REQUEST, -1, Action.PAY_FEES, Status.PENDING, list);
         
         responseHandler.setActiveLateFeesPanel(this);
     	responseHandler.setRequestIdExpected(msg.getId());

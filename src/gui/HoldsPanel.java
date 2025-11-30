@@ -62,7 +62,7 @@ public class HoldsPanel extends JPanel {
     	add(new JScrollPane(table), BorderLayout.CENTER);
     	add(buildButtons(), BorderLayout.SOUTH);
     	
-    	Message msg = new Message(0, Type.REQUEST, -1, Action.GET_HOLDS, Status.PENDING, new ArrayList<>());
+    	Message msg = new Message(Type.REQUEST, -1, Action.GET_HOLDS, Status.PENDING, new ArrayList<>());
   
     	responseHandler.setRequestIdExpected(msg.getId());
     	responseHandler.setOldWindow(SwingUtilities.getWindowAncestor(this));
@@ -138,7 +138,7 @@ public class HoldsPanel extends JPanel {
     		return;
     	}
     	
-    	Message msg = new Message(0, Type.REQUEST, -1, Action.GET_HOLDS, Status.PENDING, new ArrayList<>());
+    	Message msg = new Message(Type.REQUEST, -1, Action.GET_HOLDS, Status.PENDING, new ArrayList<>());
     	responseHandler.setActiveHoldsPanel(this);
     	responseHandler.setRequestIdExpected(msg.getId());
     	responseHandler.setOldWindow(parentWindow());
@@ -172,7 +172,7 @@ public class HoldsPanel extends JPanel {
     	
     	ArrayList<String> info = new ArrayList<>();
     	info.add(Integer.toString(holdId));
-    	Message msg = new Message(0, Type.REQUEST, -1, Action.CANCEL_HOLD, Status.PENDING, info);
+    	Message msg = new Message(Type.REQUEST, -1, Action.CANCEL_HOLD, Status.PENDING, info);
     	
     	responseHandler.setActiveHoldsPanel(this);
     	responseHandler.setRequestIdExpected(msg.getId());
