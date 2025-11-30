@@ -17,7 +17,7 @@ public class ResponseHandler implements Runnable {
 		// private GUIPreparer guiPreparer;
 		private JFrame oldFrame;
 //		private Window oldFrame;
-//		private JFrame oldOldFrame;
+		private JFrame oldOldFrame;
 		private JDialog oldDialog;
 		private JPanel oldPanel;
 		private HoldsPanel activeHoldsPanel;
@@ -29,7 +29,7 @@ public class ResponseHandler implements Runnable {
 			this.requestWriter = requestWriter;
 			// this.guiPreparer = null;
 			this.oldFrame = null;
-//			this.oldOldFrame = null;
+			this.oldOldFrame = null;
 			this.oldDialog = null;
 			this.oldPanel = null;
 			this.requestIdExpected = -1;
@@ -49,6 +49,7 @@ public class ResponseHandler implements Runnable {
 //		}
 		
 		public void setOldFrame(JFrame frame) {
+			System.out.println("old frame set");
 			this.oldFrame = frame;
 		}
 		
@@ -60,9 +61,10 @@ public class ResponseHandler implements Runnable {
 			return oldFrame;
 		}
 		
-//		public void setOldOldFrame() {
-//			this.oldOldFrame = oldFrame;
-//		}
+		public void setOldOldFrame() {
+			System.out.println("old old frame set");
+			this.oldOldFrame = oldFrame;
+		}
 		
 		public void setOldDialog(JDialog oldDialog) {
 			this.oldDialog = oldDialog;
@@ -130,7 +132,7 @@ public class ResponseHandler implements Runnable {
 										response.getInfo().removeFirst();
 										// GO TO ADMIN PORTAL
 										(new AdminPortalFrame(requestWriter, this, response.getInfo())).setVisible(true);
-//										oldOldFrame.dispose();
+										oldOldFrame.dispose();
 										oldFrame.dispose();
 									} else if (response.getInfo().getFirst().equals("MEMBER")) {
 										response.getInfo().removeFirst();

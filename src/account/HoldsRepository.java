@@ -61,7 +61,7 @@ public class HoldsRepository {
 		return hold;
 	}
 	
-	public Boolean cancelHold(int holdId, Inventory inventory, int memberId) {
+	public boolean cancelHold(int holdId, Inventory inventory, int memberId) {
 		for (Hold h : holds) {
 			if (h.getHoldId() == holdId) {
 				if (h.getStatus() == HoldStatus.CANCELLED) {
