@@ -13,21 +13,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Inventory {
-	private int numMedia;
 	private ArrayList<Media> mediaItems; // array of Media superclass, accepts subclass objects
 	
-	public Inventory(int newNumMedia, ArrayList<Media> newMediaItems) {
-		this.numMedia = newNumMedia;
-		this.mediaItems = newMediaItems;
-	}
-	
+
 	public Inventory(ArrayList<Media> newMediaItems) {
 		this.mediaItems = newMediaItems;
-		this.numMedia = newMediaItems.size();
 	}
 	
 	public int getNumMedia() {
-		return this.numMedia;
+		return this.mediaItems.size();
 	}
 	
 	public ArrayList<Media> getMediaItems() {
@@ -55,11 +49,9 @@ public class Inventory {
 				this.mediaItems.add(newMedia);
 				break;
 			default:
-				System.out.println("Error: Invalid Media Type - " + newMedia.getMediaType());
-				return;
+				throw new IllegalArgumentException("Error: Invalid Media Type - " + newMedia.getMediaType());
 		}
-		numMedia++;
-		System.out.println("Media Item Added: " + newMedia.toString() + " at position " + (numMedia-1) + "\n");
+		System.out.println("Media Item Added: " + newMedia.toString() + " at index " + (this.mediaItems.indexOf(newMedia)) + "\n");
 		return;
 	} // end of addMedia() method
 	
@@ -118,12 +110,12 @@ public class Inventory {
 	} // end of searchByID() method
 	
 	public void saveInventoryToFile(String filename) {
-		ifNameEmptyDefaultOutput(filename);
-		Path filePath = Paths.get("src", "inventory", "fileoutput", filename + ".txt");
+		filename = ifNameEmptyDefaultOutput(filename);
+		Path filePath = Paths.get("resources", "output", filename + ".txt");
 		File file = filePath.toFile();
 		
 		// comment out, this is for debug purposes
-		System.out.println("Saving inventory to: " + filePath.toAbsolutePath() + "\n");
+		// System.out.println("Saving inventory to: " + filePath.toAbsolutePath() + "\n");
 		try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
 			for (Media item : mediaItems) {
 				writer.write("Item #" + (mediaItems.indexOf(item) + 1) + ":");
@@ -147,9 +139,9 @@ public class Inventory {
 		return filename;
 	}
 	
-	// right now, read from file located in src/inventory/fileoutput
+	// right now, read from file located in resources/input/
 	public void loadInventoryFromFile(String filename) {
-		Path filePath = Paths.get("src", "inventory", "fileoutput", filename + ".txt");
+		Path filePath = Paths.get("resources", "input", filename + ".txt");
 		System.out.println("Looking at: " + filePath.toAbsolutePath()+ "\n");
 		if (!Files.isRegularFile(filePath)) {
 			System.out.println("Error: Inventory file not found:" + filePath.toAbsolutePath() + "\n");
@@ -173,7 +165,6 @@ public class Inventory {
 			e.printStackTrace();
 		}
 		this.mediaItems = tempMediaList;
-		this.numMedia = mediaItems.size();
 	}
 	
 	public Media parseMedia(String line) {
@@ -199,7 +190,7 @@ public class Inventory {
 		 * extraPart looks like:
 		 * "BOOK:[Author:John Doe;DDNumber:123.45;ISBN:9783161484100]"
 		 * "BOARD_GAME:[AgeRating:PG-13;Min Players:2;Max Players:4;Game Length:60]"
-		 * DVD:[AgeRating:PG;RunTime:120]
+		 * "DVD:[AgeRating:PG;RunTime:120]"
 		*/
 		if (extraPart.isEmpty()) {
 			throw new IllegalArgumentException("Missing media type information: " + line);
@@ -221,13 +212,13 @@ public class Inventory {
 		
 		switch (mediaType) {
 			case BOOK:
-				media = parseBookDetails(detailPart, title, publisher, genre, totalQuantity, quantityAvailable);
+				media = parseBookDetails(detailPart, id, title, publisher, genre, totalQuantity, quantityAvailable);
 				break;
 			case DVD:
-				media = parseDVDDetails(detailPart, title, publisher, genre, totalQuantity, quantityAvailable);
+				media = parseDVDDetails(detailPart, id, title, publisher, genre, totalQuantity, quantityAvailable);
 				break;
 			case BOARD_GAME:
-				media = parseBoardGameDetails(detailPart, title, publisher, genre, totalQuantity, quantityAvailable);
+				media = parseBoardGameDetails(detailPart, id, title, publisher, genre, totalQuantity, quantityAvailable);
 				break;
 			default:
 				throw new IllegalArgumentException("Unknown media type: " + mediaTypeString);
@@ -236,7 +227,7 @@ public class Inventory {
 	}
 	
 	private Media parseBookDetails(
-			String detailPart, String title, String publisher,
+			String detailPart, int id, String title, String publisher,
 			String genre,int totalQuantity, int quantityAvailable) 
 	{
 		// detailPart example:
@@ -257,18 +248,18 @@ public class Inventory {
 		String author = fields.get("Author");
 		double ddNumber = Double.parseDouble(fields.get("DDNumber"));
 		String isbn = fields.get("ISBN");
-		return new Book(title, publisher, genre, totalQuantity, quantityAvailable, author, ddNumber, isbn);
+		return new Book(id, title, publisher, genre, totalQuantity, quantityAvailable, author, ddNumber, isbn);
 	}
 	
 	private Media parseBoardGameDetails(
-		String detailPart,String title,String publisher,
+		String detailPart, int id, String title,String publisher,
 		String genre,int totalQuantity,int quantityAvailable) 
 	{
 		Map<String, String> fields = new HashMap<>();
 		
 		// Split by semicolon
 		// detailPart looks like:
-		// "AgeRating:PG-13;Min Players:2;Max Players:4;Game Length:60"
+		// "AgeRating:PG_13;Min Players:2;Max Players:4;Game Length:60"
 		String[] parts = detailPart.split(";");
 		for (String part : parts) {
 			part = part.trim();
@@ -286,11 +277,11 @@ public class Inventory {
 		int minPlayers = Integer.parseInt(fields.get("Min Players"));
 		int maxPlayers = Integer.parseInt(fields.get("Max Players"));
 		int gameLength = Integer.parseInt(fields.get("Game Length"));
-		return new BoardGame(title,publisher,genre,totalQuantity,quantityAvailable,ageRating,minPlayers,maxPlayers,gameLength);
+		return new BoardGame(id,title,publisher,genre,totalQuantity,quantityAvailable,ageRating,minPlayers,maxPlayers,gameLength);
 	}
 	
 	private Media parseDVDDetails(
-		String detailPart, String title, String publisher,
+		String detailPart, int id, String title, String publisher,
 		String genre, int totalQuantity,int quantityAvailable)
 	{
 		Map<String, String> fields = new HashMap<>();
@@ -309,7 +300,7 @@ public class Inventory {
 		String ageRatingStr = fields.get("AgeRating");
 		Rating ageRating = Rating.valueOf(ageRatingStr); // rating enum
 		int runTime = Integer.parseInt(fields.get("RunTime"));
-		return new DVD(title, publisher, genre, totalQuantity, quantityAvailable, ageRating, runTime);
+		return new DVD(id, title, publisher, genre, totalQuantity, quantityAvailable, ageRating, runTime);
 	}
 	
 	private Map<String, String> parseBaseFields(String wholeString) {
@@ -324,7 +315,7 @@ public class Inventory {
 		
 		// Split by semicolon 
 		// ie. Media Info{ID:1;Title:Catan;Publisher:Kosmos;Genre:Strategy;Total Quantity:5;Quantity Available:3}
-		// => ID:1, Title:Catan, Publisher:Kosmos,Genre: Strategy,TotalQuantity:5,QuantityAvailable:3
+		// => [ID:1] [Title:Catan] [Publisher:Kosmos] [Genre:Strategy] [TotalQuantity:5] [QuantityAvailable:3]
 		String[] parts = innerMediaString.split(";");
 		for (String part : parts) {
 			// Remove leading/trailing whitespace
