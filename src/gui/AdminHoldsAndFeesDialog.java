@@ -34,7 +34,7 @@ public class AdminHoldsAndFeesDialog extends JDialog {
 	
 	private void sendInitialGetHolds(ObjectOutputStream requestWriter, ResponseHandler responseHandler) {
 		try {
-			Message msg = new Message(0, message.Type.REQUEST, -1, message.Action.GET_HOLDS, Status.PENDING, new ArrayList<>());
+			Message msg = new Message(message.Type.REQUEST, -1, message.Action.GET_HOLDS, Status.PENDING, new ArrayList<>());
 	    	responseHandler.setRequestIdExpected(msg.getId());
 	    	requestWriter.writeObject(msg);;
 		} catch (Exception e) {
