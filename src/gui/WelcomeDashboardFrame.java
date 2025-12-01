@@ -341,6 +341,7 @@ public class WelcomeDashboardFrame extends JFrame {
         cardsGrid.repaint();
     }
 
+    /*
     private JPanel buildCard(Book b) {
         JPanel card = baseCard();
         JLabel title = new JLabel("<html><b>" + b.getTitle() + "</b></html>");
@@ -389,6 +390,7 @@ public class WelcomeDashboardFrame extends JFrame {
         card.add(details);
         return card;
     }
+    */
 
     private JPanel baseCard() {
         JPanel p = new JPanel();
