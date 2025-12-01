@@ -1,0 +1,5 @@
+Item #1:Media Info{ID:8;Title:Help;Publisher:Publishers;Genre:Horror;Total Quantity:4;Quantity Available:4}BOOK:[Author:Milton;DDNumber:325.7;ISBN:351-12334-343]
+Item #2:Media Info{ID:9;Title:Why;Publisher:Incorporated;Genre:Drama;Total Quantity:2;Quantity Available:2}BOOK:[Author:Hilton;DDNumber:411.7;ISBN:45434-3423434]
+Item #3:Media Info{ID:10;Title:Help;Publisher:A24;Genre:Horror;Total Quantity:3;Quantity Available:3}DVD:[AgeRating:R;RunTime:200]
+Item #4:Media Info{ID:11;Title:Trains;Publisher:Games Unlimited;Genre:Dice Game;Total Quantity:2;Quantity Available:2}BOARD_GAME:[AgeRating:NC_17;Min Players:3;Max Players:6;Game Length:240]
+Item #5:Media Info{ID:12;Title:Gains;Publisher:Games Unlimited;Genre:Party Game;Total Quantity:3;Quantity Available:3}BOARD_GAME:[AgeRating:PG;Min Players:4;Max Players:6;Game Length:30]
