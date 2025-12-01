@@ -164,6 +164,9 @@ public class LibraryServer {
 							boolean shouldIncludeType = requestMediaType.equals("All") || messageFromClient.getAction() == Action.GET_SEARCH_MEMBER;
 							String requestMediaTitle = messageFromClient.getInfo().getLast();
 							ArrayList<Media> relevantInventory = requestMediaTitle.equals("") ? inventory.getMediaItems() : inventory.searchByTitle(requestMediaTitle);
+							if (relevantInventory == null) {
+								relevantInventory = new ArrayList<Media>();
+							}
 							for (Media media : relevantInventory) {
 								if ((requestMediaType.equals("All") || requestMediaType.equals("Books")) && media instanceof Book) {
 									addBookToInfo(info, (Book) media, shouldIncludeType);
