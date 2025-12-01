@@ -1,0 +1,3 @@
+Item #1:Media Info{ID:0;Title:World War Z;Publisher:BookPublisher;Genre:Sci-Fi;Total Quantity:2;Quantity Available:1}BOOK:[Author:Max Brooks;DDNumber:56.25;ISBN:99988]
+Item #2:Media Info{ID:1;Title:Dawn of the Dead;Publisher:DVD Publisher;Genre:Horror;Total Quantity:1;Quantity Available:1}DVD:[AgeRating:R;RunTime:101]
+Item #3:Media Info{ID:2;Title:Dungeons & Dragons;Publisher:Hasbro;Genre:Fantasy;Total Quantity:5;Quantity Available:3}BOARD_GAME:[AgeRating:G;Min Players:2;Max Players:6;Game Length:120]

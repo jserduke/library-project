@@ -1,7 +1,8 @@
-Inventory toString() appends:
-Item #int:
+Inventory toString() prepends:
+Item #.size():
 General Format of toString Media Types:
-Always has "Media Info{ID:...;Title:...;Publisher:...;Genre:...;Total Quantity:...;QuantityAvailable:...;}"
+Always has 
+"Media Info{ID:...;Title:...;Publisher:...;Genre:...;Total Quantity:...;QuantityAvailable:...;}"
 in front, followed by Media Type Line:
 "Book:[Author:...;DDNumber:...;ISBN:...]\n"
 "DVD:[AgeRating:...;RunTime:...]\n"
