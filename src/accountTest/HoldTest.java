@@ -55,7 +55,5 @@ public class HoldTest {
 		assertTrue(result.contains("memberId="));
 		assertTrue(result.contains("holdUntilDate="));
 	}
-	
-
 
 }
