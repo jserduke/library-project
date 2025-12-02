@@ -1,14 +1,21 @@
 package accountTest;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.platform.suite.api.SelectClasses;
 
-import org.junit.jupiter.api.Test;
+import org.junit.platform.suite.api.Suite;
 
-class AllTest {
+@Suite
+@SelectClasses({
+	AccountTest.class,
+    AccountsDirectoryTest.class,
+    AdminTest.class,
+    HoldTest.class,
+    LoanTest.class,
+    MemberTest.class,
+    HoldsRepositoryTest.class,
+    LoanRepositoryTest.class
+})
 
-	@Test
-	void test() {
-		fail("Not yet implemented");
-	}
-
+public class AllTest {
+	
 }
