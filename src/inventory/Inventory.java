@@ -111,7 +111,7 @@ public class Inventory {
 	
 	public void saveInventoryToFile(String filename) {
 		filename = ifNameEmptyDefaultOutput(filename);
-		Path filePath = Paths.get("resources", "output", filename + ".txt");
+		Path filePath = Paths.get("resources", filename + ".txt");
 		File file = filePath.toFile();
 		
 		// comment out, this is for debug purposes

@@ -173,7 +173,7 @@ public class InventoryFileBuilder {
 		inventory.saveInventoryToFile(filename);
 
 		System.out.println("Done!");
-		System.out.println("File written to: resources/output/" + filename + ".txt");
+		System.out.println("File written to: resources/" + filename + ".txt");
 		System.out.println("Load with: inventory.loadInventoryFromFile(\"" + filename + "\");");
 
 		scanner.close();

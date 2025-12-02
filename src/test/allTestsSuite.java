@@ -11,19 +11,11 @@ import inventoryTest.*;
 
 @Suite
 @SelectClasses({
-	inventoryTest.class,
-	mediaTest.class,
-	AccountsDirectoryTest.class,
-	AccountTest.class,
-	AdminTest.class,
-	HoldsRepositoryTest.class,
-	HoldTest.class,
-	LoanRepositoryTest.class,
-	LoanTest.class,
-	MemberTest.class,
-	LibrarySystemTest.class,
+	inventoryAllTests.class, // inventory Tests
+	AllTest.class, // account Tests
+	LibrarySystemTest.class, // library Tests
 	LibraryTest.class,
-	ActionTest.class,
+	ActionTest.class, // message Tests
 	MessageTest.class,
 	StatusTest.class,
 	TypeTest.class
