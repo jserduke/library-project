@@ -13,7 +13,7 @@ import library.*;
 public class LibraryServer {
 	public static void main(String[] args) {
 		ServerSocket server = null;
-		
+		/*
     	File file = new File("new-folder" + File.separator + "logs2.txt"); //open logs.txt
     	file.getParentFile().mkdir();
     	try {
@@ -25,6 +25,7 @@ public class LibraryServer {
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
+		*/
 		
 		LibrarySystem librarySystem = new LibrarySystem("Double Library System");
 		librarySystem.addLibrary(new Library(0, "Our Little Library", new Inventory(new ArrayList<Media>())));
