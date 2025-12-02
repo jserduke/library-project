@@ -1,4 +1,4 @@
-package test.inventoryJUnitTest;
+package inventoryTest;
 
 import inventory.*;
 
@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import org.junit.jupiter.api.*;
 
 @DisplayName("Abstract Media Class Tests")
-class mediaTest {
+public class mediaTest {
 	Book book;
 	DVD dvd;
 	BoardGame boardGame;

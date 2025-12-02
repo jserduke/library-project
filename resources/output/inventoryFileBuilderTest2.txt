@@ -1,0 +1,2 @@
+Item #1:Media Info{ID:5;Title:Shrek;Publisher:Dreamworks;Genre:Comedy;Total Quantity:3;Quantity Available:1}DVD:[AgeRating:PG;RunTime:80]
+Item #2:Media Info{ID:3;Title:Hatchet;Publisher:lolidk;Genre:Survival;Total Quantity:3;Quantity Available:3}BOOK:[Author:HatchetAuthor;DDNumber:50.1;ISBN:1121]

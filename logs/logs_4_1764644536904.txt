@@ -1,0 +1,6 @@
+LOGGING FOR Cool Admin's Mon Dec 01 19:02:16 PST 2025 SESSION @ Our Little Library
+Mon Dec 01 19:02:16 PST 2025 - Successfully logged into the ADMIN portal
+Mon Dec 01 19:02:46 PST 2025 - Successfully added a new book, Hatchet by me
+Mon Dec 01 19:03:14 PST 2025 - Successfully deleted a DVD, The Running Man
+Mon Dec 01 19:03:27 PST 2025 - Successfully edited a DVD, Troll 2
+Mon Dec 01 19:04:03 PST 2025 - Successfully logged out

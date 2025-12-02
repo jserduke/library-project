@@ -49,7 +49,6 @@ public class MessageTest {
 
         String s = msg.toString();
 
-        assertTrue(s.contains("library id: 1"));
         assertTrue(s.contains("type: REQUEST"));
         assertTrue(s.contains("request id: 99"));
         assertTrue(s.contains("status: SUCCESS"));

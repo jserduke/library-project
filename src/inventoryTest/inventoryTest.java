@@ -1,4 +1,4 @@
-package test.inventoryJUnitTest;
+package inventoryTest;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.lang.reflect.InvocationTargetException;
@@ -10,11 +10,10 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.io.TempDir;
-
 import inventory.*;
 
 @DisplayName("Inventory Class Test")
-class inventoryTest {
+public class inventoryTest {
 
 	ArrayList<Media> mediaList;
 	Inventory inventory;
