@@ -1,11 +1,10 @@
-package test.inventoryJUnitTest;
-
+package inventoryTest;
 import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;
 
 @Suite
 @SelectClasses({
-	test.inventoryJUnitTest.inventoryTest.class,
-	test.inventoryJUnitTest.mediaTest.class
+	inventoryTest.class,
+	mediaTest.class
 })
 public class inventoryAllTests {}
